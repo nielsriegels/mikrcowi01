@@ -451,9 +451,11 @@ IF(debugging,
 *beam.iterlim        = 5000;
 
 
-* We make wheat the only sluggish crop in baseline, thus it will be fixed
-* (model cannot handle no fixed crops right now)
+* =============================================================================
+* Define base scenario and solve
+* =============================================================================
 
+* We make wheat the only sluggish crop in baseline, thus it will be fixed
 jAF(j)      = 0;
 jAF("wht")  = 1;
 jAX(j) = 1$(not jAF(j));
@@ -481,6 +483,9 @@ PUT step;
 PUT "3";
 PUTCLOSE;
 
+* =============================================================================
+* Define counterfactual scenario and solve
+* =============================================================================
 
 * Allow flexibility in land allocation
 jAF(j)                  = jAF0(j);
