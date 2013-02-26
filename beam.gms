@@ -318,7 +318,6 @@ EQUATIONS
     RESVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESFIXDIS(s,bd,bo,y0,m0)    "Fix Reservoir Discharge level"
     RESFIXVOL(s,b,y0,m0)        "Fix Reservoir Volume level"
-    RESBUILDUP(b,y0)            "Reservoir buildup"
     SEAVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOLMAX(b,y0,m0)          "Reservoir maximum level"
     RESVOLMIN(b,y0,m0)          "Reservoir minimum level"
@@ -368,11 +367,6 @@ RESVOL(s,b,y,m)$(bRes(b) and (not rFixVol(b,m))  )..
                                            +STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
                                            -ctrfBuild*reservoirs(b,"max")$(mBgn(m) AND bResBuild(b))
                                           ) * scalem3;
-
-* Reservoir buidup
-* VOL is end of month, so we subtract net discharge from beginning period to get start of month
-RESBUILDUP(b,y)$(bResBuild(b))..
-    ctrfBuild*reservoirs(b,"max") =e= SUM((m,s)$sW(s), STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m)+ITK(s,bd,b,y,m)+FLW(s,bd,b,y,m)) )  ;
 
 * Maximal water flow
 RESDISMAX(s,b,y,m)$(maxDischrg(b,m) gt 0 and not rFixVol(b,m))..
