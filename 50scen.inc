@@ -82,7 +82,7 @@ PARAMETER modelYear "Model year choice" /
 /;
 
 PARAMETER natExtra0(b) "Extra nature demands relative to baseline" /
-LAK_ARN                         1.000000E+03    
+LAK_ARN                         0.000000E+00    
 LAK_ARS         0.000000E+00    
 LAK_GOL         0.000000E+00    
 
