@@ -15,12 +15,7 @@ PUT step;
 PUT "1";
 PUTCLOSE;
 
-
-
-* TEMPORARY SCALARS
-*SCALAR elyPeakHrs / 8 /;
-*SCALAR elyPeakFac / 2 /;
-
+* Scalar for optimisation of HEPS production in baseline
 SCALAR basDisOpt "Optimise HEPS production in baseline" / 0 /;
 
 * The debugging scalar is used for testing/debugging model water balance against water flow data
@@ -57,8 +52,8 @@ SET bResBuild(b)        / Res_NUR, Res_TOK /;
 
 * Include data driven maps (i.e. intake, reservoir and river arcs)
 $offlisting
-$onlisting
 $include "%path%maps.inc";
+$onlisting
 
 SETS
     bRes(b)                 "Reservoir body"
@@ -72,13 +67,14 @@ SETS
 ;
 
 * Data tables on water flows, agriculture and economics
-*$offlisting
+$offlisting
 $include "%path%data.inc";
-*$onlisting
+$onlisting
+
+* Include defition of scenario
 $include "%path%scen.inc";
 
-y(y0)$modelYear(y0) = YES;
-
+y(y0)$modelYear(y0)     = YES;
 bRiv(b)                 = YES$SUM(bd$intk(bd,b), 1);
 bRes(b)                 = YES$SUM(bd$resv(bd,b), 1);
 bPlz(b)                 = YES$SUM(j, qAWater(b,j));
@@ -134,8 +130,6 @@ qInputs(b,"land",j)             = qALand(b,j);
 qInputs(b,"watr",j)             = qAWater(b,j);
 * Set water supply to normal year (base year cannot be dry year, as base year agricultural water use is fixed at 2009 level)
 sup(s,b,m)                      = sup0(s,b,"2009",m);
-* Hand correction of 2001 imbalance from KELES supply
-*sup("W","Src_KEL",m)        = sup("W","Src_KEL",m) -0$baseyear("2001");
 
 pEly(y,m)                       = pElyBase(y,m);
 pCrop(j)                        = pCrop0(j,"base");
@@ -144,11 +138,9 @@ pInput(k)                       = 1;
 iInv(sInv)                      = 0;
 minInflow0(b,m0)                = minInflowN(b,m0)$baseyear("2009");
 
-
 * Ground water correction: Data on groundwater leaves too much water in some planning zones in some months, below is corrected for that
 qmWater(b,m)$bPlz(b)            = SUM(j, qAWater(b,j)*agriSeason(b,j,m)) + qIwater(b,m) + qHwater(b,m) - sup("W",b,m);
 gwCorr(b,m)                     = min(0,qmWater(b,m));
-
 
 * Set maximum discharge capacity
 maxDischrg(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,
@@ -156,8 +148,6 @@ maxDischrg(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,
                              )$bResEly(b) + INF$(not bResEly(b));
 flow(bd,bo)$(SUM(m, maxDischrg(bo,m)) gt 0 and SUM(m, maxDischrg(bo,m)) lt INF)  = YES$resv(bd,bo);
 OPTION flow:0:0:2;
-
-
 
 * =============================================================================
 * Declare and assign model and equations and solve
@@ -357,8 +347,9 @@ OBJ..    TWV  =e=
 
 
 MODEL beam  /   WBALANCE, RESVOL, RESFIXVOL, RESFIXDIS, SEAVOL, RESDISMAX, ELECHEAD, RESVOLMAX, RESVOLMIN,
-                ELECBASE, ELECPEAK, ELECSALES, GRNDWATER,
-                LEONTIEF, CETLAND, FIXEDLAND,  OBJ, MINOUTFLOW, MININFLOW, MININFLOWa /;
+                MINOUTFLOW, MININFLOW, MININFLOWa, 
+                ELECBASE, ELECPEAK, ELECSALES, 
+                GRNDWATER, LEONTIEF, CETLAND, FIXEDLAND, OBJ /;
 
 
 * Baseline Levels
@@ -486,23 +477,6 @@ WBALANCE.M("w",b,y,m)$(WBALANCE.M("w",b,y,m) eq eps) = 0;
 PUT step;
 PUT "3";
 PUTCLOSE;
-
-
-
-$ontext
-* Note: This piece of code is for checking that CHI_KAZ has enough water from Src_KEL in baseline.
-*       The supply from Src_KEL is tight and in some baseline months not sufficient to cover demand (spreadsheet corrections made)
-DISPLAY GRW.l, ITK.l, FLW.l;
-parameter testKEL(*,m0);
-testKEL("src",m) = sup("W","src_kel",m);
-testKEL("los",m) = testKEL("src",m)*lossSh("KELES",m);
-testKEL("rtn",m) = rtn0("CHI_KAZ",m);
-testKEL("IHH",m) = qIWater("CHI_KAZ",m) + qHWater("CHI_KAZ",m);
-testKEL("agr",m) = SUM(j, qAWater("CHI_KAZ",j)*agriSeason("CHI_KAZ",j,m));
-testKEL("flw",m) = testKEL("src",m) -testKEL("los",m) -testKEL("IHH",m) - testKEL("agr",m) - testKEL("rtn",m);
-DISPLAY testKEL;
-abort "Hej";
-$offtext
 
 PARAMETERS
     rFlowBase(b,e_resFlow,y0,m0)        "Flow of water through bodies, baseline"
