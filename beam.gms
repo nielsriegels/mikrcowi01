@@ -783,7 +783,7 @@ ctrfBuild = ctrfBuild0;
 
 *DISPLAY minInflow0, sup0, sup, baseyear;
 *beam.solprint = yes;
-beam.limrow = 5000;
+*beam.limrow = 5000;
 SOLVE beam MAXIMIZING twv USING NLP;
 modlStatS = beam.modelstat;
 solvStatS = beam.solvestat;
@@ -1087,6 +1087,15 @@ PUTCLOSE;
 
 PUT step;
 PUT "4";
+PUTCLOSE;
+
+
+file fObjValues /%path%output\objValues.txt/
+PUT fObjValues;
+PUT "Base total income: ";
+PUT SUM((b,y,m), rEconBase(b,"TotInc",y,m)); PUT /;
+PUT "Ctrf total income: ";
+PUT SUM((b,y,m), rEconCtrf(b,"TotInc",y,m)); PUT /;
 PUTCLOSE;
 
 DISPLAY minInflow0, natExtra;
