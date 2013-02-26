@@ -332,7 +332,6 @@ EQUATIONS
     LEONTIEF(b,j,k,y0)          "Ratio between outputs and inputs"
     CETLAND(b,y0)               "Index for physical amount of land"
     FIXEDLAND(b,j,y0)           "Fixed land shares"
-    LANDLIMIT(b,y0)             "Limit on agricultural area use"
 * Objective functions
     OBJ                         "Objective function"
 ;
@@ -449,12 +448,6 @@ CETLAND(b,y)$SUM(j$jAF(j), qInputs(b,"land",j))..
 * Some crops have a fixed share of land
 FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
     iOUTPUT(b,j,y)$jAX(j)   =e= 1;
-
-* NOT USED ANYMORE
-* Enforce land limits in agricultural production
-LANDLIMIT(b,y)$SUM(j, qInputs(b,"land",j))..
-    SUM(j, iINPUT(b,j,"land",y)*qInputs(b,"land",j)) =e= SUM(j, qInputs(b,"land",j));
-
 
 * Objective is the total value of water from electricity, industry and agriculture
 OBJ..    TWV  =e=
