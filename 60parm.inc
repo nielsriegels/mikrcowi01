@@ -59,3 +59,5 @@ flow(bd,bo)$(SUM(m, maxDischrg(bo,m)) gt 0 and SUM(m, maxDischrg(bo,m)) lt INF) 
 OPTION flow:0:0:2;
 
 
+* Temporary data for hours in each electricity market segment
+PARAMETER segmentHours(g) / base 16, peak 8 /;

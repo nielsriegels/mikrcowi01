@@ -33,6 +33,10 @@ SETS
     y0                      "Years"                 / 2001, 2009, 2020, 2050 /
     y(y0)                   "Modelled years"
     yB(y0)                  "Base year"
+    g0                      "Energy demand segment" / base, peak /
+    g(g0)                   "Energy demand segment" / base, peak /
+    u0                      "Energy prod. units"    / u01*u99 /
+    u                       "Energy prod. units"    
     sBal                    "Balance table cols"    / Demand, FromSrc, DisTo, FromUp, FromIn, Return, ToIn, DisFrom, ToDwn, ToLoss /
     sInv                    "Irrigation investment" / usdPerMM3, usdPerHa, improve /
     sSec                    "Non-agri sectors"      / HH, ind /

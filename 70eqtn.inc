@@ -5,9 +5,7 @@ POSITIVE VARIABLES
     VOL(s,b,y0,m0)          "Reservoir volume levels end of season (mm3)"
     DIS(s,bd,bo,y0,m0)      "Reservoir seasonal discharge (mm3)"
     STO(s,b,y0,m0)          "Reservoir seasonal storage buildup (mm3)"
-    ELY(b,y0,m0)            "Electricity generation (MWh)"
-    ELYPEAK(b,y0,m0)        "Electricity peak sales (MWh)"
-    ELYBASE(b,y0,m0)        "Electricity base sales (MWh)"
+    HPP(b,g0,y0,m0)         "Hydro power production (MWh)"
     iOUTPUT(b,j,y0)         "Index for production of industrial/agricultural goods (1=baseyear)"
     iINPUT(b,j,k,y0)        "Index for use of production inputs (1=baseyear)"
     iLAND(b,j,y0)           "Index for physical amount of land"
@@ -20,6 +18,7 @@ OPTIONS DIS:0:3:1;
 OPTIONS FLW:0:3:1;
 OPTIONS ITK:0:3:1;
 OPTIONS STO:0:2:1;
+OPTIONS HPP:0:3:1;
 OPTIONS iINPUT:3:2:2;
 OPTIONS iOUTPUT:3:1:2;
 OPTIONS iLAND:3:1:2;
@@ -37,10 +36,8 @@ EQUATIONS
     SEAVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOLMAX(b,y0,m0)          "Reservoir maximum level"
     RESVOLMIN(b,y0,m0)          "Reservoir minimum level"
-    ELECHEAD(b,y0,m)            "Unit Electricity generation, reservoir state dependent"
-    ELECSALES(b,y0,m0)          "Total electricity sales"
-    ELECPEAK(b,y0,m0)           "Electricity sales to peak price"
-    ELECBASE(b,y0,m0)           "Electricity sales to base price"
+    ELYHEAD(b,y0,m)             "Unit Electricity generation, reservoir state dependent"
+    ELYHPP(b,g0,y0,m0)          "Hydro power production"
     MININFLOW(b,y0,m0)          "Minimum inflow to body"
     MINOUTFLOW(b,y0,m0)         "Minimum outflow from body"
     MININFLOWa(b,y0,m0)         "Minimum inflow to body, annual"
@@ -114,24 +111,17 @@ RESVOLMIN(b,y,m)$bRes(b)..
 * Reservoir unit electricity generation
 * Filled reservoirs produce more per m3 than half empty
 * OBS: Check how average volume is calcuated in the start and end months!
-ELECHEAD(b,y,m)$bResEly(b)..
-    ELY(b,y,m) =e= SUM(s$sW(s),  gravity * reservoirs(b,"coef_eta") * SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
+ELYHEAD(b,y,m)$bResEly(b)..
+    SUM(g, HPP(b,g,y,m))
+                =e= SUM(s$sW(s),  gravity * reservoirs(b,"coef_eta") * SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
                       * ( reservoirs(b,"coef_a")
                          +reservoirs(b,"coef_b") *      (VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2
                          +reservoirs(b,"coef_c") *POWER((VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2,2)
                         ) / 3.6 );
 
 *  Peak sales are 8 hours per day
-ELECPEAK(b,y,m)$bResEly(b)..
-    ELYPEAK(b,y,m) =l= reservoirs(b,"effect")*30*elyPeakHrs;
-
-* Base sales are 16 hours per day
-ELECBASE(b,y,m)$bResEly(b)..
-    ELYBASE(b,y,m) =l= reservoirs(b,"effect")*30*(24-elyPeakHrs);
-
-*Total sales are base plus peak
-ELECSALES(b,y,m)$bResEly(b)..
-    ELYBASE(b,y,m) + ELYPEAK(b,y,m) =e= ELY(b,y,m);
+ELYHPP(b,g,y,m)$bResEly(b)..
+    HPP(b,g,y,m) =l= 30 * reservoirs(b,"effect") * segmentHours(g);
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
@@ -168,16 +158,16 @@ FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
 * Objective is the total value of water from electricity, industry and agriculture
 OBJ..    TWV  =e=
                     SUM((b,j,y)$oCosts(b,j), iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)/1000000 - SUM(k$(not kLimit(k)), iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)) )
-                   +SUM((b,y,m)$bResEly(b), ELYBASE(b,y,m) * pEly(y,m) / 1000000 )
-                   +SUM((b,y,m)$bResEly(b), ELYPEAK(b,y,m) * pEly(y,m)*elyPeakFac / 1000000 )
+                   +SUM((b,y,m)$bResEly(b), HPP(b,"base",y,m) * pEly(y,m) / 1000000 )
+                   +SUM((b,y,m)$bResEly(b), HPP(b,"peak",y,m) * pEly(y,m)*elyPeakFac / 1000000 )
                    -SUM((b,y,m)$bRes(b), reservoirs(b,"cost")$(not bResNOP(b)))
                    -SUM((b,j,y), iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j) + (1-iInv0("improve"))*iInv("usdPerMM3")*iINPUT(b,j,"watr",y)*qAWater(b,j))/1000000 ;
 
 
 MODEL beam  /   WBALANCE, RESVOL, RESFIXVOL, RESFIXDIS, SEAVOL, 
-                RESDISMAX, ELECHEAD, RESVOLMAX, RESVOLMIN,
+                RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, 
-                ELECBASE, ELECPEAK, ELECSALES, 
+                ELYHEAD, ELYHPP,  
                 GRNDWATER, LEONTIEF, CETLAND, FIXEDLAND, 
                 OBJ /;
 
@@ -211,6 +201,7 @@ FLW.fx(s,bd,bo,y,m)$(not flow(bd,bo))                       = 0;
 ITK.fx(s,bd,bo,y,m)$(not intk(bd,bo))                       = 0;
 DIS.fx(s,bd,bo,y,m)$(not resv(bd,bo))                       = 0;
 GRW.fx(b,y,m)$(SUM(ms$mSeason(m,ms), grwtrMax(b,ms)) eq 0)  = 0;
+HPP.fx(b,g,y,m)$(not bResEly(b))                            = 0;
 STO.fx(s,bo,y,m)                                            = 0;
 STO.up(s,b,y,m)$bRes(b)                                     = 99999;
 STO.up(s,b,y,m)$sea(b)                                      = INF;

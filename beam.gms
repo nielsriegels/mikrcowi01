@@ -216,3 +216,6 @@ $include "%path%93out3.inc";
 PUT step;
 PUT "4";
 PUTCLOSE;
+
+
+DISPLAY HPP.l;
