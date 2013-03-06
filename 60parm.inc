@@ -7,6 +7,7 @@ PARAMETERS
     qALand(b,j)             "Base year land use in agriculture (ha)"
     qAWater(b,j)            "Base year water in agriculture (mm3/y)"
     qmWater(b,m)            "Base year water (mm3/month)"
+    irg0(b,j,y0,m0)         "Base year water for irrigation (mm3/month)"
     qInputs(b,k,j)          "Base year physical input use (unit/year)"
     oCosts(b,j)             "Base year production agri/industrt unit cost (usd/ton)"
     iShare(b,k,j)           "Base year share of input costs (pct of total cost)"
@@ -37,6 +38,7 @@ iShare(b,k,j)$qValue(b,j)       = iACosts(b,k,j) / qValue(b,j);
 lShare(b,j)$jAF(j)              = (qALand(b,j) / SUM(jj$jAF(jj), qALand(b,jj)))$SUM(jj$jAF(jj), qALand(b,jj));
 qInputs(b,"land",j)             = qALand(b,j);
 qInputs(b,"watr",j)             = qAWater(b,j);
+irg0(b,j,y,m)                   = qAWater(b,j)*agriSeason(b,j,m);
 * Set water supply to normal year (base year cannot be dry year, as base year agricultural water use is fixed at 2009 level)
 sup(s,b,m)                      = sup0(s,b,"2009",m);
 

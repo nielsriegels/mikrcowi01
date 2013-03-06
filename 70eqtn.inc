@@ -65,7 +65,7 @@ WBALANCE(s,b,y,m)..
    + SUM(bd$flow(bd,b), FLW(s,bd,b,y,m))
    + STO(s,b,y,m)$sea(b)
    + STO(s,b,y,m)$bRes(b)
-   + SUM(j, IRG(b,j,y,m))
+   + SUM(j$irg0(b,j,y,m), IRG(b,j,y,m))
    + qIWater(b,m)*(1+demography(y,"Ind"))
    + qHWater(b,m)*(1+demography(y,"HH"))
     )
@@ -81,8 +81,8 @@ WBALANCE(s,b,y,m)..
 
 
 * Irrigation needs
-IRGACT(b,j,y,m)$(qAWater(b,j)*agriSeason(b,j,m))..
-   IRG(b,j,y,m) =e= iINPUT(b,j,"watr",y)*qAWater(b,j)*agriSeason(b,j,m) * (1-iInv("improve"));
+IRGACT(b,j,y,m)$irg0(b,j,y,m)..
+   IRG(b,j,y,m) =e= iINPUT(b,j,"watr",y)*irg0(b,j,y,m) * (1-iInv("improve"));
 
 * Sea volumes are not restricted to primo level =e= ultimo level
 SEAVOL(s,b,y,m)$sea(b)..
