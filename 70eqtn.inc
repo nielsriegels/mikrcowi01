@@ -85,8 +85,8 @@ WBALANCE(s,b,y,m)..
 ;
 
 * Account for losses to seepage and evaporation
-LOSSES(s,b,l,y,m)$(lossRivers(b,m))..
-    LOS(s,b,l,y,m) =e= lossRivers(b,m) 
+LOSSES(s,b,l,y,m)$(lossRivers(b,l,m))..
+    LOS(s,b,l,y,m) =e= lossRivers(b,l,m) 
                     * (  SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
                        + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
                        + sup(s,b,m)

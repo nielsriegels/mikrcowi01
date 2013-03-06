@@ -25,7 +25,7 @@ rFlowCtrf(b,"OutDis",y,m)                 = -SUM((s,bd)$(not sea(bd)),      DIS.
 rFlowCtrf(b,"OutFlw",y,m)                 = -SUM((s,bd)$(not sea(bd)),      FLW.l(s,bd,b,y,m));
 rFlowCtrf(b,"OutInt",y,m)                 = -SUM((s,bd)$(not sea(bd)),      ITK.l(s,bd,b,y,m));
 rFlowCtrf(b,"OutLak",y,m)                 = -SUM((s,bd)$(    sea(bd)),      ITK.l(s,bd,b,y,m)+FLW.l(s,bd,b,y,m)+DIS.l(s,bd,b,y,m));
-rFlowCtrf(b,"OutLos",y,m)                 = -rFlowCtrf(b,"InTot",y,m) * lossRivers(b,m);
+rFlowCtrf(b,"OutLos",y,m)                 = -SUM((s,l),                     LOS.l(s,b,l,y,m));
 rFlowCtrf(b,"OutTot",y,m)                 = rFlowCtrf(b,"OutDem",y,m) + rFlowCtrf(b,"OutDis",y,m) + rFlowCtrf(b,"OutFlw",y,m) + rFlowCtrf(b,"OutInt",y,m) + rFlowCtrf(b,"OutLos",y,m) + rFlowCtrf(b,"OutLak",y,m);
 rFlowCtrf(b,"Balance",y,m)                = round(rFlowCtrf(b,"InTot",y,m)+rFlowCtrf(b,"OutTot",y,m)-rFlowCtrf(b,"ResChg",y,m)$bRes(b), 3);
 * Add a tiny bit in order for GDX to show variable

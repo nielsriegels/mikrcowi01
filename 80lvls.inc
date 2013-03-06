@@ -9,17 +9,18 @@ COSTS.l(b,j,y)                  = SUM(k$(not kLimit(k)), iACosts(b,k,j));
 * For testing water balance, all water in first month.
 * 0 = no test, just normal run
 IF(debugging,
-    loss(b,m)                   = SUM((mm,s), lossRivers(b,mm)*sup(s,b,mm))$(ord(m) eq 1);
+*    loss(b,m)                   = SUM((mm,l,s), lossRivers(b,l,mm)*sup(s,b,mm))$(ord(m) eq 1);
     sup(s,b,m)                  = SUM(mm, sup(s,b,mm))$(ord(m) eq 1);
-    lossRivers(b,m)             = (loss(b,m)/SUM(s,sup(s,b,m)))$SUM(s,sup(s,b,m));
+*    lossRivers(b,m)             = (loss(b,m)/SUM(s,sup(s,b,m)))$SUM(s,sup(s,b,m));
     agriSeason(b,j,m)           = 1$(ord(m) eq 1);
-    ITK.l(s,bd,bo,y,m)          = itk0(bd,bo)$(ord(m) eq 1);
-    FLW.l(s,bd,bo,y,m)          = flw0(bd,bo)$(ord(m) eq 1);
-    DIS.l(s,bd,bo,y,m)          = dis0(bd,bo)$(ord(m) eq 1);
-    GRW.l(b,y,m)                = SUM(mS, grwtrMax(b,mS))$(ord(m) eq 1);
     qIWater(b,m)                = SUM(mm, qIWater(b,mm))$(ord(m) eq 1);
     qHWater(b,m)                = SUM(mm, qHWater(b,mm))$(ord(m) eq 1);
     rtn0(b,m)                   = SUM(mm, rtn0(b,mm))$(ord(m) eq 1);
+    ITK.l(s,bd,bo,y,m)          = itk0(bd,bo)$(ord(m) eq 1);
+    FLW.l(s,bd,bo,y,m)          = flw0(bd,bo)$(ord(m) eq 1);
+    DIS.l(s,bd,bo,y,m)          = dis0(bd,bo)$(ord(m) eq 1);
+    LOS.l(s,b,l,y,m)            = lossRivers(b,l,m)*(rtn0(b,m) + sup(s,b,m) + SUM(bo, FLW.l(s,b,bo,y,m)+DIS.l(s,b,bo,y,m)));
+    GRW.l(b,y,m)                = SUM(mS, grwtrMax(b,mS))$(ord(m) eq 1);
     demography(y,"Ind")         = 0;
     demography(y,"HH")          = 0;
 ELSE
@@ -63,7 +64,7 @@ balCheck(bo,"outDis")   = -SUM((s,bd,y,m)$resv(bd,bo), DIS.l(s,bd,bo,y,m));
 balCheck(bo,"outItk")   = -SUM((s,bd,y,m)$intk(bd,bo), ITK.l(s,bd,bo,y,m));
 balCheck(bo,"outSto")   = -SUM((s,y,m),                STO.l(s,bo,y,m))$sea(bo);
 * Determine losses on inflow basis
-balCheck(b,"outLos")    = -SUM((s,y,m), (SUM(bo, -FLW.l(s,b,bo,y,m) - ITK.l(s,b,bo,y,m) - DIS.l(s,b,bo,y,m)) + sup(s,b,m) + 0*gwCorr(b,m) + rtn0(b,m))*lossRivers(b,m)) ;
+balCheck(b,"outLos")    = -SUM((s,l,y,m), (SUM(bo, -FLW.l(s,b,bo,y,m) - ITK.l(s,b,bo,y,m) - DIS.l(s,b,bo,y,m)) + sup(s,b,m) + 0*gwCorr(b,m) + rtn0(b,m))*lossRivers(b,l,m)) ;
 *balCheck(bo,"outLos")$bSrc(bo)   = -SUM((s,m), sup(s,bo,m)*lossRivers(bo,m));
 
 balCheck(b,"Check")     = balCheck(b,"inSrc")  + balCheck(b,"inFlw")  + balCheck(b,"inDis")  + balCheck(b,"inItk")  + balCheck(b,"inRtn")
