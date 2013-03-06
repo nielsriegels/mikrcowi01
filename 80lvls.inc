@@ -9,9 +9,9 @@ COSTS.l(b,j,y)                  = SUM(k$(not kLimit(k)), iACosts(b,k,j));
 * For testing water balance, all water in first month.
 * 0 = no test, just normal run
 IF(debugging,
-    loss(b,m)                   = SUM((mm,s), lossSh(b,mm)*sup(s,b,mm))$(ord(m) eq 1);
+    loss(b,m)                   = SUM((mm,s), lossRivers(b,mm)*sup(s,b,mm))$(ord(m) eq 1);
     sup(s,b,m)                  = SUM(mm, sup(s,b,mm))$(ord(m) eq 1);
-    lossSh(b,m)                 = (loss(b,m)/SUM(s,sup(s,b,m)))$SUM(s,sup(s,b,m));
+    lossRivers(b,m)             = (loss(b,m)/SUM(s,sup(s,b,m)))$SUM(s,sup(s,b,m));
     agriSeason(b,j,m)           = 1$(ord(m) eq 1);
     ITK.l(s,bd,bo,y,m)          = itk0(bd,bo)$(ord(m) eq 1);
     FLW.l(s,bd,bo,y,m)          = flw0(bd,bo)$(ord(m) eq 1);
@@ -63,8 +63,8 @@ balCheck(bo,"outDis")   = -SUM((s,bd,y,m)$resv(bd,bo), DIS.l(s,bd,bo,y,m));
 balCheck(bo,"outItk")   = -SUM((s,bd,y,m)$intk(bd,bo), ITK.l(s,bd,bo,y,m));
 balCheck(bo,"outSto")   = -SUM((s,y,m),                STO.l(s,bo,y,m))$sea(bo);
 * Determine losses on inflow basis
-balCheck(b,"outLos")    = -SUM((s,y,m), (SUM(bo, -FLW.l(s,b,bo,y,m) - ITK.l(s,b,bo,y,m) - DIS.l(s,b,bo,y,m)) + sup(s,b,m) + 0*gwCorr(b,m) + rtn0(b,m))*lossSh(b,m)) ;
-*balCheck(bo,"outLos")$bSrc(bo)   = -SUM((s,m), sup(s,bo,m)*lossSh(bo,m));
+balCheck(b,"outLos")    = -SUM((s,y,m), (SUM(bo, -FLW.l(s,b,bo,y,m) - ITK.l(s,b,bo,y,m) - DIS.l(s,b,bo,y,m)) + sup(s,b,m) + 0*gwCorr(b,m) + rtn0(b,m))*lossRivers(b,m)) ;
+*balCheck(bo,"outLos")$bSrc(bo)   = -SUM((s,m), sup(s,bo,m)*lossRivers(bo,m));
 
 balCheck(b,"Check")     = balCheck(b,"inSrc")  + balCheck(b,"inFlw")  + balCheck(b,"inDis")  + balCheck(b,"inItk")  + balCheck(b,"inRtn")
                              +balCheck(b,"outAgr") + balCheck(b,"outHHI") + balCheck(b,"outFlw") + balCheck(b,"outDis") + balCheck(b,"outItk") + balCheck(b,"outSto") + balCheck(b,"outLos");

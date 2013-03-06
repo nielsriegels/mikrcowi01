@@ -73,7 +73,7 @@ WBALANCE(s,b,y,m)..
       +sup(s,b,m)
       +rtn0(b,m)
       +GRW(b,y,m)
-     ) * (1-lossSh(b,m)) * scalem3
+     ) * (1-lossRivers(b,m)) * scalem3
 ;
 
 * Sea volumes are not restricted to primo level =e= ultimo level
