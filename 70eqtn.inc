@@ -1,5 +1,6 @@
 POSITIVE VARIABLES
     GRW(bd,y0,m0)           "Ground water extraction (mm3)"
+    IRG(b,j,y0,m0)          "Actual irrigation (mm3)"
     ITK(s,bo,bd,y0,m0)      "Water intakes from river nodes to zones (mm3)"
     FLW(s,bo,bd,y0,m0)      "Flows between river nodes (mm3)"
     VOL(s,b,y0,m0)          "Reservoir volume levels end of season (mm3)"
@@ -18,6 +19,7 @@ VARIABLES
 OPTIONS DIS:0:3:1;
 OPTIONS FLW:0:3:1;
 OPTIONS ITK:0:3:1;
+OPTIONS IRG:0:3:1;
 OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
 OPTIONS TPP:0:3:1;
@@ -30,6 +32,7 @@ EQUATIONS
 * Hydrological constraints and identities
     WBALANCE(s,b,y0,m0)         "Water balance at all nodes"
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
+    IRGACT(b,j,y0,m0)           "Actual irrigation need by zone"
     SEAVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOLMAX(b,y0,m0)          "Reservoir maximum level"
@@ -62,7 +65,7 @@ WBALANCE(s,b,y,m)..
    + SUM(bd$flow(bd,b), FLW(s,bd,b,y,m))
    + STO(s,b,y,m)$sea(b)
    + STO(s,b,y,m)$bRes(b)
-   + SUM(j, iINPUT(b,j,"watr",y)*qAWater(b,j)*agriSeason(b,j,m))*(1-iInv("improve"))
+   + SUM(j, IRG(b,j,y,m))
    + qIWater(b,m)*(1+demography(y,"Ind"))
    + qHWater(b,m)*(1+demography(y,"HH"))
     )
@@ -75,6 +78,11 @@ WBALANCE(s,b,y,m)..
       +GRW(b,y,m)
      ) * (1-lossRivers(b,m)) * scalem3
 ;
+
+
+* Irrigation needs
+IRGACT(b,j,y,m)$(qAWater(b,j)*agriSeason(b,j,m))..
+   IRG(b,j,y,m) =e= iINPUT(b,j,"watr",y)*qAWater(b,j)*agriSeason(b,j,m) * (1-iInv("improve"));
 
 * Sea volumes are not restricted to primo level =e= ultimo level
 SEAVOL(s,b,y,m)$sea(b)..
@@ -183,8 +191,8 @@ OBJ..    TWV  =e=
 MODEL beam  /   WBALANCE, RESVOL, RESFIXVOL, RESFIXDIS, SEAVOL, 
                 RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, 
-                ELYHEAD, ELYHPP, ELYTPP, ELYMKT,  
-                GRNDWATER, LEONTIEF, CETLAND, FIXEDLAND, 
+                ELYHEAD, ELYHPP, ELYTPP, ELYMKT, 
+                GRNDWATER, LEONTIEF, CETLAND, FIXEDLAND, IRGACT, 
                 OBJ /;
 
 
@@ -215,6 +223,7 @@ IF(debugging,
 * Fix hydrological variables that can never be non-zero
 FLW.fx(s,bd,bo,y,m)$(not flow(bd,bo))                       = 0;
 ITK.fx(s,bd,bo,y,m)$(not intk(bd,bo))                       = 0;
+IRG.fx(b,j,y,m)$(qAWater(b,j)*agriSeason(b,j,m) eq 0)       = 0;
 DIS.fx(s,bd,bo,y,m)$(not resv(bd,bo))                       = 0;
 GRW.fx(b,y,m)$(SUM(ms$mSeason(m,ms), grwtrMax(b,ms)) eq 0)  = 0;
 HPP.fx(b,g,y,m)$(not bResEly(b))                            = 0;
