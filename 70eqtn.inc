@@ -1,6 +1,7 @@
 POSITIVE VARIABLES
     GRW(bd,y0,m0)           "Ground water extraction (mm3)"
     IRG(b,j,y0,m0)          "Actual irrigation (mm3)"
+    LOS(s,b,l,y0,m0)        "Losses to seepage and evaporation (mm3)"
     ITK(s,bo,bd,y0,m0)      "Water intakes from river nodes to zones (mm3)"
     FLW(s,bo,bd,y0,m0)      "Flows between river nodes (mm3)"
     VOL(s,b,y0,m0)          "Reservoir volume levels end of season (mm3)"
@@ -20,6 +21,7 @@ OPTIONS DIS:0:3:1;
 OPTIONS FLW:0:3:1;
 OPTIONS ITK:0:3:1;
 OPTIONS IRG:0:3:1;
+OPTIONS LOS:0:4:1;
 OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
 OPTIONS TPP:0:3:1;
@@ -32,6 +34,7 @@ EQUATIONS
 * Hydrological constraints and identities
     WBALANCE(s,b,y0,m0)         "Water balance at all nodes"
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
+    LOSSES(s,b,l,y0,m0)         "Losses to seepage and evaporation"
     IRGACT(b,j,y0,m0)           "Actual irrigation need by zone"
     SEAVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOL(s,b,y0,m0)           "Reservoir level end of season"
@@ -68,21 +71,30 @@ WBALANCE(s,b,y,m)..
    + SUM(j$irg0(b,j,y,m), IRG(b,j,y,m))
    + qIWater(b,m)*(1+demography(y,"Ind"))
    + qHWater(b,m)*(1+demography(y,"HH"))
-    )
-  =e=
-     ( SUM(bo$intk(b,bo), ITK(s,b,bo,y,m))
+   + LOS(s,b,"seep",y,m)
+   
+   ) =e= (
+       SUM(bo$intk(b,bo), ITK(s,b,bo,y,m))
       +SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
       +SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
       +sup(s,b,m)
       +rtn0(b,m)
       +GRW(b,y,m)
-     ) * (1-lossRivers(b,m)) * scalem3
+     ) * scalem3
 ;
 
+* Account for losses to seepage and evaporation
+LOSSES(s,b,l,y,m)$(lossRivers(b,m))..
+    LOS(s,b,l,y,m) =e= lossRivers(b,m) 
+                    * (  SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
+                       + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
+                       + sup(s,b,m)
+                       + rtn0(b,m)
+                      );
 
 * Irrigation needs
 IRGACT(b,j,y,m)$irg0(b,j,y,m)..
-   IRG(b,j,y,m) =e= iINPUT(b,j,"watr",y)*irg0(b,j,y,m) * (1-iInv("improve"));
+    IRG(b,j,y,m) =e= iINPUT(b,j,"watr",y)*irg0(b,j,y,m) * (1-iInv("improve"));
 
 * Sea volumes are not restricted to primo level =e= ultimo level
 SEAVOL(s,b,y,m)$sea(b)..
@@ -188,7 +200,7 @@ OBJ..    TWV  =e=
                    -SUM((b,j,y), iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j) + (1-iInv0("improve"))*iInv("usdPerMM3")*iINPUT(b,j,"watr",y)*qAWater(b,j))/1000000 ;
 
 
-MODEL beam  /   WBALANCE, RESVOL, RESFIXVOL, RESFIXDIS, SEAVOL, 
+MODEL beam  /   WBALANCE, RESVOL, RESFIXVOL, RESFIXDIS, SEAVOL, LOSSES,
                 RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, 
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT, 

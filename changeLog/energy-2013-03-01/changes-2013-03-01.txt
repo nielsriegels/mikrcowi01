@@ -1,0 +1,9 @@
+The objective value changed when implementing the energy market, as the model now accounts for costs associated with 
+thermal energy generation.
+The two beam.lst files shows the hydro power generation generation before and after implementing the energy market in 
+the model. The list files show that the hydro power generation is exactly the same before and after the change.
+From this we conclude that the implementation of the thermal energy generation changed the model in the desired way,
+i.e. instead of HEPS reacting on exogenous electricity prices, HEPS now react on thermal marginal cost of production
+relative to demand not met by thermal generation.
+The data provided electricity demand and thermal generation capacity is suited such that they
+

@@ -1,0 +1,4 @@
+# Ignore the following file types when committing to git
+*.lst
+*.csv
+output/beamOutput.xls
