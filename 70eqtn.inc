@@ -1,6 +1,7 @@
 POSITIVE VARIABLES
     GRW(bd,y0,m0)           "Ground water extraction (mm3)"
     IRG(b,j,y0,m0)          "Actual irrigation (mm3)"
+    HHI(s,sSec,b,y0,m0)     "Water use by households and industries (mm3)"
     LOS(s,b,l,y0,m0)        "Losses to seepage and evaporation (mm3)"
     ITK(s,bo,bd,y0,m0)      "Water intakes from river nodes to zones (mm3)"
     FLW(s,bo,bd,y0,m0)      "Flows between river nodes (mm3)"
@@ -36,6 +37,7 @@ EQUATIONS
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
     LOSSES(s,b,l,y0,m0)         "Losses to seepage and evaporation"
     IRGACT(b,j,y0,m0)           "Actual irrigation need by zone"
+    HHIUSE(s,sSec,b,y0,m0)      "Water use by households and industries"
     SEAVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOLMAX(b,y0,m0)          "Reservoir maximum level"
@@ -69,8 +71,7 @@ WBALANCE(s,b,y,m)..
    + STO(s,b,y,m)$sea(b)
    + STO(s,b,y,m)$bRes(b)
    + SUM(j$irg0(b,j,y,m), IRG(b,j,y,m))
-   + qIWater(b,m)*(1+demography(y,"Ind"))
-   + qHWater(b,m)*(1+demography(y,"HH"))
+   + SUM(sSec,            HHI(s,sSec,b,y,m))
    + LOS(s,b,"seep",y,m)
    
    ) =e= (
@@ -95,6 +96,10 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,m))..
 * Irrigation needs
 IRGACT(b,j,y,m)$irg0(b,j,y,m)..
     IRG(b,j,y,m) =e= iINPUT(b,j,"watr",y)*irg0(b,j,y,m) * (1-iInv("improve"));
+
+* Use of water by households and industries
+HHIUSE(s,sSec,b,y,m)$hhiUse0(sSec,b,m)..
+    HHI(s,sSec,b,y,m) =e= hhiUse0(sSec,b,m)*(1+demography(y,sSec));
 
 * Sea volumes are not restricted to primo level =e= ultimo level
 SEAVOL(s,b,y,m)$sea(b)..
@@ -200,7 +205,7 @@ OBJ..    TWV  =e=
                    -SUM((b,j,y), iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j) + (1-iInv0("improve"))*iInv("usdPerMM3")*iINPUT(b,j,"watr",y)*qAWater(b,j))/1000000 ;
 
 
-MODEL beam  /   WBALANCE, RESVOL, RESFIXVOL, RESFIXDIS, SEAVOL, LOSSES,
+MODEL beam  /   WBALANCE, RESVOL, RESFIXVOL, RESFIXDIS, SEAVOL, LOSSES, HHIUSE,
                 RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, 
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT, 

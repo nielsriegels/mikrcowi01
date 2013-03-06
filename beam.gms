@@ -191,7 +191,7 @@ ctrfBuild = ctrfBuild0;
 
 *DISPLAY minInflow0, sup0, sup, baseyear;
 *beam.solprint = yes;
-*beam.limrow = 5000;
+beam.limrow = 5000;
 SOLVE beam MAXIMIZING twv USING NLP;
 modlStatS = beam.modelstat;
 solvStatS = beam.solvestat;

@@ -8,6 +8,7 @@ PARAMETERS
     qAWater(b,j)            "Base year water in agriculture (mm3/y)"
     qmWater(b,m)            "Base year water (mm3/month)"
     irg0(b,j,y0,m0)         "Base year water for irrigation (mm3/month)"
+    hhiUse0(sSec,b,m0)      "Base year water use for households and industries (mm3)"
     qInputs(b,k,j)          "Base year physical input use (unit/year)"
     oCosts(b,j)             "Base year production agri/industrt unit cost (usd/ton)"
     iShare(b,k,j)           "Base year share of input costs (pct of total cost)"
@@ -41,6 +42,9 @@ qInputs(b,"watr",j)             = qAWater(b,j);
 irg0(b,j,y,m)                   = qAWater(b,j)*agriSeason(b,j,m);
 * Set water supply to normal year (base year cannot be dry year, as base year agricultural water use is fixed at 2009 level)
 sup(s,b,m)                      = sup0(s,b,"2009",m);
+
+hhiUse0("HH",b,m)               = qHwater(b,m);
+hhiUse0("ind",b,m)              = qIwater(b,m);
 
 pEly(y,m)                       = pElyBase(y,m);
 pCrop(j)                        = pCrop0(j,"base");
