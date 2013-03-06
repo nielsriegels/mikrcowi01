@@ -36,12 +36,14 @@ SETS
     g0                      "Energy demand segment" / base, peak /
     g(g0)                   "Energy demand segment" / base, peak /
     u0                      "Energy prod. units"    / u01*u99 /
-    u                       "Energy prod. units"    
+    u(u0)                   "Energy prod. units"    / u01*u20 /
     sBal                    "Balance table cols"    / Demand, FromSrc, DisTo, FromUp, FromIn, Return, ToIn, DisFrom, ToDwn, ToLoss /
     sInv                    "Irrigation investment" / usdPerMM3, usdPerHa, improve /
     sSec                    "Non-agri sectors"      / HH, ind /
     sRtn                    "Return flow types"     / total, irrig, river, lakes/
+    sEly                    "Elec. data types"      / elyCap, aCAPEX, aFOPEX, uVOPEX, uFUELEX /
     sSce                    "Scenarios"             / base, ctrf /
+    l                       "Loss types"            / seep, evap /
 ;
 
 * Aliases 

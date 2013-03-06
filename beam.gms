@@ -76,8 +76,8 @@ SETS
 * Include data tables on water flows, agriculture and economics
 * =============================================================================
 $offlisting
-$include "%path%40data.inc";
 $onlisting
+$include "%path%40data.inc";
 
 * =============================================================================
 * Include defition of scenario
@@ -125,8 +125,8 @@ jAF(j)      = 0;
 jAF("wht")  = 1;
 jAX(j) = 1$(not jAF(j));
 IF(not basDisOpt,
-    rFixVol(b,m)                = SUM(y0$baseyear(y0), rVolBas0(b,y0,m));
-    rFixDis(bd,bo,m)            = SUM(y0$baseyear(y0), rDisBas0(bd,bo,y0,m));
+    rFixVol(b,m)                = SUM(y0$baseyear(y0), resVolFix0(b,y0,m));
+    rFixDis(bd,bo,m)            = SUM(y0$baseyear(y0), resDisFix0(bd,bo,y0,m));
     sup("W","Src_ZAR","m06")    = sup("W","Src_ZAR","m06") + 2000*0;
 );
 
@@ -143,6 +143,8 @@ SOLVE beam MAXIMIZING twv USING NLP;
 modlStatB = beam.modelstat;
 solvStatB = beam.solvestat;
 WBALANCE.M("w",b,y,m)$(WBALANCE.M("w",b,y,m) eq eps) = 0;
+
+DISPLAY "Base scenario", HPP.l;
 
 * =============================================================================
 * Generate output parameter for base scenario
@@ -164,7 +166,7 @@ jAX(j)                  = 1$(not jAF(j));
 * Set water supply (choose between dry and normal)
 sup(s,b,m)              = SUM(y0$baseyear(y0), sup0(s,b,y0,m));
 * Set minimum inflows according to baseyear
-minInflow0(b,m0)                = minInflowN(b,m0)$baseyear("2009") + minInflowD(b,m0)$baseyear("2001");
+minInflow0(b,m0)        = minInflowN(b,m0)$baseyear("2009") + minInflowD(b,m0)$baseyear("2001");
 * Set counterfactual electricity prices
 pEly(y,m)               = pElyCtrf(y,m);
 * Set new reservoirs in operation active in counterfactual scenario
@@ -179,8 +181,8 @@ pCrop(j)                = pCrop0(j,"ctrf");
 * change input prices
 pInput(k)               = pInput0(k);
 * Reset fixed discharge patterns from baseline
-rFixVol(b,m)            = 0;
-rFixDis(bd,bo,m)        = 0;
+resVolFix0(b,y,m)       = 0;
+resDisFix0(bd,bo,y,m)   = 0;
 * Set irrigation investment costs
 iInv(sInv)              = iInv0(sInv);
 * Set reservoir buildup
@@ -217,5 +219,19 @@ PUT step;
 PUT "4";
 PUTCLOSE;
 
+PARAMETER testEly(g,*,m0);
 
-DISPLAY HPP.l;
+testEly(g,"HPP electricity MWh",m)  = SUM((y,b), HPP.l(b,g,y,m));
+testEly(g,"TPP electricity MWh",m)  = SUM((y,u), TPP.l(u,g,y,m));
+testEly(g,"All electricity MWh",m)  = SUM((y,u), TPP.l(u,g,y,m))+SUM((y,b), HPP.l(b,g,y,m));
+testEly(g,"Demand MWh",m)           = SUM((y,c), elyDemand0(c,g,m))*30*segmentHours(g);
+testEly(g,"HPP electricity MW",m)   = SUM((y,b), HPP.l(b,g,y,m))/(30*segmentHours(g));
+testEly(g,"TPP electricity MW",m)   = SUM((y,u), TPP.l(u,g,y,m))/(30*segmentHours(g));
+testEly(g,"All electricity MW",m)   = SUM((y,u), TPP.l(u,g,y,m))/(30*segmentHours(g))+SUM((y,b), HPP.l(b,g,y,m))/(30*segmentHours(g));
+testEly(g,"TPP el capacity MW",m)   = SUM((u), elyThermal("elyCap",u));
+testEly(g,"Demand MW",m)            = SUM((y,c), elyDemand0(c,g,m));
+testEly(g,"Price USD/MWh",m)        = SUM((y), ELYMKT.M(g,y,m))*1000000;
+
+OPTIONS testEly:0:2:1;
+
+DISPLAY "Action scenario", HPP.l, TPP.l, testEly;

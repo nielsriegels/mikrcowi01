@@ -6,6 +6,7 @@ POSITIVE VARIABLES
     DIS(s,bd,bo,y0,m0)      "Reservoir seasonal discharge (mm3)"
     STO(s,b,y0,m0)          "Reservoir seasonal storage buildup (mm3)"
     HPP(b,g0,y0,m0)         "Hydro power production (MWh)"
+    TPP(u,g0,y0,m0)         "Thermal power production (MWh)"
     iOUTPUT(b,j,y0)         "Index for production of industrial/agricultural goods (1=baseyear)"
     iINPUT(b,j,k,y0)        "Index for use of production inputs (1=baseyear)"
     iLAND(b,j,y0)           "Index for physical amount of land"
@@ -19,6 +20,7 @@ OPTIONS FLW:0:3:1;
 OPTIONS ITK:0:3:1;
 OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
+OPTIONS TPP:0:3:1;
 OPTIONS iINPUT:3:2:2;
 OPTIONS iOUTPUT:3:1:2;
 OPTIONS iLAND:3:1:2;
@@ -28,16 +30,18 @@ EQUATIONS
 * Hydrological constraints and identities
     WBALANCE(s,b,y0,m0)         "Water balance at all nodes"
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
-    RESDISMAX(s,b,y0,m0)        "Maximal water throughput"
-    DISCHARGE(b,y0,m0)          "Reservoir minimum discharge during season"
-    RESVOL(s,b,y0,m0)           "Reservoir level end of season"
-    RESFIXDIS(s,bd,bo,y0,m0)    "Fix Reservoir Discharge level"
-    RESFIXVOL(s,b,y0,m0)        "Fix Reservoir Volume level"
     SEAVOL(s,b,y0,m0)           "Reservoir level end of season"
+    RESVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOLMAX(b,y0,m0)          "Reservoir maximum level"
     RESVOLMIN(b,y0,m0)          "Reservoir minimum level"
+    RESDISMAX(s,b,y0,m0)        "Maximal water throughput"
+    RESDISMIN(b,y0,m0)          "Reservoir minimum discharge during season"
+    RESFIXDIS(s,bd,bo,y0,m0)    "Fix Reservoir Discharge level"
+    RESFIXVOL(s,b,y0,m0)        "Fix Reservoir Volume level"
     ELYHEAD(b,y0,m)             "Unit Electricity generation, reservoir state dependent"
     ELYHPP(b,g0,y0,m0)          "Hydro power production"
+    ELYTPP(u,g0,y0,m0)          "Thermal power production"
+    ELYMKT(g,y0,m0)             "Power market balance"
     MININFLOW(b,y0,m0)          "Minimum inflow to body"
     MINOUTFLOW(b,y0,m0)         "Minimum outflow from body"
     MININFLOWa(b,y0,m0)         "Minimum inflow to body, annual"
@@ -72,33 +76,17 @@ WBALANCE(s,b,y,m)..
      ) * (1-lossSh(b,m)) * scalem3
 ;
 
+* Sea volumes are not restricted to primo level =e= ultimo level
+SEAVOL(s,b,y,m)$sea(b)..
+    VOL(s,b,y,m)  * scalem3 =e= (SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm))$(ord(m) gt 1) + STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))) * scalem3;
+
 * Reservoir is calculated at end of body and end of season
 * In break month we introduce requirements for buildup or rundown of reservoir
-RESVOL(s,b,y,m)$(bRes(b) and (not rFixVol(b,m))  )..
+RESVOL(s,b,y,m)$(bRes(b) and (not resVolFix0(b,y,m))  )..
     VOL(s,b,y,m)$bResSto(b) * scalem3 =e= ( SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm))$bResSto(b)
                                            +STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
                                            -ctrfBuild*reservoirs(b,"max")$(mBgn(m) AND bResBuild(b))
                                           ) * scalem3;
-
-* Maximal water flow
-RESDISMAX(s,b,y,m)$(maxDischrg(b,m) gt 0 and not rFixVol(b,m))..
-    SUM(bd$resv(bd,b), DIS(s,bd,b,y,m)) * scalem3 =l= scalem3 * maxDischrg(b,m);
-
-* Discharges must be higher than a given minimun level
-DISCHARGE(b,y,m)$resDisMin(b,m)..
-    SUM(s$sW(s), SUM(bd, DIS(s,bd,b,y,m))) * scalem3 =g= resDisMin(b,m) * scalem3;
-
-* Fix volumes in selected reservoirs in selected months (for baseline)
-RESFIXVOL(s,b,y,m)$rFixVol(b,m)..
-    VOL(s,b,y,m) * scalem3 =e= rFixVol(b,m) * scalem3;
-
-* Fix volumes in selected reservoirs in selected months (for baseline)
-RESFIXDIS(s,bd,bo,y,m)$rFixDis(bd,bo,m)..
-    FLW(s,bd,bo,y,m) + DIS(s,bd,bo,y,m) * scalem3 =e= rFixDis(bd,bo,m) * scalem3;
-
-* Sea volumes are not restricted to primo level =e= ultimo level
-SEAVOL(s,b,y,m)$sea(b)..
-    VOL(s,b,y,m)  * scalem3 =e= (SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm))$(ord(m) gt 1) + STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))) * scalem3;
 
 * Maximum reservoir volume
 RESVOLMAX(b,y,m)$bRes(b)..
@@ -107,6 +95,23 @@ RESVOLMAX(b,y,m)$bRes(b)..
 * Minimum reservoir volume
 RESVOLMIN(b,y,m)$bRes(b)..
     SUM(s$sW(s), VOL(s,b,y,m)) * scalem3 =g= (reservoirs(b,"min") * scalem3)$bResSto(b);
+
+* Maximal water flow
+RESDISMAX(s,b,y,m)$(resDisMax0(b,m) gt 0 and not resVolFix0(b,y,m))..
+    SUM(bd$resv(bd,b), DIS(s,bd,b,y,m)) * scalem3 =l= scalem3 * resDisMax0(b,m);
+
+* Discharges must be higher than a given minimun level
+RESDISMIN(b,y,m)$resDisMin0(b,m)..
+    SUM(s$sW(s), SUM(bd, DIS(s,bd,b,y,m))) * scalem3 =g= resDisMin0(b,m) * scalem3;
+
+* Fix volumes in selected reservoirs in selected months (for baseline)
+RESFIXVOL(s,b,y,m)$resVolFix0(b,y,m)..
+    VOL(s,b,y,m) * scalem3 =e= resVolFix0(b,y,m) * scalem3;
+
+* Fix discharges in selected reservoirs in selected months (for baseline)
+* ### NB: Need to take account for fixed zero discharges - revert to scenario parameter for deciding whether to fix or not
+RESFIXDIS(s,bd,bo,y,m)$resDisFix0(bd,bo,y,m)..
+    FLW(s,bd,bo,y,m) + DIS(s,bd,bo,y,m) * scalem3 =e= resDisFix0(bd,bo,y,m) * scalem3;
 
 * Reservoir unit electricity generation
 * Filled reservoirs produce more per m3 than half empty
@@ -119,9 +124,18 @@ ELYHEAD(b,y,m)$bResEly(b)..
                          +reservoirs(b,"coef_c") *POWER((VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2,2)
                         ) / 3.6 );
 
-*  Peak sales are 8 hours per day
+* Hydro power production (in MWh) by time segment is capped by hours in each segment according to maximum effect (in MW)
 ELYHPP(b,g,y,m)$bResEly(b)..
-    HPP(b,g,y,m) =l= 30 * reservoirs(b,"effect") * segmentHours(g);
+    0.001*HPP(b,g,y,m) =l= 0.001 * 30 * reservoirs(b,"effect") * segmentHours(g);
+
+* Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
+ELYTPP(u,g,y,m)$elyThermal("elyCap",u)..
+    0.001 * TPP(u,g,y,m) =l= 0.001 * 30 * elyThermal("elyCap",u) * segmentHours(g);
+    
+* Themal and hydro power production should cover the energy demand in every segment
+ELYMKT(g,y,m)..
+    1.001 * ( SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) + SUM(b$bResEly(b), HPP(b,g,y,m)) ) 
+    =e=    1.001 * 30 * segmentHours(g) * SUM(c, elyDemand0(c,g,m));
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
@@ -158,8 +172,10 @@ FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
 * Objective is the total value of water from electricity, industry and agriculture
 OBJ..    TWV  =e=
                     SUM((b,j,y)$oCosts(b,j), iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)/1000000 - SUM(k$(not kLimit(k)), iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)) )
-                   +SUM((b,y,m)$bResEly(b), HPP(b,"base",y,m) * pEly(y,m) / 1000000 )
-                   +SUM((b,y,m)$bResEly(b), HPP(b,"peak",y,m) * pEly(y,m)*elyPeakFac / 1000000 )
+*                   +SUM((b,y,m)$bResEly(b), HPP(b,"base",y,m) * pEly(y,m) / 1000000 )
+*                   +SUM((b,y,m)$bResEly(b), HPP(b,"peak",y,m) * pEly(y,m)*elyPeakFac / 1000000 )
+                   -SUM((u,g,y,m)$elyThermal("elyCap",u), elyThermal("uFUELEX",u)*TPP(u,g,y,m))/1000000
+                   +SUM((c,y,m), elyDemand0(c,"base",m)*pEly(y,m)*16 + 8*elyDemand0(c,"peak",m)*pEly(y,m)*elyPeakFac )*30/1000000 
                    -SUM((b,y,m)$bRes(b), reservoirs(b,"cost")$(not bResNOP(b)))
                    -SUM((b,j,y), iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j) + (1-iInv0("improve"))*iInv("usdPerMM3")*iINPUT(b,j,"watr",y)*qAWater(b,j))/1000000 ;
 
@@ -167,7 +183,7 @@ OBJ..    TWV  =e=
 MODEL beam  /   WBALANCE, RESVOL, RESFIXVOL, RESFIXDIS, SEAVOL, 
                 RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, 
-                ELYHEAD, ELYHPP,  
+                ELYHEAD, ELYHPP, ELYTPP, ELYMKT,  
                 GRNDWATER, LEONTIEF, CETLAND, FIXEDLAND, 
                 OBJ /;
 
@@ -208,9 +224,10 @@ STO.up(s,b,y,m)$sea(b)                                      = INF;
 iOUTPUT.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                = 0;
 COSTS.fx(b,j,y)$(oCosts(b,j) eq 0)                          = 0;
 
-
 * Lower and upper bounds
 iINPUT.lo(b,j,k,y)                                          = 0.1$(iACosts(b,k,j) AND oCosts(b,j));
 iLAND.lo(b,j,y)$jAF(j)                                      = 0.1$lShare(b,j);
 iOUTPUT.lo(b,j,y)$jAF(j)                                    = 0.1$lShare(b,j);
 
+
+TPP.up(u,g,y,m) = elyThermal("elyCap",u)*30*segmentHours(g);

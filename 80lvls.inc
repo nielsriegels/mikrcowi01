@@ -40,6 +40,7 @@ HPP.l(b,g,y,m)$bResEly(b)   = 0.5*SUM((s,bd)$(resv(bd,b) AND sW(s)),  gravity * 
                                   * ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*VOL.l(s,b,y,m) + reservoirs(b,"coef_c")*POWER(VOL.l(s,b,y,m),2))
                               ) / 3600;
 
+TPP.l(u,g,y,m)              = elyThermal("elyCap",u) / 2;
 
 * Adjust initial variable levels for KELES which is a special case for debugging purposes
 * (this does not influence results, only initial solver point)

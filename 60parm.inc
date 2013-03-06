@@ -24,7 +24,7 @@ PARAMETERS
     rFixDis(bd,bo,m)        "Fixed discharges for reservoirs (mm3/month)"
     iInv(sInv)              "Irrigation investment data"
     minInflow0(b,m0)        "Minimum inflow for nature (mm3/month)"
-    maxDischrg(b,m0)        "Maximum reservoir discharge (mm3/month)"
+    resDisMax0(b,m0)        "Maximum reservoir discharge (mm3/month)"
 ;
 
 jAF(j)                          = jAF0(j);
@@ -52,10 +52,10 @@ qmWater(b,m)$bPlz(b)            = SUM(j, qAWater(b,j)*agriSeason(b,j,m)) + qIwat
 gwCorr(b,m)                     = min(0,qmWater(b,m));
 
 * Set maximum discharge capacity
-maxDischrg(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,
+resDisMax0(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,
                               (reservoirs(b,"effect")*24*30/reservoirs(b,"ely"))$reservoirs(b,"ely")
                              )$bResEly(b) + INF$(not bResEly(b));
-flow(bd,bo)$(SUM(m, maxDischrg(bo,m)) gt 0 and SUM(m, maxDischrg(bo,m)) lt INF)  = YES$resv(bd,bo);
+flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
 OPTION flow:0:0:2;
 
 
