@@ -95,7 +95,7 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m))..
                           SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) )
 ;
 
-* Irrigation needs
+* Irrigation needs - irg0 is base year irrigation, iINPUT is an index scaling irg0 up and down
 IRGACT(b,j,y,m)$irg0(b,j,y,m)..
     IRG(b,j,y,m) =e= iINPUT(b,j,"watr",y)*irg0(b,j,y,m) * (1-iInv("improve"));
 
@@ -161,8 +161,8 @@ ELYTPP(u,g,y,m)$elyThermal("elyCap",u)..
     
 * Themal and hydro power production should cover the energy demand in every segment
 ELYMKT(g,y,m)..
-    1.001 * ( SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) + SUM(b$bResEly(b), HPP(b,g,y,m)) ) 
-    =e=    1.001 * 30 * segmentHours(g) * SUM(c, elyDemand0(c,g,m));
+    0.001 * ( SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) + SUM(b$bResEly(b), HPP(b,g,y,m)) ) 
+    =e=    0.001 * 30 * segmentHours(g) * SUM(c, elyDemand0(c,g,m));
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
@@ -199,10 +199,7 @@ FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
 * Objective is the total value of water from electricity, industry and agriculture
 OBJ..    TWV  =e=
                     SUM((b,j,y)$oCosts(b,j), iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)/1000000 - SUM(k$(not kLimit(k)), iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)) )
-*                   +SUM((b,y,m)$bResEly(b), HPP(b,"base",y,m) * pEly(y,m) / 1000000 )
-*                   +SUM((b,y,m)$bResEly(b), HPP(b,"peak",y,m) * pEly(y,m)*elyPeakFac / 1000000 )
                    -SUM((u,g,y,m)$elyThermal("elyCap",u), elyThermal("uFUELEX",u)*TPP(u,g,y,m))/1000000
-                   +SUM((c,y,m), elyDemand0(c,"base",m)*pEly(y,m)*16 + 8*elyDemand0(c,"peak",m)*pEly(y,m)*elyPeakFac )*30/1000000 
                    -SUM((b,y,m)$bRes(b), reservoirs(b,"cost")$(not bResNOP(b)))
                    -SUM((b,j,y), iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j) + (1-iInv0("improve"))*iInv("usdPerMM3")*iINPUT(b,j,"watr",y)*qAWater(b,j))/1000000 ;
 

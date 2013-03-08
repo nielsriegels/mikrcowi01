@@ -1,5 +1,8 @@
 * out1.inc - output data parameter generation for base scenario
 
+WBALANCE.M("w",b,y,m)$(WBALANCE.M("w",b,y,m) eq eps) = 0;
+pEly(g,y,m)     = -ELYMKT.M(g,y,m)*1000;
+
 PARAMETERS
     rFlowBase(b,e_resFlow,y0,m0)        "Flow of water through bodies, baseline"
     rFlowCtrf(b,e_resFlow,y0,m0)        "Flow of water through bodies, counterfactual"
@@ -59,13 +62,14 @@ rAgriBase(b,"LandIncome",j,y)                 = ( 1000000*rAgriBase(b,"AgriIncom
 rAgriBase(b,"WatrIncome",j,y)                 = ( 1000000*rAgriBase(b,"AgriIncome",j,y) / rAgriBase(b,"WaterUse",j,y) )$rAgriBase(b,"WaterUse",j,y);
 rAgriBase(b,"LabrUse",j,y)                    = 1000*iINPUT.l(b,j,"labr",y)*iACosts(b,"labr",j);
 
+
 * Economic results, baseline
 rEconBase(b,"AgriSales",y,m)              = SUM(j, rAgriBase(b,"AgriSales",j,y) ) / 12;
 rEconBase(b,"AgriInc",y,m)                = SUM(j, rAgriBase(b,"AgriIncome",j,y)) / 12;
 rEconBase(b,"IrrInvCost",y,m)             = SUM(j, rAgriBase(b,"IrrInvCost",j,y)) / 12;
 rEconBase(b,"AgriCost",y,m)               = SUM(j, rAgriBase(b,"AgriCosts",j,y) ) / 12;
 rEconBase(b,"HydroCost",y,m)              = -1000*reservoirs(b,"cost")$(not bResNOP(b));
-rEconBase(b,"HydroInc",y,m)               = 1000*(HPP.l(b,"base",y,m) *  pEly(y,m) + HPP.l(b,"peak",y,m) *  pEly(y,m)*elyPeakFac) / 1000000 + rEconBase(b,"HydroCost",y,m);
+rEconBase(b,"HydroInc",y,m)               = 1000 * SUM(g, HPP.l(b,g,y,m) *  pEly(g,y,m)) / 1000000 + rEconBase(b,"HydroCost",y,m);
 rEconBase(b,"HydroProd",y,m)              = SUM(g, HPP.l(b,g,y,m));
 rEconBase(b,"HydroHead",y,m)              = ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*rFlowBase(b,"ResVolAvg",y,m) + reservoirs(b,"coef_c")*POWER(rFlowBase(b,"ResVolAvg",y,m),2));
 rEconBase(b,"HydroGain",y,m)              = -( rEconBase(b,"HydroProd",y,m) / rFlowBase(b,"OutDis",y,m) )$rFlowBase(b,"OutDis",y,m);

@@ -18,7 +18,7 @@ PARAMETERS
     jAX(j)                  "Crops with fixed land allocation 0/1"
     gwCorr(b,m)             "Ground water correction (mm3/month)"
     loss(b,m)               "Water loss from river (mm3/month)"
-    pEly(y0,m)              "Electricity price (USD/MWh)"
+    pEly(g,y0,m0)           "Electricity price (USD/MWh)"
     pCrop(j)                "Crop prices (USD/ton)"
     natExtra(b)             "Extra nature demands (mm3/year)"
     pInput(k)               "Index for input prices"
@@ -46,7 +46,6 @@ sup(s,b,m)                      = sup0(s,b,"2009",m);
 hhiUse0("HH",b,m)               = qHwater(b,m);
 hhiUse0("ind",b,m)              = qIwater(b,m);
 
-pEly(y,m)                       = pElyBase(y,m);
 pCrop(j)                        = pCrop0(j,"base");
 natExtra(b)                     = 0;
 pInput(k)                       = 1;

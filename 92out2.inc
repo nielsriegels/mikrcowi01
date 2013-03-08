@@ -1,7 +1,7 @@
 * out2.inc - generation of scenario output data parameter
 
 WBALANCE.M("w",b,y,m)$(WBALANCE.M("w",b,y,m) eq eps) = 0;
-
+pEly(g,y,m)     = -ELYMKT.M(g,y,m)*1000;
 
 * Flows by seasons and years counterfactual
 rFlowCtrf(b,"ResVol",y,m)                 = SUM(s$sW(s),      VOL.l(s,b,y,m));
@@ -57,7 +57,7 @@ rEconCtrf(b,"AgriInc",y,m)                = SUM(j, rAgriCtrf(b,"AgriIncome",j,y)
 rEconCtrf(b,"IrrInvCost",y,m)             = SUM(j, rAgriCtrf(b,"IrrInvCost",j,y)) / 12;
 rEconCtrf(b,"AgriCost",y,m)               = SUM(j, rAgriCtrf(b,"AgriCosts",j,y) ) / 12;
 rEconCtrf(b,"HydroCost",y,m)              = -1000*reservoirs(b,"cost")$(not bResNOP(b));
-rEconCtrf(b,"HydroInc",y,m)               = 1000*(HPP.l(b,"base",y,m) *  pEly(y,m) +HPP.l(b,"peak",y,m) *  pEly(y,m)*elyPeakFac) / 1000000 + rEconBase(b,"HydroCost",y,m);;
+rEconCtrf(b,"HydroInc",y,m)               = 1000 * SUM(g, HPP.l(b,g,y,m) *  pEly(g,y,m)) / 1000000 + rEconCtrf(b,"HydroCost",y,m);
 rEconCtrf(b,"HydroProd",y,m)              = SUM(g, HPP.l(b,g,y,m));
 rEconCtrf(b,"HydroHead",y,m)              = ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*rFlowCtrf(b,"ResVolAvg",y,m) + reservoirs(b,"coef_c")*POWER(rFlowCtrf(b,"ResVolAvg",y,m),2));
 rEconCtrf(b,"HydroGain",y,m)              = -( rEconCtrf(b,"HydroProd",y,m) / rFlowCtrf(b,"OutDis",y,m) )$rFlowCtrf(b,"OutDis",y,m) ;

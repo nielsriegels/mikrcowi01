@@ -142,7 +142,6 @@ SOLVE beam MAXIMIZING twv USING NLP;
 *abort "Test baseline only";
 modlStatB = beam.modelstat;
 solvStatB = beam.solvestat;
-WBALANCE.M("w",b,y,m)$(WBALANCE.M("w",b,y,m) eq eps) = 0;
 
 DISPLAY "Base scenario", HPP.l;
 
@@ -167,8 +166,6 @@ jAX(j)                  = 1$(not jAF(j));
 sup(s,b,m)              = SUM(y0$baseyear(y0), sup0(s,b,y0,m));
 * Set minimum inflows according to baseyear
 minInflow0(b,m0)        = minInflowN(b,m0)$baseyear("2009") + minInflowD(b,m0)$baseyear("2001");
-* Set counterfactual electricity prices
-pEly(y,m)               = pElyCtrf(y,m);
 * Set new reservoirs in operation active in counterfactual scenario
 bResNOP(b)              = YES$(resNew(b) AND not resNewOp(b));
 bResSto(b)              = YES$(reservoirs(b,"max") gt reservoirs(b,"min"));
@@ -234,4 +231,4 @@ testEly(g,"Price USD/MWh",m)        = SUM((y), ELYMKT.M(g,y,m))*1000000;
 
 OPTIONS testEly:0:2:1;
 
-DISPLAY "Action scenario", HPP.l, TPP.l, testEly;
+DISPLAY "Action scenario", HPP.l, TPP.l, testEly, pELy;

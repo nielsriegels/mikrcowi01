@@ -92,18 +92,6 @@ SET sAss /
     iNAR    "Investments in Naryn cascade"
     iVAH    "Investments in Vakhsh cascade"
     iZAR    "Investments in Yavan"
-    pE01    "Electricity price m01 USD/MWh"
-    pE02    "Electricity price m02 USD/MWh"
-    pE03    "Electricity price m03 USD/MWh"
-    pE04    "Electricity price m04 USD/MWh"
-    pE05    "Electricity price m05 USD/MWh"
-    pE06    "Electricity price m06 USD/MWh"
-    pE07    "Electricity price m07 USD/MWh"
-    pE08    "Electricity price m08 USD/MWh"
-    pE09    "Electricity price m09 USD/MWh"
-    pE10    "Electricity price m10 USD/MWh"
-    pE11    "Electricity price m11 USD/MWh"
-    pE12    "Electricity price m12 USD/MWh"
     rBld    "Reservoir buildup"
     cDHH    "Demographic change households"
     cDIn    "Demographic change industry"
@@ -138,19 +126,6 @@ assumptn("iNAR",sSce)   = 0;
 assumptn("iVAH",sSce)   = 0;
 assumptn("iZAR",sSce)   = 0;
 
-assumptn("pE01","base")   = SUM(y$modelYear(y), pElyBase(y,"m01"));
-assumptn("pE02","base")   = SUM(y$modelYear(y), pElyBase(y,"m02"));
-assumptn("pE03","base")   = SUM(y$modelYear(y), pElyBase(y,"m03"));
-assumptn("pE04","base")   = SUM(y$modelYear(y), pElyBase(y,"m04"));
-assumptn("pE05","base")   = SUM(y$modelYear(y), pElyBase(y,"m05"));
-assumptn("pE06","base")   = SUM(y$modelYear(y), pElyBase(y,"m06"));
-assumptn("pE07","base")   = SUM(y$modelYear(y), pElyBase(y,"m07"));
-assumptn("pE08","base")   = SUM(y$modelYear(y), pElyBase(y,"m08"));
-assumptn("pE09","base")   = SUM(y$modelYear(y), pElyBase(y,"m09"));
-assumptn("pE10","base")   = SUM(y$modelYear(y), pElyBase(y,"m10"));
-assumptn("pE11","base")   = SUM(y$modelYear(y), pElyBase(y,"m11"));
-assumptn("pE12","base")   = SUM(y$modelYear(y), pElyBase(y,"m12"));
-
 assumptn("rain","base")   = 2009;
 assumptn("rain","ctrf")   = 2001$baseYear("2001") + 2009$baseYear("2009") ;
 
@@ -179,19 +154,6 @@ assumptn("iKAM","ctrf")   = resNewOp("res_KAM");
 assumptn("iNAR","ctrf")   = resNewOp("res_NAR");
 assumptn("iVAH","ctrf")   = resNewOp("res_VAH");
 assumptn("iZAR","ctrf")   = resNewOp("res_ZAR");
-
-assumptn("pE01","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m01"));
-assumptn("pE02","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m02"));
-assumptn("pE03","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m03"));
-assumptn("pE04","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m04"));
-assumptn("pE05","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m05"));
-assumptn("pE06","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m06"));
-assumptn("pE07","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m07"));
-assumptn("pE08","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m08"));
-assumptn("pE09","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m09"));
-assumptn("pE10","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m10"));
-assumptn("pE11","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m11"));
-assumptn("pE12","ctrf")   = SUM(y$modelYear(y), pElyctrf(y,"m12"));
 
 assumptn("mSta","base") = modlStatB;
 assumptn("mSta","ctrf") = modlStatS;
