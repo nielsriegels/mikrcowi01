@@ -86,12 +86,14 @@ WBALANCE(s,b,y,m)..
 
 * Account for losses to seepage and evaporation
 LOSSES(s,b,l,y,m)$(lossRivers(b,l,m))..
-    LOS(s,b,l,y,m) =e= lossRivers(b,l,m) 
-                    * (  SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
-                       + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
-                       + sup(s,b,m)
-                       + rtn0(b,m)
-                      );
+    LOS(s,b,l,y,m) =e= lossRivers(b,l,m) * (
+                          SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
+                        + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
+                        + sup(s,b,m)
+                        + rtn0(b,m) )
+                      +lossChannels(b,l,m) * ( 
+                          SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) )
+;
 
 * Irrigation needs
 IRGACT(b,j,y,m)$irg0(b,j,y,m)..
