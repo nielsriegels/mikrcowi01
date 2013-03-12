@@ -84,6 +84,9 @@ $include "%path%40data.inc";
 * =============================================================================
 $include "%path%50scen.inc";
 
+PARAMETER scenario(*,*) "Scenario defintion parameter";
+scenario("RunOfRiver","ctrf") = 0;
+
 y(y0)$modelYear(y0)     = YES;
 bRiv(b)                 = YES$SUM(bd$intk(bd,b), 1);
 bRes(b)                 = YES$SUM(bd$resv(bd,b), 1);
@@ -161,6 +164,7 @@ PUTCLOSE;
 * Allow flexibility in land allocation
 jAF(j)                  = jAF0(j);
 jAF("fal")              = YES$fallowLand;
+jAF("fal")              = YES;
 jAX(j)                  = 1$(not jAF(j));
 * Set water supply (choose between dry and normal)
 sup(s,b,m)              = SUM(y0$baseyear(y0), sup0(s,b,y0,m));
@@ -184,11 +188,13 @@ resDisFix0(bd,bo,y,m)   = 0;
 iInv(sInv)              = iInv0(sInv);
 * Set reservoir buildup
 ctrfBuild = ctrfBuild0;
-
-
+* Force run-off river for all reservoirs
+bResSto(b)$scenario("RunOfRiver","ctrf") = NO;
+bResBuild(b)$scenario("RunOfRiver","ctrf") = NO;
+*irg0(b,"wht",y,m) = irg0(b,"wht",y,m)/20;
 *DISPLAY minInflow0, sup0, sup, baseyear;
-*beam.solprint = yes;
-beam.limrow = 5000;
+beam.solprint = yes;
+beam.limrow = 0;
 SOLVE beam MAXIMIZING twv USING NLP;
 modlStatS = beam.modelstat;
 solvStatS = beam.solvestat;
@@ -216,19 +222,11 @@ PUT step;
 PUT "4";
 PUTCLOSE;
 
-PARAMETER testEly(g,*,m0);
+PARAMETER testRoR(*,b,m0);
 
-testEly(g,"HPP electricity MWh",m)  = SUM((y,b), HPP.l(b,g,y,m));
-testEly(g,"TPP electricity MWh",m)  = SUM((y,u), TPP.l(u,g,y,m));
-testEly(g,"All electricity MWh",m)  = SUM((y,u), TPP.l(u,g,y,m))+SUM((y,b), HPP.l(b,g,y,m));
-testEly(g,"Demand MWh",m)           = SUM((y,c), elyDemand0(c,g,m))*30*segmentHours(g);
-testEly(g,"HPP electricity MW",m)   = SUM((y,b), HPP.l(b,g,y,m))/(30*segmentHours(g));
-testEly(g,"TPP electricity MW",m)   = SUM((y,u), TPP.l(u,g,y,m))/(30*segmentHours(g));
-testEly(g,"All electricity MW",m)   = SUM((y,u), TPP.l(u,g,y,m))/(30*segmentHours(g))+SUM((y,b), HPP.l(b,g,y,m))/(30*segmentHours(g));
-testEly(g,"TPP el capacity MW",m)   = SUM((u), elyThermal("elyCap",u));
-testEly(g,"Demand MW",m)            = SUM((y,c), elyDemand0(c,g,m));
-testEly(g,"Price USD/MWh",m)        = SUM((y), ELYMKT.M(g,y,m))*1000000;
+testRoR("Discharge",b,m)$(not sea(b))    = SUM((s,y,bd), DIS.l(s,bd,b,y,m));
+testRoR("Storage",b,m)$(not sea(b))      = SUM((s,y), STO.l(s,b,y,m));
+testRoR("Balance",b,m)$(not sea(b))      = testRoR("Storage",b,m) - testRoR("Discharge",b,m);
+testRoR("Volume",b,m)$(not sea(b))      = SUM((s,y), VOL.l(s,b,y,m));
 
-OPTIONS testEly:0:2:1;
-
-DISPLAY "Action scenario", HPP.l, TPP.l, testEly, pELy;
+DISPLAY "Run-of-river in Action scenario", testRoR, iOUTPUT.l;

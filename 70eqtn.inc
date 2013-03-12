@@ -110,7 +110,8 @@ SEAVOL(s,b,y,m)$sea(b)..
 * Reservoir is calculated at end of body and end of season
 * In break month we introduce requirements for buildup or rundown of reservoir
 RESVOL(s,b,y,m)$(bRes(b) and (not resVolFix0(b,y,m))  )..
-    VOL(s,b,y,m)$bResSto(b) * scalem3 =e= ( SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm))$bResSto(b)
+    ( VOL(s,b,y,m) - SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)) ) * scalem3$bResSto(b) 
+        =e=   (
                                            +STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
                                            -ctrfBuild*reservoirs(b,"max")$(mBgn(m) AND bResBuild(b))
                                           ) * scalem3;
@@ -250,9 +251,9 @@ iOUTPUT.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                = 0;
 COSTS.fx(b,j,y)$(oCosts(b,j) eq 0)                          = 0;
 
 * Lower and upper bounds
-iINPUT.lo(b,j,k,y)                                          = 0.1$(iACosts(b,k,j) AND oCosts(b,j));
-iLAND.lo(b,j,y)$jAF(j)                                      = 0.1$lShare(b,j);
-iOUTPUT.lo(b,j,y)$jAF(j)                                    = 0.1$lShare(b,j);
+iINPUT.lo(b,j,k,y)                                          = 0.01$(iACosts(b,k,j) AND oCosts(b,j));
+iLAND.lo(b,j,y)$jAF(j)                                      = 0.01$lShare(b,j);
+iOUTPUT.lo(b,j,y)$jAF(j)                                    = 0.01$lShare(b,j);
 
 
 TPP.up(u,g,y,m) = elyThermal("elyCap",u)*30*segmentHours(g);
