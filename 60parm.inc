@@ -67,3 +67,13 @@ OPTION flow:0:0:2;
 * Temporary data for hours in each electricity market segment
 PARAMETER segmentHours(g) / base 16, peak 8 /;
 
+* Temporary data for objective weights
+PARAMETER objDISweight(b,m)       "Constrained optimisation objective weights for discharges";
+PARAMETER objHPPweight(b,m)       "Constrained optimisation objective weights for hydro power";
+PARAMETER objELYweight            "Constrained optimisation objective weights for electricity";
+PARAMETER objAGRweight(b)         "Constrained optimisation objective weights for agriculture";
+objDISweight(b,m)   = 0;
+objHPPweight(b,m)   = 0;
+objELYweight        = 1;
+objAGRweight(b)     = 1;
+

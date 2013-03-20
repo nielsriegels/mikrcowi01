@@ -199,12 +199,17 @@ FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
-                    SUM((b,j,y)$oCosts(b,j),                    iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)                        )/1000000 
-                   -SUM((b,j,y,k)$oCosts(b,j),                  iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)$(not kLimit(k))    )
-                   -SUM((u,g,y,m)$elyThermal("elyCap",u),       elyThermal("uFUELEX",u)*TPP(u,g,y,m)                        )/1000000
-                   -SUM((b,y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       )
-                   -SUM((b,j,y),                                iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j)           ) 
-                   -SUM((b,j,y),                                (1-iInv0("improve"))*iInv("usdPerMM3")*iINPUT(b,j,"watr",y)*qAWater(b,j))/1000000 
+                    SUM((b,j,y)$oCosts(b,j),                    iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)                        * objAGRweight(b)    )  / 1000000 
+                   -SUM((b,j,y,k)$oCosts(b,j),                  iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)$(not kLimit(k))    * objAGRweight(b)    )
+* CAUTION: The row below are operating costs depending on water use, e.g. power consumption - correct specification when receiving inv. data from Bekzhod
+                   -SUM((b,j,y,m),                              iInv("usdPerMM3")*IRG(b,j,y,m)                              * objAGRweight(b)    )  / 1000000 
+* CAUTION: The irrigation investments are probably misspecified: they depend on exogenous land use, not actual - check this!!!
+                   -SUM((b,j,y),                                iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j)           * objAGRweight(b)    )
+                   -SUM((u,g,y,m)$elyThermal("elyCap",u),       elyThermal("uFUELEX",u)*TPP(u,g,y,m)                        * objELYweight       ) / 1000000
+                   -SUM((b,y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       )
+                   +SUM((b,g,y,m),                              HPP(b,g,y,m)                                                * objHPPweight(b,m)  ) / 1000000
+                   +SUM((s,bd,bo,j,y,m),                        (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000
+
 ;
 
 
