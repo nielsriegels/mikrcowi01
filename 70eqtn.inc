@@ -198,18 +198,20 @@ FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
     iOUTPUT(b,j,y)$jAX(j)   =e= 1;
 
 * Objective is the total value of water from electricity, industry and agriculture
-OBJ..    TWV  =e=
-                    SUM((b,j,y)$oCosts(b,j), iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)/1000000 - SUM(k$(not kLimit(k)), iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)) )
-                   -SUM((u,g,y,m)$elyThermal("elyCap",u), elyThermal("uFUELEX",u)*TPP(u,g,y,m))/1000000
-                   -SUM((b,y)$bRes(b), reservoirs(b,"cost")$(not bResNOP(b)))
-                   -SUM((b,j,y), iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j) + (1-iInv0("improve"))*iInv("usdPerMM3")*iINPUT(b,j,"watr",y)*qAWater(b,j))/1000000 ;
+OBJ..   TWV =e=
+                    SUM((b,j,y)$oCosts(b,j),                    iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)                        )/1000000 
+                   -SUM((b,j,y,k)$oCosts(b,j),                  iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)$(not kLimit(k))    )
+                   -SUM((u,g,y,m)$elyThermal("elyCap",u),       elyThermal("uFUELEX",u)*TPP(u,g,y,m)                        )/1000000
+                   -SUM((b,y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       )
+                   -SUM((b,j,y),                                iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j)           ) 
+                   -SUM((b,j,y),                                (1-iInv0("improve"))*iInv("usdPerMM3")*iINPUT(b,j,"watr",y)*qAWater(b,j))/1000000 ;
 
 
-MODEL beam  /   WBALANCE, RESVOL, RESFIXVOL, RESFIXDIS, SEAVOL, LOSSES, HHIUSE,
-                RESDISMAX, RESVOLMAX, RESVOLMIN,
+MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSE, GRNDWATER, 
+                RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, 
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT, 
-                GRNDWATER, LEONTIEF, CETLAND, FIXEDLAND, IRGACT, 
+                LEONTIEF, CETLAND, FIXEDLAND, IRGACT, 
                 OBJ /;
 
 
