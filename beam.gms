@@ -193,7 +193,7 @@ ctrfBuild = ctrfBuild0;
 *bResBuild(b)$scenario("RunOfRiver","ctrf") = NO;
 *irg0(b,"wht",y,m) = irg0(b,"wht",y,m)/20;
 *DISPLAY minInflow0, sup0, sup, baseyear;
-beam.solprint = yes;
+*beam.solprint = yes;
 beam.limrow = 0;
 SOLVE beam MAXIMIZING twv USING NLP;
 modlStatS = beam.modelstat;
@@ -221,12 +221,3 @@ $include "%path%93out3.inc";
 PUT step;
 PUT "4";
 PUTCLOSE;
-
-PARAMETER testRoR(*,b,m0);
-
-testRoR("Discharge",b,m)$(not sea(b))    = SUM((s,y,bd), DIS.l(s,bd,b,y,m));
-testRoR("Storage",b,m)$(not sea(b))      = SUM((s,y), STO.l(s,b,y,m));
-testRoR("Balance",b,m)$(not sea(b))      = testRoR("Storage",b,m) - testRoR("Discharge",b,m);
-testRoR("Volume",b,m)$(not sea(b))      = SUM((s,y), VOL.l(s,b,y,m));
-
-DISPLAY "Run-of-river in Action scenario", testRoR, iOUTPUT.l;
