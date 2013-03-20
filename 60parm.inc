@@ -66,3 +66,4 @@ OPTION flow:0:0:2;
 
 * Temporary data for hours in each electricity market segment
 PARAMETER segmentHours(g) / base 16, peak 8 /;
+

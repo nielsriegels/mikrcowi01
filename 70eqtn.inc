@@ -201,7 +201,7 @@ FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
 OBJ..    TWV  =e=
                     SUM((b,j,y)$oCosts(b,j), iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)/1000000 - SUM(k$(not kLimit(k)), iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)) )
                    -SUM((u,g,y,m)$elyThermal("elyCap",u), elyThermal("uFUELEX",u)*TPP(u,g,y,m))/1000000
-                   -SUM((b,y,m)$bRes(b), reservoirs(b,"cost")$(not bResNOP(b)))
+                   -SUM((b,y)$bRes(b), reservoirs(b,"cost")$(not bResNOP(b)))
                    -SUM((b,j,y), iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j) + (1-iInv0("improve"))*iInv("usdPerMM3")*iINPUT(b,j,"watr",y)*qAWater(b,j))/1000000 ;
 
 

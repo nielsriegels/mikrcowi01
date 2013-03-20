@@ -189,8 +189,8 @@ iInv(sInv)              = iInv0(sInv);
 * Set reservoir buildup
 ctrfBuild = ctrfBuild0;
 * Force run-off river for all reservoirs
-bResSto(b)$scenario("RunOfRiver","ctrf") = NO;
-bResBuild(b)$scenario("RunOfRiver","ctrf") = NO;
+*bResSto(b)$scenario("RunOfRiver","ctrf") = NO;
+*bResBuild(b)$scenario("RunOfRiver","ctrf") = NO;
 *irg0(b,"wht",y,m) = irg0(b,"wht",y,m)/20;
 *DISPLAY minInflow0, sup0, sup, baseyear;
 beam.solprint = yes;
