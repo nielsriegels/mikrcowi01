@@ -1,5 +1,7 @@
 * out1.inc - output data parameter generation for base scenario
 
+iOUTPUT.l(b,j,y)$qAQuant(b,j) = CRP.l(b,j,y)/qAQuant(b,j);
+
 WBALANCE.M("w",b,y,m)$(WBALANCE.M("w",b,y,m) eq eps) = 0;
 pEly(g,y,m)     = -ELYMKT.M(g,y,m)*1000;
 
@@ -10,6 +12,7 @@ PARAMETERS
     rAgriCtrf(b,e_resAgri,j,y0)         "Agricultural results for bodies, counterfactual"
     rEconBase(b,e_resEcon,y0,m0)        "Economical results for bodies, baseline"
     rEconCtrf(b,e_resEcon,y0,m0)        "Economical results for bodies, counterfactual"
+
 ;
 
 OPTIONS rFlowBase:1:3:1;
@@ -79,4 +82,3 @@ rEconBase(b,"WaterVal",y,m)               = WBALANCE.M("w",b,y,m)*1000000;
 rEconBase(b,"WaterVal",y,"annual")        = ( SUM(m, rEconBase(b,"WaterVal",y,m) * rFlowBase(b,"InTot",y,m) )  / rFlowBase(b,"InTot",y,"annual")
                                                   )$rFlowBase(b,"InTot",y,"annual") + 0.000001;
 
- 

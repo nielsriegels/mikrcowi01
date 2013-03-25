@@ -1,5 +1,7 @@
 * out2.inc - generation of scenario output data parameter
 
+iOUTPUT.l(b,j,y)$qAQuant(b,j) = CRP.l(b,j,y)/qAQuant(b,j);
+
 WBALANCE.M("w",b,y,m)$(WBALANCE.M("w",b,y,m) eq eps) = 0;
 pEly(g,y,m)     = -ELYMKT.M(g,y,m)*1000;
 
@@ -67,4 +69,3 @@ rEconCtrf(b,"WaterVal",y,"annual")        = ( SUM(m, rEconCtrf(b,"WaterVal",y,m)
                                                   )$rFlowCtrf(b,"InTot",y,"annual") + 0.000001;
 
 
- 

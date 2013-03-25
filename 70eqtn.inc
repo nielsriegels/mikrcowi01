@@ -10,9 +10,10 @@ POSITIVE VARIABLES
     STO(s,b,y0,m0)          "Reservoir seasonal storage buildup (mm3)"
     HPP(b,g0,y0,m0)         "Hydro power production (MWh)"
     TPP(u,g0,y0,m0)         "Thermal power production (MWh)"
-    iOUTPUT(b,j,y0)         "Index for production of industrial/agricultural goods (1=baseyear)"
     iINPUT(b,j,k,y0)        "Index for use of production inputs (1=baseyear)"
     iLAND(b,j,y0)           "Index for physical amount of land"
+    CRP(b,j,y0)             "Crop production for each year (usd/ha)"
+    iOUTPUT(b,j,y0)         "Index for production of industrial/agricultural goods (1=baseyear)"
 VARIABLES
     TWV                     "Total water value (USD)"
     COSTS(b,j,y0)           "Production industrial/agricultural costs (usd/ton)"
@@ -27,7 +28,7 @@ OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
 OPTIONS TPP:0:3:1;
 OPTIONS iINPUT:3:2:2;
-OPTIONS iOUTPUT:3:1:2;
+*OPTIONS iOUTPUT:3:1:2;
 OPTIONS iLAND:3:1:2;
 
 
@@ -53,6 +54,7 @@ EQUATIONS
     MININFLOW(b,y0,m0)          "Minimum inflow to body"
     MINOUTFLOW(b,y0,m0)         "Minimum outflow from body"
     MININFLOWa(b,y0,m0)         "Minimum inflow to body, annual"
+    INDEXCALCULATOR(b,j,y0)     "Index for the relation between new crop output and the old crop output"
 * Economical constraints and identities
     LEONTIEF(b,j,k,y0)          "Ratio between outputs and inputs"
     CETLAND(b,y0)               "Index for physical amount of land"
@@ -73,7 +75,7 @@ WBALANCE(s,b,y,m)..
    + SUM(j$irg0(b,j,y,m), IRG(b,j,y,m))
    + SUM(sSec,            HHI(s,sSec,b,y,m))
    + LOS(s,b,"seep",y,m)
-   
+
    ) =e= (
        SUM(bo$intk(b,bo), ITK(s,b,bo,y,m))
       +SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
@@ -91,7 +93,7 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m))..
                         + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
                         + sup(s,b,m)
                         + rtn0(b,m) )
-                      +lossChannels(b,l,m) * ( 
+                      +lossChannels(b,l,m) * (
                           SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) )
 ;
 
@@ -110,7 +112,7 @@ SEAVOL(s,b,y,m)$sea(b)..
 * Reservoir is calculated at end of body and end of season
 * In break month we introduce requirements for buildup or rundown of reservoir
 RESVOL(s,b,y,m)$(bRes(b) and (not resVolFix0(b,y,m))  )..
-    ( VOL(s,b,y,m) - SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)) ) * scalem3$bResSto(b) 
+    ( VOL(s,b,y,m) - SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)) ) * scalem3$bResSto(b)
         =e=   (
                                            +STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
                                            -ctrfBuild*reservoirs(b,"max")$(mBgn(m) AND bResBuild(b))
@@ -159,10 +161,10 @@ ELYHPP(b,g,y,m)$bResEly(b)..
 * Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
 ELYTPP(u,g,y,m)$elyThermal("elyCap",u)..
     0.001 * TPP(u,g,y,m) =l= 0.001 * 30 * elyThermal("elyCap",u) * segmentHours(g);
-    
+
 * Themal and hydro power production should cover the energy demand in every segment
 ELYMKT(g,y,m)..
-    0.001 * ( SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) + SUM(b$bResEly(b), HPP(b,g,y,m)) ) 
+    0.001 * ( SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) + SUM(b$bResEly(b), HPP(b,g,y,m)) )
     =e=    0.001 * 30 * segmentHours(g) * SUM(c, elyDemand0(c,g,m));
 
 * Maximum seasonal ground water extraction
@@ -186,23 +188,28 @@ MININFLOWa(b,y,mA)$(minInFlow0(b,mA) + natExtra(b))..
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
 LEONTIEF(b,j,k,y)$iShare(b,k,j)..
-    iOUTPUT(b,j,y) =e= iINPUT(b,j,k,y) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*iOUTPUT(b,jj,y))$jAF(j) ) ;
-
+    ( CRP(b,j,y) / qAQuant(b,j) ) =e= iINPUT(b,j,k,y) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*( CRP(b,jj,y) / qAQuant(b,jj) ) )$jAF(j) ) ;
+*   iOUTPUT(b,j,y) =e= iINPUT(b,j,k,y) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*iOUTPUT(b,jj,y))$jAF(j) ) ;
 * Enforce decreasing returns to scale from deviating away from base year land use patterns
 * iINPUT(j,JA,"land",j) is effective land use, iLAND(b,j,y) is physical land use
 CETLAND(b,y)$SUM(j$jAF(j), qInputs(b,"land",j))..
-    1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*iOUTPUT(b,j,y)**rL )**(1/rL) ) ;
-
+    1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*( CRP(b,j,y) / qAQuant(b,j) )**rL )**(1/rL) ) ;
+*   1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*iOUTPUT(b,j,y)**rL )**(1/rL) ) ;
 * Some crops have a fixed share of land
 FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
-    iOUTPUT(b,j,y)$jAX(j)   =e= 1;
+    ( CRP(b,j,y) / qAQuant(b,j) )$jAX(j)   =e= 1;
+*  iOUTPUT(b,j,y)$jAX(j)   =e= 1;
+
+INDEXCALCULATOR(b,j,y)$qAQuant(b,j)..
+iOUTPUT(b,j,y) =e=   ( CRP(b,j,y) / qAQuant(b,j) );
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
-                    SUM((b,j,y)$oCosts(b,j),                    iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)                        * objAGRweight(b)    )  / 1000000 
+                    SUM((b,j,y)$oCosts(b,j),                    ( CRP(b,j,y) / qAQuant(b,j) )*qAQuant(b,j)*pCrop(j)                        * objAGRweight(b)    )  / 1000000
+*                   SUM((b,j,y)$oCosts(b,j),                    iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)                        * objAGRweight(b)    )  / 1000000
                    -SUM((b,j,y,k)$oCosts(b,j),                  iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)$(not kLimit(k))    * objAGRweight(b)    )
 * CAUTION: The row below are operating costs depending on water use, e.g. power consumption - correct specification when receiving inv. data from Bekzhod
-                   -SUM((b,j,y,m),                              iInv("usdPerMM3")*IRG(b,j,y,m)                              * objAGRweight(b)    )  / 1000000 
+                   -SUM((b,j,y,m),                              iInv("usdPerMM3")*IRG(b,j,y,m)                              * objAGRweight(b)    )  / 1000000
 * CAUTION: The irrigation investments are probably misspecified: they depend on exogenous land use, not actual - check this!!!
                    -SUM((b,j,y),                                iInv("usdPerHa")*iINPUT(b,j,"land",y)*qALand(b,j)           * objAGRweight(b)    )
                    -SUM((u,g,y,m)$elyThermal("elyCap",u),       elyThermal("uFUELEX",u)*TPP(u,g,y,m)                        * objELYweight       ) / 1000000
@@ -213,15 +220,15 @@ OBJ..   TWV =e=
 ;
 
 
-MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSE, GRNDWATER, 
+MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSE, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
-                MINOUTFLOW, MININFLOW, MININFLOWa, 
-                ELYHEAD, ELYHPP, ELYTPP, ELYMKT, 
+                MINOUTFLOW, MININFLOW, MININFLOWa,
+                ELYHEAD, ELYHPP, ELYTPP, ELYMKT,
                 LEONTIEF, CETLAND, FIXEDLAND, IRGACT, 
                 OBJ /;
 
 
- 
+
 beam.optfile        = 1;
 *beam.holdfixed     = yes;
 *beam.solprint       = yes;
@@ -255,12 +262,15 @@ HPP.fx(b,g,y,m)$(not bResEly(b))                            = 0;
 STO.fx(s,bo,y,m)                                            = 0;
 STO.up(s,b,y,m)$bRes(b)                                     = 99999;
 STO.up(s,b,y,m)$sea(b)                                      = INF;
+
+CRP.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                     = 0;
 iOUTPUT.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                = 0;
 COSTS.fx(b,j,y)$(oCosts(b,j) eq 0)                          = 0;
 
 * Lower and upper bounds
 iINPUT.lo(b,j,k,y)                                          = 0.01$(iACosts(b,k,j) AND oCosts(b,j));
 iLAND.lo(b,j,y)$jAF(j)                                      = 0.01$lShare(b,j);
+CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) * qAQuant(b,j);
 iOUTPUT.lo(b,j,y)$jAF(j)                                    = 0.01$lShare(b,j);
 
 

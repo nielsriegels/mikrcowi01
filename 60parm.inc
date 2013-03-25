@@ -27,6 +27,7 @@ PARAMETERS
     iInv(sInv)              "Irrigation investment data"
     minInflow0(b,m0)        "Minimum inflow for nature (mm3/month)"
     resDisMax0(b,m0)        "Maximum reservoir discharge (mm3/month)"
+    
 ;
 
 jAF(j)                          = jAF0(j);
@@ -76,4 +77,3 @@ objDISweight(b,m)   = 0;
 objHPPweight(b,m)   = 0;
 objELYweight        = 1;
 objAGRweight(b)     = 1;
-

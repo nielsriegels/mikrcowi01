@@ -1,4 +1,4 @@
-$SETGLOBAL path  "c:\mikr\beam\"
+$SETGLOBAL path  "c:\mikr\mikrcowi01\"
 *option nlp=IPOPT;
 *$SETGLOBAL path  ""
 * =============================================================================
@@ -146,6 +146,9 @@ SOLVE beam MAXIMIZING twv USING NLP;
 modlStatB = beam.modelstat;
 solvStatB = beam.solvestat;
 
+*Parameter iOUTPUT(b,j,y0)         "Index for production of industrial/agricultural goods (1=baseyear)"  ;
+
+*iOUTPUT(b,j,y)  =     ( CRP.l(b,j,y) / qAQuant(b,j) ) ;
 * =============================================================================
 * Generate output parameter for base scenario
 * =============================================================================
@@ -195,6 +198,8 @@ ctrfBuild = ctrfBuild0;
 beam.solprint = no;
 beam.limrow = 0;
 SOLVE beam MAXIMIZING twv USING NLP;
+
+*iOUTPUT(b,j,y)  =     ( CRP.l(b,j,y) / qAQuant(b,j) ) ;
 
 * =============================================================================
 * Generate output parameter for action scenario
