@@ -1,9 +1,9 @@
 * Baseline Levels
-iINPUT.l(b,j,k,y)               = 1$iACosts(b,k,j);
-iLAND.l(b,j,y)                  = 1$qALand(b,j);
-iINPUT.l(b,j,"land",y)          = 1$qALand(b,j);
-iINPUT.l(b,j,"watr",y)          = 1$qAWater(b,j);
-iOUTPUT.l(b,j,y)                = 1$qAQuant(b,j);
+*iINPUT.l(b,j,k,y)               = 1$iACosts(b,k,j);
+*iLAND.l(b,j,y)                  = 1$qALand(b,j);
+*iINPUT.l(b,j,"land",y)          = 1$qALand(b,j);
+*iINPUT.l(b,j,"watr",y)          = 1$qAWater(b,j);
+*iOUTPUT.l(b,j,y)                = 1$qAQuant(b,j);
 COSTS.l(b,j,y)                  = SUM(k$(not kLimit(k)), iACosts(b,k,j));
 
 * For testing water balance, all water in first month.
@@ -46,7 +46,7 @@ TPP.l(u,g,y,m)              = elyThermal("elyCap",u) / 2;
 * Adjust initial variable levels for KELES which is a special case for debugging purposes
 * (this does not influence results, only initial solver point)
 ITK.l(s,"CHI_KAZ","KELES",y,m) = qIWater("CHI_KAZ",m) + qHWater("CHI_KAZ",m)
-                                 + SUM(j, qAWater("CHI_KAZ",j)*agriSeason("CHI_KAZ",j,m)) - rtn0("CHI_KAZ",m);
+                                 + SUM(j, irgYear0("CHI_KAZ",j)*agriSeason("CHI_KAZ",j,m)) - rtn0("CHI_KAZ",m);
 FLW.l(s,"KELES","SRC_KEL",y,m) = sup(s,"SRC_KEL",m);
 FLW.l(s,"SYRMID","KELES",y,m) = sup(s,"SRC_KEL",m) - ITK.l(s,"CHI_KAZ","KELES",y,m);
 
@@ -57,7 +57,8 @@ balCheck(bd,"inFlw")    =  SUM((s,bo,y,m)$flow(bd,bo), FLW.l(s,bd,bo,y,m));
 balCheck(bd,"inDis")    =  SUM((s,bo,y,m)$resv(bd,bo), DIS.l(s,bd,bo,y,m));
 balCheck(bd,"inItk")    =  SUM((s,bo,y,m)$intk(bd,bo), ITK.l(s,bd,bo,y,m));
 balCheck(bd,"inRtn")    =  SUM(m, rtn0(bd,m));
-balCheck(bo,"outAgr")   = -SUM((s,y,m), SUM(j, iINPUT.l(bo,j,"watr",y)*qAWater(bo,j)*agriSeason(bo,j,m))) ;
+balCheck(bo,"outAgr")   = -SUM((s,y,m), SUM(j,  IRG.l(bo,j,y,m) )) ;
+* balCheck(bo,"outAgr")   = -SUM((s,y,m), SUM(j, iINPUT.l(bo,j,"watr",y)*qAWater(bo,j)*agriSeason(bo,j,m))) ;
 balCheck(bo,"outHHI")   = -SUM((y,m)$modelYear(y), qIWater(bo,m)*(1+demography(y,"Ind"))  + qHWater(bo,m)*(1+demography(y,"HH"))) ;
 balCheck(bo,"outFlw")   = -SUM((s,bd,y,m)$flow(bd,bo), FLW.l(s,bd,bo,y,m));
 balCheck(bo,"outDis")   = -SUM((s,bd,y,m)$resv(bd,bo), DIS.l(s,bd,bo,y,m));
@@ -78,4 +79,3 @@ OPTION flw0:0:0:2;
 OPTION dis0:0:0:2;
 DISPLAY balCheck;
 
- 

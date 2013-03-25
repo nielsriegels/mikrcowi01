@@ -1,4 +1,4 @@
-$SETGLOBAL path  "c:\mikr\beam\"
+$SETGLOBAL path  "c:\mikr\mikrcowi01\"
 *option nlp=IPOPT;
 *$SETGLOBAL path  ""
 * =============================================================================
@@ -90,7 +90,7 @@ scenario("RunOfRiver","ctrf") = 0;
 y(y0)$modelYear(y0)     = YES;
 bRiv(b)                 = YES$SUM(bd$intk(bd,b), 1);
 bRes(b)                 = YES$SUM(bd$resv(bd,b), 1);
-bPlz(b)                 = YES$SUM(j, qAWater(b,j));
+bPlz(b)                 = YES$SUM(j, irgYear0(b,j));
 bSrc(b)                 = YES$SUM((s,m,y), sup0(s,b,y,m));
 
 * Reservoirs not in operation
@@ -151,6 +151,23 @@ solvStatB = beam.solvestat;
 * =============================================================================
 $include "%path%91out1.inc";
 
+PARAMETER
+testcost(b,j);
+
+testCost(b,j) = SUM(y, lnd.l(b,j,y)*cropcost(b,j));
+
+
+Parameter
+Income,
+Cost;
+
+
+Income   =  SUM((b,j,y)$oCosts(b,j), CRP.l(b,j,y)*pCrop(j)                                                                       * objAGRweight(b)    )  / 1000000;
+Cost     = -SUM((b,j,y, k)$(oCosts(b,j) AND NOT klimit(k)),     iACosts(b,k,j)/lnd0(b,j)*LND.l(b,j,y)                           * objAGRweight(b)    )   ;
+
+
+DISPLAY LND.L, cropcost, testCost, Income, Cost;
+
 PUT step;
 PUT "3";
 PUTCLOSE;
@@ -192,8 +209,8 @@ ctrfBuild = ctrfBuild0;
 *bResBuild(b)$scenario("RunOfRiver","ctrf") = NO;
 *irg0(b,"wht",y,m) = irg0(b,"wht",y,m)/20;
 *DISPLAY minInflow0, sup0, sup, baseyear;
-beam.solprint = no;
-beam.limrow = 0;
+beam.solprint = yes;
+beam.limrow = 17;
 SOLVE beam MAXIMIZING twv USING NLP;
 
 * =============================================================================
@@ -218,3 +235,16 @@ $include "%path%93out3.inc";
 PUT step;
 PUT "4";
 PUTCLOSE;
+
+Parameter
+Income,
+Cost,
+test(b,j,y0);
+
+OPTIONS test:3:2:1 ;
+
+Income   =  SUM((b,j,y)$oCosts(b,j), CRP.l(b,j,y)*pCrop(j)                                                                       * objAGRweight(b)    )  / 1000000;
+Cost     = -SUM((b,j,y, k)$(oCosts(b,j) AND NOT klimit(k)),     iACosts(b,k,j)/lnd0(b,j)*LND.l(b,j,y)                           * objAGRweight(b)    )   ;
+test(b,j,y) = LND.l(b,j,y)/ lnd0(b,j)
+
+display LSHARE, cropcost, LND.L, Income, Cost, lShare ;

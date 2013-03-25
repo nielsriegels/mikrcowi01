@@ -1,11 +1,11 @@
 
 PARAMETERS
     sup(s,b,m)              "Base year supply of river water (mm3/month)"
-    qAQuant(b,j)            "Base year production agri/industrt quantities (ton/year)"
+    crp0(b,j)            "Base year production agri/industrt quantities (ton/year)"
     iACosts(b,k,j)          "Base year production agri/industrt input shares quantities (mn usd/year)"
     qValue(b,j)             "Base year production agri/industrt prod. values (mn usd/year)"
-    qALand(b,j)             "Base year land use in agriculture (ha)"
-    qAWater(b,j)            "Base year water in agriculture (mm3/y)"
+    lnd0(b,j)             "Base year land use in agriculture (ha)"
+    irgYear0(b,j)            "Base year water in agriculture (mm3/y)"
     qmWater(b,m)            "Base year water (mm3/month)"
     irg0(b,j,y0,m0)         "Base year water for irrigation (mm3/month)"
     hhiUse0(sSec,b,m0)      "Base year water use for households and industries (mm3)"
@@ -27,19 +27,24 @@ PARAMETERS
     iInv(sInv)              "Irrigation investment data"
     minInflow0(b,m0)        "Minimum inflow for nature (mm3/month)"
     resDisMax0(b,m0)        "Maximum reservoir discharge (mm3/month)"
+    cropCost(b,j)           "Cost per crop. (usd/ha)"
 ;
+
 
 jAF(j)                          = jAF0(j);
 qValue(b,j)                     = SUM(k, iACosts(b,k,j));
-oCosts(b,j)$qAQuant(b,j)        = 1000000 * qValue(b,j) / qAQuant(b,j);
+oCosts(b,j)$crp0(b,j)        = 1000000 * qValue(b,j) / crp0(b,j);
+
+
+cropCost(b,j)$crp0(b,j)        = 1000000*SUM(k$(NOT klimit(k)), iACosts(b,k,j))/crp0(b,j) ;
 
 * Add fallow land area to area table
-qALand(b,"fal")                 = fallowLand * SUM(j$jAF(j), qAland(b,j));
+lnd0(b,"fal")                 = fallowLand * SUM(j$jAF(j), lnd0(b,j));
 iShare(b,k,j)$qValue(b,j)       = iACosts(b,k,j) / qValue(b,j);
-lShare(b,j)$jAF(j)              = (qALand(b,j) / SUM(jj$jAF(jj), qALand(b,jj)))$SUM(jj$jAF(jj), qALand(b,jj));
-qInputs(b,"land",j)             = qALand(b,j);
-qInputs(b,"watr",j)             = qAWater(b,j);
-irg0(b,j,y,m)                   = qAWater(b,j)*agriSeason(b,j,m);
+lShare(b,j)$jAF(j)              = (lnd0(b,j) / SUM(jj$jAF(jj), lnd0(b,jj)))$SUM(jj$jAF(jj), lnd0(b,jj));
+qInputs(b,"land",j)             = lnd0(b,j);
+qInputs(b,"watr",j)             = irgYear0(b,j);
+irg0(b,j,y,m)                   = irgYear0(b,j)*agriSeason(b,j,m);
 * Set water supply to normal year (base year cannot be dry year, as base year agricultural water use is fixed at 2009 level)
 sup(s,b,m)                      = sup0(s,b,"2009",m);
 
@@ -53,7 +58,7 @@ iInv(sInv)                      = 0;
 minInflow0(b,m0)                = minInflowN(b,m0)$baseyear("2009");
 
 * Ground water correction: Data on groundwater leaves too much water in some planning zones in some months, below is corrected for that
-qmWater(b,m)$bPlz(b)            = SUM(j, qAWater(b,j)*agriSeason(b,j,m)) + qIwater(b,m) + qHwater(b,m) - sup("W",b,m);
+qmWater(b,m)$bPlz(b)            = SUM(j, irgYear0(b,j)*agriSeason(b,j,m)) + qIwater(b,m) + qHwater(b,m) - sup("W",b,m);
 gwCorr(b,m)                     = min(0,qmWater(b,m));
 
 * Set maximum discharge capacity
@@ -76,4 +81,3 @@ objDISweight(b,m)   = 0;
 objHPPweight(b,m)   = 0;
 objELYweight        = 1;
 objAGRweight(b)     = 1;
-

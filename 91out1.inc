@@ -34,7 +34,8 @@ rFlowBase(b,"InFlw",y,m)                  = SUM((s,bo),       FLW.l(s,b,bo,y,m))
 rFlowBase(b,"InItk",y,m)                  = SUM((s,bo),       ITK.l(s,b,bo,y,m));
 rFlowBase(b,"InRtn",y,m)                  = rtn0(b,m);
 rFlowBase(b,"InTot",y,m)                  = rFlowBase(b,"InSrc",y,m) + rFlowBase(b,"InDis",y,m) + rFlowBase(b,"InFlw",y,m) + rFlowBase(b,"InItk",y,m) + rFlowBase(b,"InRtn",y,m) + rFlowBase(b,"InGrw",y,m);
-rFlowBase(b,"OutDem",y,m)                 = SUM(j,            -iINPUT.l(b,j,"watr",y)*qAWater(b,j)*agriSeason(b,j,m))*(1-iInv0("improve")) - qIwater(b,m) - qHwater(b,m);
+rFlowBase(b,"OutDem",y,m)                 = SUM(j,            -IRG.l(b,j,y,m))*(1-iInv0("improve")) - qIwater(b,m) - qHwater(b,m);
+* rFlowBase(b,"OutDem",y,m)                 = SUM(j,            -iINPUT.l(b,j,"watr",y)*qAWater(b,j)*agriSeason(b,j,m))*(1-iInv0("improve")) - qIwater(b,m) - qHwater(b,m);
 rFlowBase(b,"OutSto",y,m)                 = -SUM(s$sW(s),     STO.l(s,b,y,m));
 rFlowBase(b,"OutDis",y,m)                 = -SUM((s,bd)$(not sea(bd)), DIS.l(s,bd,b,y,m));
 rFlowBase(b,"OutFlw",y,m)                 = -SUM((s,bd)$(not sea(bd)), FLW.l(s,bd,b,y,m));
@@ -48,19 +49,28 @@ rFlowBase(b,"ResVol",y,"annual")          = rFlowBase(b,"ResVol",y,"annual") + 0
 rFlowBase(b,"Balance",y,"annual")         = rFlowBase(b,"Balance",y,"annual") + 0.000001;
 
 * Agricultural baseline results
-rAgriBase(b,"WaterUse",j,y)                   = iINPUT.l(b,j,"watr",y)*qAWater(b,j)*(1-iInv("improve"));
-rAgriBase(b,"LandEff",j,y)$bPlz(b)            = 1000*SUM(jj$lShare(b,jj),  iINPUT.l(b,jj,"land",y)*qALand(b,jj)) /  SUM(jj$lShare(b,jj), qALand(b,jj)) - 1;
+
+rAgriBase(b,"WaterUse",j,y)                   = SUM(m,IRG.l(b,j,y,m))*(1-iInv("improve"));
+*rAgriBase(b,"WaterUse",j,y)                   = iINPUT.l(b,j,"watr",y)*qAWater(b,j)*(1-iInv("improve"));
+rAgriBase(b,"LandEff",j,y)$bPlz(b)            = 1000*SUM(jj$lShare(b,jj),  LND.l(b,jj,y) ) /  SUM(jj$lShare(b,jj), lnd0(b,jj)) - 1;
+*rAgriBase(b,"LandEff",j,y)$bPlz(b)            = 1000*SUM(jj$lShare(b,jj),  iINPUT.l(b,jj,"land",y)*qALand(b,jj)) /  SUM(jj$lShare(b,jj), qALand(b,jj)) - 1;
 rAgriBase(b,"LandEff",j,y)$(not jAF(j))       = 0;
 *rAgriBase(b,"LandUse",j,y)                    = qALand(b,j) * iINPUT.l(b,j,"land",y) / (1+rAgriBase(b,"LandEff",j,y)/1000) ;
-rAgriBase(b,"LandUse",j,y)                    = qALand(b,j) * iINPUT.l(b,j,"land",y);
-rAgriBase(b,"AgriSales",j,y)                  = 1000*iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) / 1000000;
-rAgriBase(b,"AgriCosts",j,y)                  = -1000*SUM(k$(not kLimit(k)), iACosts(b,k,j)*iINPUT.l(b,j,k,y)*pInput(k));
-rAgriBase(b,"IrrInvCost",j,y)                 = -1000*(iInv("usdPerHa")*iINPUT.l(b,j,"land",y)*qALand(b,j) + (1-iInv("improve"))*iInv("usdPerMM3")*iINPUT.l(b,j,"watr",y)*qAWater(b,j))/1000000 ;
+*rAgriBase(b,"LandUse",j,y)                    = qALand(b,j) * iINPUT.l(b,j,"land",y);
+rAgriBase(b,"LandUse",j,y)                    = LND.l(b,j,y);
+rAgriBase(b,"AgriSales",j,y)                  = 1000*CRP.l(b,j,y)*pCrop(j) / 1000000;
+*rAgriBase(b,"AgriSales",j,y)                  = 1000*iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) / 1000000;
+rAgriBase(b,"AgriCosts",j,y)$lnd0(b,j)         = -1000*cropCost(b,j)*CRP.l(b,j,y)/1000000;
+*rAgriBase(b,"AgriCosts",j,y)                  = -1000*SUM(k$(not kLimit(k)), iACosts(b,k,j)*iINPUT.l(b,j,k,y)*pInput(k));
+rAgriBase(b,"IrrInvCost",j,y)                 = -1000*(iInv("usdPerHa")*LND.l(b,j,y) + (1-iInv("improve"))*iInv("usdPerMM3")*SUM(m,IRG.L(b,j,y,m)) )/1000000 ;
+*rAgriBase(b,"IrrInvCost",j,y)                 = -1000*(iInv("usdPerHa")*iINPUT.l(b,j,"land",y)*qALand(b,j) + (1-iInv("improve"))*iInv("usdPerMM3")*iINPUT.l(b,j,"watr",y)*qAWater(b,j))/1000000 ;
 rAgriBase(b,"AgriIncome",j,y)                 = rAgriBase(b,"AgriSales",j,y) + rAgriBase(b,"AgriCosts",j,y) + rAgriBase(b,"IrrInvCost",j,y);
-rAgriBase(b,"AgriProd",j,y)                   = iOUTPUT.l(b,j,y)*qAQuant(b,j);
+rAgriBase(b,"AgriProd",j,y)                   = CRP.l(b,j,y);
+*rAgriBase(b,"AgriProd",j,y)                   = iOUTPUT.l(b,j,y)*qAQuant(b,j);
 rAgriBase(b,"LandIncome",j,y)                 = ( 1000000*rAgriBase(b,"AgriIncome",j,y) / rAgriBase(b,"LandUse",j,y) )$rAgriBase(b,"LandUse",j,y);
 rAgriBase(b,"WatrIncome",j,y)                 = ( 1000000*rAgriBase(b,"AgriIncome",j,y) / rAgriBase(b,"WaterUse",j,y) )$rAgriBase(b,"WaterUse",j,y);
-rAgriBase(b,"LabrUse",j,y)                    = 1000*iINPUT.l(b,j,"labr",y)*iACosts(b,"labr",j);
+
+*rAgriBase(b,"LabrUse",j,y)                    = 1000*iINPUT.l(b,j,"labr",y)*iACosts(b,"labr",j);
 
 
 * Economic results, baseline
@@ -78,5 +88,3 @@ rEconBase(b,"DischVal",y,m)$bResEly(b)    = -1000000*( rEconBase(b,"HydroInc",y,
 rEconBase(b,"WaterVal",y,m)               = WBALANCE.M("w",b,y,m)*1000000;
 rEconBase(b,"WaterVal",y,"annual")        = ( SUM(m, rEconBase(b,"WaterVal",y,m) * rFlowBase(b,"InTot",y,m) )  / rFlowBase(b,"InTot",y,"annual")
                                                   )$rFlowBase(b,"InTot",y,"annual") + 0.000001;
-
- 
