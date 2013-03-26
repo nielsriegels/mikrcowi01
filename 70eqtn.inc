@@ -13,7 +13,6 @@ POSITIVE VARIABLES
     iINPUT(b,j,k,y0)        "Index for use of production inputs (1=baseyear)"
     iLAND(b,j,y0)           "Index for physical amount of land"
     CRP(b,j,y0)             "Crop production for each year (usd/ha)"
-*    iOUTPUT(b,j,y0)         "Index for production of industrial/agricultural goods (1=baseyear)"
 VARIABLES
     TWV                     "Total water value (USD)"
     COSTS(b,j,y0)           "Production industrial/agricultural costs (usd/ton)"
@@ -28,7 +27,6 @@ OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
 OPTIONS TPP:0:3:1;
 OPTIONS iINPUT:3:2:2;
-*OPTIONS iOUTPUT:3:1:2;
 OPTIONS iLAND:3:1:2;
 
 
@@ -198,12 +196,10 @@ CETLAND(b,y)$SUM(j$jAF(j), qInputs(b,"land",j))..
 * Some crops have a fixed share of land
 FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
     ( CRP(b,j,y) / crp0(b,j) )$jAX(j)   =e= 1;
-*  iOUTPUT(b,j,y)$jAX(j)   =e= 1;
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
-                    SUM((b,j,y)$oCosts(b,j),                    ( CRP(b,j,y) / crp0(b,j) )*crp0(b,j)*pCrop(j)                        * objAGRweight(b)    )  / 1000000
-*                   SUM((b,j,y)$oCosts(b,j),                    iOUTPUT(b,j,y)*crp0(b,j)*pCrop(j)                        * objAGRweight(b)    )  / 1000000
+                    SUM((b,j,y)$oCosts(b,j),                    CRP(b,j,y) * pCrop(j)                                       * objAGRweight(b)    )  / 1000000
                    -SUM((b,j,y,k)$oCosts(b,j),                  iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)$(not kLimit(k))    * objAGRweight(b)    )
 * CAUTION: The row below are operating costs depending on water use, e.g. power consumption - correct specification when receiving inv. data from Bekzhod
                    -SUM((b,j,y,m),                              iInv("usdPerMM3")*IRG(b,j,y,m)                              * objAGRweight(b)    )  / 1000000
@@ -261,14 +257,12 @@ STO.up(s,b,y,m)$bRes(b)                                     = 99999;
 STO.up(s,b,y,m)$sea(b)                                      = INF;
 
 CRP.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                     = 0;
-*iOUTPUT.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                = 0;
 COSTS.fx(b,j,y)$(oCosts(b,j) eq 0)                          = 0;
 
 * Lower and upper bounds
 iINPUT.lo(b,j,k,y)                                          = 0.01$(iACosts(b,k,j) AND oCosts(b,j));
 iLAND.lo(b,j,y)$jAF(j)                                      = 0.01$lShare(b,j);
 CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) * crp0(b,j);
-*iOUTPUT.lo(b,j,y)$jAF(j)                                    = 0.01$lShare(b,j);
 
 
 TPP.up(u,g,y,m) = elyThermal("elyCap",u)*30*segmentHours(g);
