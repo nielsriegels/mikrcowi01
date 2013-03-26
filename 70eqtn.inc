@@ -55,7 +55,7 @@ EQUATIONS
     MININFLOWa(b,y0,m0)         "Minimum inflow to body, annual"
     INDEXCALCULATOR(b,j,k,y0)     "Index for the relation between new crop output and the old crop output"
 * Economical constraints and identities
-    LEONTIEF(b,j,k,y0)          "Ratio between outputs and inputs"
+    LEONTIEF(b,j,y0)            "Ratio between outputs and inputs"
     CETLAND(b,y0)               "Index for physical amount of land"
     FIXEDLAND(b,j,y0)           "Fixed land shares"
 * Objective functions
@@ -186,7 +186,7 @@ MININFLOWa(b,y,mA)$(minInFlow0(b,mA) + natExtra(b))..
 
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
-LEONTIEF(b,j,k,y)$iShare(b,k,j)..
+LEONTIEF(b,j,y)$lnd0(b,j)..
     ( CRP(b,j,y) / crp0(b,j) ) =e= (LND(b,j,y)/lnd0(b,j)) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*( CRP(b,jj,y) / crp0(b,jj) ) )$jAF(j) ) ;
 
 * Enforce decreasing returns to scale from deviating away from base year land use patterns
