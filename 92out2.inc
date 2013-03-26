@@ -1,6 +1,6 @@
 * out2.inc - generation of scenario output data parameter
 
-iOUTPUT.l(b,j,y)$qAQuant(b,j) = CRP.l(b,j,y)/qAQuant(b,j);
+iOUTPUT.l(b,j,y)$crp0(b,j) = CRP.l(b,j,y)/crp0(b,j);
 
 WBALANCE.M("w",b,y,m)$(WBALANCE.M("w",b,y,m) eq eps) = 0;
 pEly(g,y,m)     = -ELYMKT.M(g,y,m)*1000;
@@ -43,11 +43,11 @@ rAgriCtrf(b,"LandEff",j,y)$bPlz(b)            = 1000*SUM(jj$lShare(b,jj),  iINPU
 rAgriCtrf(b,"LandEff",j,y)$(not jAF(j))       = 0.001;
 *rAgriCtrf(b,"LandUse",j,y)                    = qALand(b,j) * iINPUT.l(b,j,"land",y) / (1+rAgriBase(b,"LandEff",j,y)/1000) ;
 rAgriCtrf(b,"LandUse",j,y)                    = qALand(b,j) * iINPUT.l(b,j,"land",y) ;
-rAgriCtrf(b,"AgriSales",j,y)                  = 1000*iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) / 1000000;
+rAgriCtrf(b,"AgriSales",j,y)                  = 1000*iOUTPUT.l(b,j,y)*crp0(b,j)*pCrop(j) / 1000000;
 rAgriCtrf(b,"AgriCosts",j,y)                  = -1000*SUM(k$(not kLimit(k)), iACosts(b,k,j)*iINPUT.l(b,j,k,y)*pInput(k));
 rAgriCtrf(b,"IrrInvCost",j,y)                 = -1000*(iInv("usdPerHa")*iINPUT.l(b,j,"land",y)*qALand(b,j) + (1-iInv("improve"))*iInv("usdPerMM3")*iINPUT.l(b,j,"watr",y)*qAWater(b,j))/1000000 ;
 rAgriCtrf(b,"AgriIncome",j,y)                 = rAgriCtrf(b,"AgriSales",j,y) + rAgriCtrf(b,"AgriCosts",j,y) + rAgriCtrf(b,"IrrInvCost",j,y);
-rAgriCtrf(b,"AgriProd",j,y)                   = iOUTPUT.l(b,j,y)*qAQuant(b,j);
+rAgriCtrf(b,"AgriProd",j,y)                   = iOUTPUT.l(b,j,y)*crp0(b,j);
 rAgriCtrf(b,"LandIncome",j,y)                 = ( 1000000*rAgriCtrf(b,"AgriIncome",j,y) / rAgriCtrf(b,"LandUse",j,y) )$rAgriCtrf(b,"LandUse",j,y);
 rAgriCtrf(b,"WatrIncome",j,y)                 = ( 1000000*rAgriCtrf(b,"AgriIncome",j,y) / rAgriCtrf(b,"WaterUse",j,y) )$rAgriCtrf(b,"WaterUse",j,y);
 rAgriCtrf(b,"LabrUse",j,y)                    = 1000*iINPUT.l(b,j,"labr",y)*iACosts(b,"labr",j);

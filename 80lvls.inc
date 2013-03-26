@@ -3,8 +3,8 @@ iINPUT.l(b,j,k,y)               = 1$iACosts(b,k,j);
 iLAND.l(b,j,y)                  = 1$qALand(b,j);
 iINPUT.l(b,j,"land",y)          = 1$qALand(b,j);
 iINPUT.l(b,j,"watr",y)          = 1$qAWater(b,j);
-iOUTPUT.l(b,j,y)                = 1$qAQuant(b,j);
-CRP.l(b,j,y)                   = 1$qAQuant(b,j)* qAQuant(b,j);
+iOUTPUT.l(b,j,y)                = 1$crp0(b,j);
+CRP.l(b,j,y)                    = crp0(b,j);
 COSTS.l(b,j,y)                  = SUM(k$(not kLimit(k)), iACosts(b,k,j));
 
 * For testing water balance, all water in first month.

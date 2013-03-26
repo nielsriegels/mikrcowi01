@@ -188,7 +188,7 @@ MININFLOWa(b,y,mA)$(minInFlow0(b,mA) + natExtra(b))..
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
 LEONTIEF(b,j,k,y)$iShare(b,k,j)..
-    ( CRP(b,j,y) / crp0(b,j) ) =e= iINPUT(b,j,k,y) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*( CRP(b,jj,y) / qAQuant(b,jj) ) )$jAF(j) ) ;
+    ( CRP(b,j,y) / crp0(b,j) ) =e= iINPUT(b,j,k,y) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*( CRP(b,jj,y) / crp0(b,jj) ) )$jAF(j) ) ;
 *   iOUTPUT(b,j,y) =e= iINPUT(b,j,k,y) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*iOUTPUT(b,jj,y))$jAF(j) ) ;
 * Enforce decreasing returns to scale from deviating away from base year land use patterns
 * iINPUT(j,JA,"land",j) is effective land use, iLAND(b,j,y) is physical land use

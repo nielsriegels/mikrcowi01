@@ -1,7 +1,7 @@
 
 PARAMETERS
     sup(s,b,m)              "Base year supply of river water (mm3/month)"
-    qAQuant(b,j)            "Base year production agri/industrt quantities (ton/year)"
+    crp0(b,j)            "Base year production agri/industrt quantities (ton/year)"
     iACosts(b,k,j)          "Base year production agri/industrt input shares quantities (mn usd/year)"
     qValue(b,j)             "Base year production agri/industrt prod. values (mn usd/year)"
     qALand(b,j)             "Base year land use in agriculture (ha)"
@@ -38,12 +38,12 @@ checkoutput("obj0","base")      = -20317.8216;
 checkoutput("obj0","ctrf")      = -20045.6471;
 OPTIONS checkoutput:0:1:1;
 
-jAF(j)                          = jAF0(j);
-qValue(b,j)                     = SUM(k, iACosts(b,k,j));
-oCosts(b,j)$qAQuant(b,j)        = 1000000 * qValue(b,j) / qAQuant(b,j);
-
 * TEMPORARY - replace Excel names to crp0, lnd0, irg0
 crp0(b,j)                       = qAquant(b,j);
+
+jAF(j)                          = jAF0(j);
+qValue(b,j)                     = SUM(k, iACosts(b,k,j));
+oCosts(b,j)$crp0(b,j)        = 1000000 * qValue(b,j) / crp0(b,j);
 
 * Add fallow land area to area table
 qALand(b,"fal")                 = fallowLand * SUM(j$jAF(j), qAland(b,j));

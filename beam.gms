@@ -148,7 +148,7 @@ solvStatB = beam.solvestat;
 
 *Parameter iOUTPUT(b,j,y0)         "Index for production of industrial/agricultural goods (1=baseyear)"  ;
 
-*iOUTPUT(b,j,y)  =     ( CRP.l(b,j,y) / qAQuant(b,j) ) ;
+*iOUTPUT(b,j,y)  =     ( CRP.l(b,j,y) / crp0(b,j) ) ;
 * =============================================================================
 * Generate output parameter for base scenario
 * =============================================================================
@@ -199,7 +199,7 @@ beam.solprint = no;
 beam.limrow = 0;
 SOLVE beam MAXIMIZING twv USING NLP;
 
-*iOUTPUT(b,j,y)  =     ( CRP.l(b,j,y) / qAQuant(b,j) ) ;
+*iOUTPUT(b,j,y)  =     ( CRP.l(b,j,y) / crp0(b,j) ) ;
 
 * =============================================================================
 * Generate output parameter for action scenario
