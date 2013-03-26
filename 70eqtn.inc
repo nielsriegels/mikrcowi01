@@ -10,7 +10,6 @@ POSITIVE VARIABLES
     STO(s,b,y0,m0)          "Reservoir seasonal storage buildup (mm3)"
     HPP(b,g0,y0,m0)         "Hydro power production (MWh)"
     TPP(u,g0,y0,m0)         "Thermal power production (MWh)"
-    iLAND(b,j,y0)           "Index for physical amount of land"
     CRP(b,j,y0)             "Crop production (ton/year)"
     LND(b,j,y0)             "Land use by crop (ha)"
 VARIABLES
@@ -26,7 +25,6 @@ OPTIONS LOS:0:4:1;
 OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
 OPTIONS TPP:0:3:1;
-OPTIONS iLAND:3:1:2;
 
 
 EQUATIONS
@@ -258,7 +256,6 @@ CRP.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                     = 0;
 COSTS.fx(b,j,y)$(oCosts(b,j) eq 0)                          = 0;
 
 * Lower and upper bounds
-iLAND.lo(b,j,y)$jAF(j)                                      = 0.01$lShare(b,j);
 CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) * crp0(b,j);
 
 

@@ -1,5 +1,4 @@
 * Baseline Levels
-iLAND.l(b,j,y)                  = 1$qALand(b,j);
 CRP.l(b,j,y)                    = crp0(b,j);
 COSTS.l(b,j,y)                  = SUM(k$(not kLimit(k)), iACosts(b,k,j));
 
