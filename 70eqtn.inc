@@ -188,11 +188,11 @@ LEONTIEF(b,j,y)$lnd0(b,j)..
     ( CRP(b,j,y) / crp0(b,j) ) =e= (LND(b,j,y)/lnd0(b,j)) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*( CRP(b,jj,y) / crp0(b,jj) ) )$jAF(j) ) ;
 
 * Enforce decreasing returns to scale from deviating away from base year land use patterns
-CETLAND(b,y)$SUM(j$jAF(j), qInputs(b,"land",j))..
+CETLAND(b,y)$SUM(j$jAF(j), lnd0(b,j))..
     1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*( CRP(b,j,y) / crp0(b,j) )**rL )**(1/rL) ) ;
  
 * Some crops have a fixed share of land
-FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
+FIXEDLAND(b,j,y)$(lnd0(b,j) AND jAX(j))..
     ( CRP(b,j,y) / crp0(b,j) )$jAX(j)   =e= 1;
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD

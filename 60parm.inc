@@ -44,13 +44,13 @@ OPTIONS checkoutput:2:1:1;
 crp0(b,j)                       = qAquant(b,j);
 lnd0(b,j)                       = qAland(b,j);
 cCrop(b,j)$lnd0(b,j)            = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/lnd0(b,j);
-
+* Add fallow land area to area table
 jAF(j)                          = jAF0(j);
+lnd0(b,"fal")                   = fallowLand * SUM(j$jAF(j), lnd0(b,j));
+
 qValue(b,j)                     = SUM(k, iACosts(b,k,j));
 oCosts(b,j)$crp0(b,j)        = 1000000 * qValue(b,j) / crp0(b,j);
 
-* Add fallow land area to area table
-qALand(b,"fal")                 = fallowLand * SUM(j$jAF(j), qAland(b,j));
 iShare(b,k,j)$qValue(b,j)       = iACosts(b,k,j) / qValue(b,j);
 lShare(b,j)$jAF(j)              = (qALand(b,j) / SUM(jj$jAF(jj), qALand(b,jj)))$SUM(jj$jAF(jj), qALand(b,jj));
 qInputs(b,"land",j)             = qALand(b,j);
