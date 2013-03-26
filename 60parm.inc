@@ -27,12 +27,23 @@ PARAMETERS
     iInv(sInv)              "Irrigation investment data"
     minInflow0(b,m0)        "Minimum inflow for nature (mm3/month)"
     resDisMax0(b,m0)        "Maximum reservoir discharge (mm3/month)"
-    
+    crp0(b,j)               "Crop production base year (ton/year)"   
+    checkoutput(*,sSce)     "Check of output values for no-change control"
 ;
+
+* Provide baseline for check against former model runs - UPDATE WHEN CHANGE IN totinc IS WARRANTED!
+checkoutput("totinc0","base")   = 9730178.43;
+checkoutput("totinc0","ctrf")   = 10002352.91;
+checkoutput("obj0","base")      = -20317.8216;
+checkoutput("obj0","ctrf")      = -20045.6471;
+OPTIONS checkoutput:0:1:1;
 
 jAF(j)                          = jAF0(j);
 qValue(b,j)                     = SUM(k, iACosts(b,k,j));
 oCosts(b,j)$qAQuant(b,j)        = 1000000 * qValue(b,j) / qAQuant(b,j);
+
+* TEMPORARY - replace Excel names to crp0, lnd0, irg0
+crp0(b,j)                       = qAquant(b,j);
 
 * Add fallow land area to area table
 qALand(b,"fal")                 = fallowLand * SUM(j$jAF(j), qAland(b,j));

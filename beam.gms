@@ -223,3 +223,6 @@ $include "%path%93out3.inc";
 PUT step;
 PUT "4";
 PUTCLOSE;
+
+* Display check for result of output
+DISPLAY checkoutput;

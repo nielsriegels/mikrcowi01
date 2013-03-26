@@ -69,3 +69,6 @@ rEconCtrf(b,"WaterVal",y,"annual")        = ( SUM(m, rEconCtrf(b,"WaterVal",y,m)
                                                   )$rFlowCtrf(b,"InTot",y,"annual") + 0.000001;
 
 
+* Save total income for checkout print
+checkoutput("totinc","ctrf")              = SUM((b,y,m), rEconCtrf(b,"TotInc",y,m));
+checkoutput("obj","ctrf")                 = TWV.l;

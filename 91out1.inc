@@ -82,3 +82,6 @@ rEconBase(b,"WaterVal",y,m)               = WBALANCE.M("w",b,y,m)*1000000;
 rEconBase(b,"WaterVal",y,"annual")        = ( SUM(m, rEconBase(b,"WaterVal",y,m) * rFlowBase(b,"InTot",y,m) )  / rFlowBase(b,"InTot",y,"annual")
                                                   )$rFlowBase(b,"InTot",y,"annual") + 0.000001;
 
+* Save total income for checkout print
+checkoutput("totinc","base")              = SUM((b,y,m), rEconBase(b,"TotInc",y,m));
+checkoutput("obj","base")                 = TWV.l;

@@ -188,25 +188,25 @@ MININFLOWa(b,y,mA)$(minInFlow0(b,mA) + natExtra(b))..
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
 LEONTIEF(b,j,k,y)$iShare(b,k,j)..
-    ( CRP(b,j,y) / qAQuant(b,j) ) =e= iINPUT(b,j,k,y) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*( CRP(b,jj,y) / qAQuant(b,jj) ) )$jAF(j) ) ;
+    ( CRP(b,j,y) / crp0(b,j) ) =e= iINPUT(b,j,k,y) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*( CRP(b,jj,y) / qAQuant(b,jj) ) )$jAF(j) ) ;
 *   iOUTPUT(b,j,y) =e= iINPUT(b,j,k,y) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*iOUTPUT(b,jj,y))$jAF(j) ) ;
 * Enforce decreasing returns to scale from deviating away from base year land use patterns
 * iINPUT(j,JA,"land",j) is effective land use, iLAND(b,j,y) is physical land use
 CETLAND(b,y)$SUM(j$jAF(j), qInputs(b,"land",j))..
-    1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*( CRP(b,j,y) / qAQuant(b,j) )**rL )**(1/rL) ) ;
+    1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*( CRP(b,j,y) / crp0(b,j) )**rL )**(1/rL) ) ;
 *   1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*iOUTPUT(b,j,y)**rL )**(1/rL) ) ;
 * Some crops have a fixed share of land
 FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
-    ( CRP(b,j,y) / qAQuant(b,j) )$jAX(j)   =e= 1;
+    ( CRP(b,j,y) / crp0(b,j) )$jAX(j)   =e= 1;
 *  iOUTPUT(b,j,y)$jAX(j)   =e= 1;
 
-INDEXCALCULATOR(b,j,y)$qAQuant(b,j)..
-iOUTPUT(b,j,y) =e=   ( CRP(b,j,y) / qAQuant(b,j) );
+INDEXCALCULATOR(b,j,y)$crp0(b,j)..
+iOUTPUT(b,j,y) =e=   ( CRP(b,j,y) / crp0(b,j) );
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
-                    SUM((b,j,y)$oCosts(b,j),                    ( CRP(b,j,y) / qAQuant(b,j) )*qAQuant(b,j)*pCrop(j)                        * objAGRweight(b)    )  / 1000000
-*                   SUM((b,j,y)$oCosts(b,j),                    iOUTPUT(b,j,y)*qAQuant(b,j)*pCrop(j)                        * objAGRweight(b)    )  / 1000000
+                    SUM((b,j,y)$oCosts(b,j),                    ( CRP(b,j,y) / crp0(b,j) )*crp0(b,j)*pCrop(j)                        * objAGRweight(b)    )  / 1000000
+*                   SUM((b,j,y)$oCosts(b,j),                    iOUTPUT(b,j,y)*crp0(b,j)*pCrop(j)                        * objAGRweight(b)    )  / 1000000
                    -SUM((b,j,y,k)$oCosts(b,j),                  iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)$(not kLimit(k))    * objAGRweight(b)    )
 * CAUTION: The row below are operating costs depending on water use, e.g. power consumption - correct specification when receiving inv. data from Bekzhod
                    -SUM((b,j,y,m),                              iInv("usdPerMM3")*IRG(b,j,y,m)                              * objAGRweight(b)    )  / 1000000
@@ -270,7 +270,7 @@ COSTS.fx(b,j,y)$(oCosts(b,j) eq 0)                          = 0;
 * Lower and upper bounds
 iINPUT.lo(b,j,k,y)                                          = 0.01$(iACosts(b,k,j) AND oCosts(b,j));
 iLAND.lo(b,j,y)$jAF(j)                                      = 0.01$lShare(b,j);
-CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) * qAQuant(b,j);
+CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) * crp0(b,j);
 iOUTPUT.lo(b,j,y)$jAF(j)                                    = 0.01$lShare(b,j);
 
 
