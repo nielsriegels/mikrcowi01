@@ -28,6 +28,8 @@ PARAMETERS
     minInflow0(b,m0)        "Minimum inflow for nature (mm3/month)"
     resDisMax0(b,m0)        "Maximum reservoir discharge (mm3/month)"
     crp0(b,j)               "Crop production base year (ton/year)"   
+    lnd0(b,j)               "Land use in base year (ha)"
+    cCrop(b,j)              "Crop costs by land use (USD/ha)"
     checkoutput(*,sSce)     "Check of output values for no-change control"
 ;
 
@@ -40,6 +42,8 @@ OPTIONS checkoutput:0:1:1;
 
 * TEMPORARY - replace Excel names to crp0, lnd0, irg0
 crp0(b,j)                       = qAquant(b,j);
+lnd0(b,j)                       = qAland(b,j);
+cCrop(b,j)$lnd0(b,j)            = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/lnd0(b,j);
 
 jAF(j)                          = jAF0(j);
 qValue(b,j)                     = SUM(k, iACosts(b,k,j));

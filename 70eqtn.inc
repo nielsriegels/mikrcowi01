@@ -12,7 +12,8 @@ POSITIVE VARIABLES
     TPP(u,g0,y0,m0)         "Thermal power production (MWh)"
     iINPUT(b,j,k,y0)        "Index for use of production inputs (1=baseyear)"
     iLAND(b,j,y0)           "Index for physical amount of land"
-    CRP(b,j,y0)             "Crop production for each year (usd/ha)"
+    CRP(b,j,y0)             "Crop production (ton/year)"
+    LND(b,j,y0)             "Land use by crop (ha)"
 VARIABLES
     TWV                     "Total water value (USD)"
     COSTS(b,j,y0)           "Production industrial/agricultural costs (usd/ton)"
@@ -52,7 +53,7 @@ EQUATIONS
     MININFLOW(b,y0,m0)          "Minimum inflow to body"
     MINOUTFLOW(b,y0,m0)         "Minimum outflow from body"
     MININFLOWa(b,y0,m0)         "Minimum inflow to body, annual"
-    INDEXCALCULATOR(b,j,y0)     "Index for the relation between new crop output and the old crop output"
+    INDEXCALCULATOR(b,j,k,y0)     "Index for the relation between new crop output and the old crop output"
 * Economical constraints and identities
     LEONTIEF(b,j,k,y0)          "Ratio between outputs and inputs"
     CETLAND(b,y0)               "Index for physical amount of land"
@@ -97,7 +98,7 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m))..
 
 * Irrigation needs - irg0 is base year irrigation, iINPUT is an index scaling irg0 up and down
 IRGACT(b,j,y,m)$irg0(b,j,y,m)..
-    IRG(b,j,y,m) =e= iINPUT(b,j,"watr",y)*irg0(b,j,y,m) * (1-iInv("improve"));
+    IRG(b,j,y,m) =e= (LND(b,j,y)/lnd0(b,j))*irg0(b,j,y,m) * (1-iInv("improve"));
 
 * Use of water by households and industries
 HHIUSE(s,sSec,b,y,m)$hhiUse0(sSec,b,m)..
@@ -192,7 +193,7 @@ LEONTIEF(b,j,k,y)$iShare(b,k,j)..
 * iINPUT(j,JA,"land",j) is effective land use, iLAND(b,j,y) is physical land use
 CETLAND(b,y)$SUM(j$jAF(j), qInputs(b,"land",j))..
     1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*( CRP(b,j,y) / crp0(b,j) )**rL )**(1/rL) ) ;
-*   1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*iOUTPUT(b,j,y)**rL )**(1/rL) ) ;
+ 
 * Some crops have a fixed share of land
 FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
     ( CRP(b,j,y) / crp0(b,j) )$jAX(j)   =e= 1;
@@ -200,7 +201,7 @@ FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
                     SUM((b,j,y)$oCosts(b,j),                    CRP(b,j,y) * pCrop(j)                                       * objAGRweight(b)    )  / 1000000
-                   -SUM((b,j,y,k)$oCosts(b,j),                  iACosts(b,k,j)*iINPUT(b,j,k,y)*pInput(k)$(not kLimit(k))    * objAGRweight(b)    )
+                   -SUM((b,j,y)$oCosts(b,j),                    LND(b,j,y) * cCrop(b,j)                                     * objAGRweight(b)    ) / 1000000
 * CAUTION: The row below are operating costs depending on water use, e.g. power consumption - correct specification when receiving inv. data from Bekzhod
                    -SUM((b,j,y,m),                              iInv("usdPerMM3")*IRG(b,j,y,m)                              * objAGRweight(b)    )  / 1000000
 * CAUTION: The irrigation investments are probably misspecified: they depend on exogenous land use, not actual - check this!!!
@@ -212,13 +213,19 @@ OBJ..   TWV =e=
 
 ;
 
+INDEXCALCULATOR(b,j,k,y)$lnd0(b,j)..
+ iINPUT(b,j,k,y) =e= LND(b,j,y)/lnd0(b,j);
+
 
 MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSE, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa,
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT,
                 LEONTIEF, CETLAND, FIXEDLAND, IRGACT, 
-                OBJ /;
+                OBJ,
+                
+                INDEXCALCULATOR
+                /;
 
 
 

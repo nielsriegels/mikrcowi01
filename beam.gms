@@ -226,3 +226,4 @@ PUTCLOSE;
 
 * Display check for result of output
 DISPLAY checkoutput;
+DISPLAY pCrop, cCrop;
