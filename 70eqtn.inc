@@ -10,7 +10,6 @@ POSITIVE VARIABLES
     STO(s,b,y0,m0)          "Reservoir seasonal storage buildup (mm3)"
     HPP(b,g0,y0,m0)         "Hydro power production (MWh)"
     TPP(u,g0,y0,m0)         "Thermal power production (MWh)"
-*    iINPUT(b,j,k,y0)        "Index for use of production inputs (1=baseyear)"
     iLAND(b,j,y0)           "Index for physical amount of land"
     CRP(b,j,y0)             "Crop production (ton/year)"
     LND(b,j,y0)             "Land use by crop (ha)"
@@ -27,7 +26,6 @@ OPTIONS LOS:0:4:1;
 OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
 OPTIONS TPP:0:3:1;
-*OPTIONS iINPUT:3:2:2;
 OPTIONS iLAND:3:1:2;
 
 
@@ -199,22 +197,18 @@ FIXEDLAND(b,j,y)$(qInputs(b,"land",j) AND jAX(j))..
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
-                    SUM((b,j,y)$oCosts(b,j),                    CRP(b,j,y) * pCrop(j)                                       * objAGRweight(b)    )  / 1000000
+                    SUM((b,j,y)$oCosts(b,j),                    CRP(b,j,y) * pCrop(j)                                       * objAGRweight(b)    ) / 1000000
                    -SUM((b,j,y)$oCosts(b,j),                    LND(b,j,y) * cCrop(b,j)                                     * objAGRweight(b)    ) / 1000000
 * CAUTION: The row below are operating costs depending on water use, e.g. power consumption - correct specification when receiving inv. data from Bekzhod
-                   -SUM((b,j,y,m)$irg0(b,j,y,m),                iInv("usdPerMM3")*IRG(b,j,y,m)                              * objAGRweight(b)    )  / 1000000
+                   -SUM((b,j,y,m)$irg0(b,j,y,m),                IRG(b,j,y,m)*iInv("usdPerMM3")                              * objAGRweight(b)    ) / 1000000
 * CAUTION: The irrigation investments are probably misspecified: they depend on exogenous land use, not actual - check this!!!
                    -SUM((b,j,y)$lnd0(b,j),                      LND(b,j,y) * iInv("usdPerHa")                               * objAGRweight(b)    ) / 1000000
-                   -SUM((u,g,y,m)$elyThermal("elyCap",u),       elyThermal("uFUELEX",u)*TPP(u,g,y,m)                        * objELYweight       ) / 1000000
+                   -SUM((u,g,y,m)$elyThermal("elyCap",u),       TPP(u,g,y,m)*elyThermal("uFUELEX",u)                        * objELYweight       ) / 1000000
                    -SUM((b,y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       )
                    +SUM((b,g,y,m)$objHPPweight(b,m),            HPP(b,g,y,m)                                                * objHPPweight(b,m)  ) / 1000000
                    +SUM((s,bd,bo,j,y,m)$objDISweight(bo,m),     (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000
 
 ;
-
-*INDEXCALCULATOR(b,j,k,y)$lnd0(b,j)..
-* iINPUT(b,j,k,y) =e= LND(b,j,y)/lnd0(b,j);
-
 
 MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSE, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
@@ -222,8 +216,6 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSE, GRNDWATER,
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT,
                 LEONTIEF, CETLAND, FIXEDLAND, IRGACT, 
                 OBJ
-                
-*               INDEXCALCULATOR
                 /;
 
 
@@ -266,7 +258,6 @@ CRP.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                     = 0;
 COSTS.fx(b,j,y)$(oCosts(b,j) eq 0)                          = 0;
 
 * Lower and upper bounds
-*iINPUT.lo(b,j,k,y)                                          = 0.01$(iACosts(b,k,j) AND oCosts(b,j));
 iLAND.lo(b,j,y)$jAF(j)                                      = 0.01$lShare(b,j);
 CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) * crp0(b,j);
 

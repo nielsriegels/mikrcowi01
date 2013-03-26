@@ -39,7 +39,6 @@ rAgriCtrf(b,"WaterUse",j,y)                   = SUM(m, IRG.l(b,j,y,m));
 rAgriCtrf(b,"WaterSave",j,y)                  = 0;
 rAgriCtrf(b,"LandEff",j,y)$bPlz(b)            = 0.001;
 rAgriCtrf(b,"LandEff",j,y)$(not jAF(j))       = 0.001;
-*rAgriCtrf(b,"LandUse",j,y)                    = qALand(b,j) * iINPUT.l(b,j,"land",y) / (1+rAgriBase(b,"LandEff",j,y)/1000) ;
 rAgriCtrf(b,"LandUse",j,y)                    = LND.l(b,j,y) ;
 rAgriCtrf(b,"AgriSales",j,y)                  = 1000 * CRP.l(b,j,y) * pCrop(j) / 1000000;
 rAgriCtrf(b,"AgriCosts",j,y)                  = -1000* LND.l(b,j,y) * cCrop(b,j) / 1000000;
