@@ -14,7 +14,6 @@ POSITIVE VARIABLES
     LND(b,j,y0)             "Land use by crop (ha)"
 VARIABLES
     TWV                     "Total water value (USD)"
-    COSTS(b,j,y0)           "Production industrial/agricultural costs (usd/ton)"
 ;
 
 OPTIONS DIS:0:3:1;
@@ -252,8 +251,7 @@ STO.fx(s,bo,y,m)                                            = 0;
 STO.up(s,b,y,m)$bRes(b)                                     = 99999;
 STO.up(s,b,y,m)$sea(b)                                      = INF;
 
-CRP.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                     = 0;
-COSTS.fx(b,j,y)$(oCosts(b,j) eq 0)                          = 0;
+CRP.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                    = 0;
 
 * Lower and upper bounds
 CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) * crp0(b,j);
