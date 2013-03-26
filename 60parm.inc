@@ -38,7 +38,7 @@ checkoutput("totinc0","base")   = 9730178.43;
 checkoutput("totinc0","ctrf")   = 10002352.91;
 checkoutput("obj0","base")      = -20317.8216;
 checkoutput("obj0","ctrf")      = -20045.6471;
-OPTIONS checkoutput:0:1:1;
+OPTIONS checkoutput:2:1:1;
 
 * TEMPORARY - replace Excel names to crp0, lnd0, irg0
 crp0(b,j)                       = qAquant(b,j);

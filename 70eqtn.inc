@@ -10,7 +10,7 @@ POSITIVE VARIABLES
     STO(s,b,y0,m0)          "Reservoir seasonal storage buildup (mm3)"
     HPP(b,g0,y0,m0)         "Hydro power production (MWh)"
     TPP(u,g0,y0,m0)         "Thermal power production (MWh)"
-    iINPUT(b,j,k,y0)        "Index for use of production inputs (1=baseyear)"
+*    iINPUT(b,j,k,y0)        "Index for use of production inputs (1=baseyear)"
     iLAND(b,j,y0)           "Index for physical amount of land"
     CRP(b,j,y0)             "Crop production (ton/year)"
     LND(b,j,y0)             "Land use by crop (ha)"
@@ -27,7 +27,7 @@ OPTIONS LOS:0:4:1;
 OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
 OPTIONS TPP:0:3:1;
-OPTIONS iINPUT:3:2:2;
+*OPTIONS iINPUT:3:2:2;
 OPTIONS iLAND:3:1:2;
 
 
@@ -96,7 +96,7 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m))..
                           SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) )
 ;
 
-* Irrigation needs - irg0 is base year irrigation, iINPUT is an index scaling irg0 up and down
+* Irrigation needs - irg0 is base year irrigation, 
 IRGACT(b,j,y,m)$irg0(b,j,y,m)..
     IRG(b,j,y,m) =e= (LND(b,j,y)/lnd0(b,j))*irg0(b,j,y,m) * (1-iInv("improve"));
 
@@ -188,9 +188,8 @@ MININFLOWa(b,y,mA)$(minInFlow0(b,mA) + natExtra(b))..
 * Also correct for the fall in yield caused by the CET function.
 LEONTIEF(b,j,k,y)$iShare(b,k,j)..
     ( CRP(b,j,y) / crp0(b,j) ) =e= (LND(b,j,y)/lnd0(b,j)) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*( CRP(b,jj,y) / crp0(b,jj) ) )$jAF(j) ) ;
-*   iOUTPUT(b,j,y) =e= iINPUT(b,j,k,y) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*iOUTPUT(b,jj,y))$jAF(j) ) ;
+
 * Enforce decreasing returns to scale from deviating away from base year land use patterns
-* iINPUT(j,JA,"land",j) is effective land use, iLAND(b,j,y) is physical land use
 CETLAND(b,y)$SUM(j$jAF(j), qInputs(b,"land",j))..
     1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*( CRP(b,j,y) / crp0(b,j) )**rL )**(1/rL) ) ;
  
@@ -213,8 +212,8 @@ OBJ..   TWV =e=
 
 ;
 
-INDEXCALCULATOR(b,j,k,y)$lnd0(b,j)..
- iINPUT(b,j,k,y) =e= LND(b,j,y)/lnd0(b,j);
+*INDEXCALCULATOR(b,j,k,y)$lnd0(b,j)..
+* iINPUT(b,j,k,y) =e= LND(b,j,y)/lnd0(b,j);
 
 
 MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSE, GRNDWATER,
@@ -222,9 +221,9 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSE, GRNDWATER,
                 MINOUTFLOW, MININFLOW, MININFLOWa,
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT,
                 LEONTIEF, CETLAND, FIXEDLAND, IRGACT, 
-                OBJ,
+                OBJ
                 
-                INDEXCALCULATOR
+*               INDEXCALCULATOR
                 /;
 
 
@@ -267,7 +266,7 @@ CRP.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                     = 0;
 COSTS.fx(b,j,y)$(oCosts(b,j) eq 0)                          = 0;
 
 * Lower and upper bounds
-iINPUT.lo(b,j,k,y)                                          = 0.01$(iACosts(b,k,j) AND oCosts(b,j));
+*iINPUT.lo(b,j,k,y)                                          = 0.01$(iACosts(b,k,j) AND oCosts(b,j));
 iLAND.lo(b,j,y)$jAF(j)                                      = 0.01$lShare(b,j);
 CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) * crp0(b,j);
 
