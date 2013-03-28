@@ -234,3 +234,12 @@ LAK_AMU         .ZAR_TAD
 LAK_AMU         .UPA_AFG         
 /;
 
+PARAMETER jAF0(j) "Crops with sluggish land allocation" /
+cot                             1.000000E+00    
+wht             1.000000E+00    
+ric             1.000000E+00    
+alf             1.000000E+00    
+fal             0.000000E+00    
+
+/;
+

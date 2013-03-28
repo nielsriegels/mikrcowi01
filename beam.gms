@@ -47,9 +47,9 @@ $include "%path%10base.inc";
 * =============================================================================
 * Include data driven set definitions
 * =============================================================================
-*$offlisting
+$offlisting
 $include "%path%20sets.inc";
-*$onlisting
+$onlisting
 ALIAS(b,bb,bd,bo);
 ALIAS(j,jj);
 SET bResBuild(b)        / Res_NUR, Res_TOK /;
@@ -76,22 +76,19 @@ SETS
 * Include data tables on water flows, agriculture and economics
 * =============================================================================
 $offlisting
-$onlisting
 $include "%path%40data.inc";
+$onlisting
 
 * =============================================================================
 * Include defition of scenario
 * =============================================================================
-$include "%path%50scen.inc";
+$include "%path%50scenB.inc";
 
-PARAMETER scenario(*,*) "Scenario defintion parameter";
-scenario("RunOfRiver","ctrf") = 0;
-
-y(y0)$modelYear(y0)     = YES;
+*y(y0)$modelYear(y0)     = YES;
 bRiv(b)                 = YES$SUM(bd$intk(bd,b), 1);
 bRes(b)                 = YES$SUM(bd$resv(bd,b), 1);
 bPlz(b)                 = YES$SUM(j, qAWater(b,j));
-bSrc(b)                 = YES$SUM((s,m,y), sup0(s,b,y,m));
+bSrc(b)                 = YES$SUM((s,m,y0), sup0(s,b,y0,m));
 
 * Reservoirs not in operation
 * In baseline, all new reservoirs are not in operation
@@ -101,6 +98,7 @@ bResSto(b)$bResNOP(b)   = NO;
 bResEly(b)              = YES$(reservoirs(b,"Ely") > 0 AND not bResNOP(b));
 
 * Calculate CET coefficient
+SCALAR sT "Elasticity of transformation" / 0.5 /;
 rL = (sT+1)/sT;
 
 * =============================================================================
@@ -116,13 +114,16 @@ $include "%path%70eqtn.inc";
 * =============================================================================
 * Set levels to help solver process faster
 * =============================================================================
-$include "%path%80lvls.inc";
+*$include "%path%80lvls.inc";
 
 
 * =============================================================================
 * Define base scenario and solve
 * =============================================================================
+$include "%path%90loop.inc";
 
+
+$ontext
 * We make wheat the only sluggish crop in baseline, thus it will be fixed
 jAF(j)      = 0;
 jAF("wht")  = 1;
@@ -198,13 +199,12 @@ ctrfBuild = ctrfBuild0;
 beam.solprint = no;
 beam.limrow = 0;
 SOLVE beam MAXIMIZING twv USING NLP;
-
-*iOUTPUT(b,j,y)  =     ( CRP.l(b,j,y) / crp0(b,j) ) ;
+$offtext 
 
 * =============================================================================
 * Generate output parameter for action scenario
 * =============================================================================
-$include "%path%92out2.inc";
+*$include "%path%92out2.inc";
 
 *$ontext
 IF(beam.solvestat eq 1,
@@ -218,12 +218,14 @@ IF(beam.solvestat eq 1,
 * =============================================================================
 * Include loops for writing csv files to disk
 * =============================================================================
-$include "%path%93out3.inc";
+*$include "%path%93out3.inc";
 
 PUT step;
 PUT "4";
 PUTCLOSE;
 
 * Display check for result of output
-DISPLAY checkoutput;
-DISPLAY pCrop, cCrop;
+DISPLAY checkoutput, pCrop,cCrop,resDisFix,resVolFix;
+execute "pause";
+
+DISPLAY grwtrMax;

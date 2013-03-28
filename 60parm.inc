@@ -8,7 +8,7 @@ PARAMETERS
     qAWater(b,j)            "Base year water in agriculture (mm3/y)"
     qmWater(b,m)            "Base year water (mm3/month)"
     irg0(b,j,y0,m0)         "Base year water for irrigation (mm3/month)"
-    hhiUse0(sSec,b,m0)      "Base year water use for households and industries (mm3)"
+    hhiUse(sSec,b,m0)       "Base year water use for households and industries (mm3)"
     qInputs(b,k,j)          "Base year physical input use (unit/year)"
     oCosts(b,j)             "Base year production agri/industrt unit cost (usd/ton)"
     iShare(b,k,j)           "Base year share of input costs (pct of total cost)"
@@ -20,10 +20,9 @@ PARAMETERS
     loss(b,m)               "Water loss from river (mm3/month)"
     pEly(g,y0,m0)           "Electricity price (USD/MWh)"
     pCrop(j)                "Crop prices (USD/ton)"
-    natExtra(b)             "Extra nature demands (mm3/year)"
     pInput(k)               "Index for input prices"
-    rFixVol(b,m)            "Fixed volume for reservoirs (mm3)"
-    rFixDis(bd,bo,m)        "Fixed discharges for reservoirs (mm3/month)"
+    resVolFix(b,y0,m)       "Fixed volume for reservoirs (mm3)"
+    resDisFix(bd,bo,y0,m)   "Fixed discharges for reservoirs (mm3/month)"
     iInv(sInv)              "Irrigation investment data"
     minInflow0(b,m0)        "Minimum inflow for nature (mm3/month)"
     resDisMax0(b,m0)        "Maximum reservoir discharge (mm3/month)"
@@ -31,51 +30,48 @@ PARAMETERS
     lnd0(b,j)               "Land use in base year (ha)"
     cCrop(b,j)              "Crop costs by land use (USD/ha)"
     checkoutput(*,sSce)     "Check of output values for no-change control"
+    natExtra(b)             "Nature extra water (mm3/year)"
+    rFlow(b,e_resFlow,y0,m0) "Flow of water through bodies"
+    rAgri(b,e_resAgri,j,y0) "Agricultural results for bodies"
+    rEcon(b,e_resEcon,y0,m0) "Economical results for bodies"
 ;
-
-* Provide baseline for check against former model runs - UPDATE WHEN CHANGE IN totinc IS WARRANTED!
-checkoutput("totinc0","base")   = 9730178.43;
-checkoutput("totinc0","ctrf")   = 10002352.91;
-checkoutput("obj0","base")      = -20317.8216;
-checkoutput("obj0","ctrf")      = -20045.6471;
+OPTIONS rEcon:2:2:2;
+OPTIONS rFlow:2:2:2;
+OPTIONS rAgri:2:2:2;
 OPTIONS checkoutput:2:1:1;
 
-* TEMPORARY - replace Excel names to crp0, lnd0, irg0
+
+* Provide baseline for check against former model runs - UPDATE WHEN CHANGE IN totinc IS WARRANTED!
+checkoutput("totinc0","s01")   = 9730178.43;
+checkoutput("totinc0","s02")   = 10002352.91;
+checkoutput("obj0","s01")      = -20317.8216;
+checkoutput("obj0","s02")      = -20045.6471;
+
+* TEMPORARY - replace Excel names to crp0, lnd0, irg0, cCrop0 and pCrop0
+irg0(b,j,y0,m)                  = qAWater(b,j)*agriSeason(b,j,m);
 crp0(b,j)                       = qAquant(b,j);
 lnd0(b,j)                       = qAland(b,j);
 cCrop(b,j)$lnd0(b,j)            = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/lnd0(b,j);
-* Add fallow land area to area table
-jAF(j)                          = jAF0(j);
-lnd0(b,"fal")                   = fallowLand * SUM(j$jAF(j), lnd0(b,j));
-
 qValue(b,j)                     = SUM(k, iACosts(b,k,j));
-oCosts(b,j)$crp0(b,j)        = 1000000 * qValue(b,j) / crp0(b,j);
+oCosts(b,j)$crp0(b,j)           = 1000000 * qValue(b,j) / crp0(b,j);
 
 iShare(b,k,j)$qValue(b,j)       = iACosts(b,k,j) / qValue(b,j);
-lShare(b,j)$jAF(j)              = (qALand(b,j) / SUM(jj$jAF(jj), qALand(b,jj)))$SUM(jj$jAF(jj), qALand(b,jj));
 qInputs(b,"land",j)             = qALand(b,j);
 qInputs(b,"watr",j)             = qAWater(b,j);
-irg0(b,j,y,m)                   = qAWater(b,j)*agriSeason(b,j,m);
 * Set water supply to normal year (base year cannot be dry year, as base year agricultural water use is fixed at 2009 level)
-sup(s,b,m)                      = sup0(s,b,"2009",m);
-
-hhiUse0("HH",b,m)               = qHwater(b,m);
-hhiUse0("ind",b,m)              = qIwater(b,m);
-
-pCrop(j)                        = pCrop0(j,"base");
-natExtra(b)                     = 0;
-pInput(k)                       = 1;
-iInv(sInv)                      = 0;
-minInflow0(b,m0)                = minInflowN(b,m0)$baseyear("2009");
+*sup(s,b,m)                      = sup0(s,b,"2009",m);
+pEly("base",y0,m)               = pEly0(y0,m);
+pEly("peak",y0,m)               = pEly0(y0,m)*elyPeakFac;
 
 * Ground water correction: Data on groundwater leaves too much water in some planning zones in some months, below is corrected for that
-qmWater(b,m)$bPlz(b)            = SUM(j, qAWater(b,j)*agriSeason(b,j,m)) + qIwater(b,m) + qHwater(b,m) - sup("W",b,m);
-gwCorr(b,m)                     = min(0,qmWater(b,m));
+*qmWater(b,m)$bPlz(b)            = SUM(j, qAWater(b,j)*agriSeason(b,j,m)) + qIwater(b,m) + qHwater(b,m) - sup("W",b,m);
+*gwCorr(b,m)                     = min(0,qmWater(b,m));
 
 * Set maximum discharge capacity
 resDisMax0(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,
                               (reservoirs(b,"effect")*24*30/reservoirs(b,"ely"))$reservoirs(b,"ely")
                              )$bResEly(b) + INF$(not bResEly(b));
+* Enable spillways in reservoirs (any overflow is found in variable FLW)
 flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
 OPTION flow:0:0:2;
 

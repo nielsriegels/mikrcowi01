@@ -32,7 +32,7 @@ EQUATIONS
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
     LOSSES(s,b,l,y0,m0)         "Losses to seepage and evaporation"
     IRGACT(b,j,y0,m0)           "Actual irrigation need by zone"
-    HHIUSE(s,sSec,b,y0,m0)      "Water use by households and industries"
+    HHIUSES(s,sSec,b,y0,m0)     "Water use by households and industries"
     SEAVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOLMAX(b,y0,m0)          "Reservoir maximum level"
@@ -96,8 +96,8 @@ IRGACT(b,j,y,m)$irg0(b,j,y,m)..
     IRG(b,j,y,m) =e= (LND(b,j,y)/lnd0(b,j))*irg0(b,j,y,m) * (1-iInv("improve"));
 
 * Use of water by households and industries
-HHIUSE(s,sSec,b,y,m)$hhiUse0(sSec,b,m)..
-    HHI(s,sSec,b,y,m) =e= hhiUse0(sSec,b,m)*(1+demography(y,sSec));
+HHIUSES(s,sSec,b,y,m)$hhiUse(sSec,b,m)..
+    HHI(s,sSec,b,y,m) =e= hhiUse(sSec,b,m);
 
 * Sea volumes are not restricted to primo level =e= ultimo level
 SEAVOL(s,b,y,m)$sea(b)..
@@ -105,7 +105,7 @@ SEAVOL(s,b,y,m)$sea(b)..
 
 * Reservoir is calculated at end of body and end of season
 * In break month we introduce requirements for buildup or rundown of reservoir
-RESVOL(s,b,y,m)$(bRes(b) and (not resVolFix0(b,y,m))  )..
+RESVOL(s,b,y,m)$(bRes(b) and (not resVolFix(b,y,m))  )..
     ( VOL(s,b,y,m) - SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)) ) * scalem3$bResSto(b)
         =e=   (
                                            +STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
@@ -121,7 +121,7 @@ RESVOLMIN(b,y,m)$bRes(b)..
     SUM(s$sW(s), VOL(s,b,y,m)) * scalem3 =g= (reservoirs(b,"min") * scalem3)$bResSto(b);
 
 * Maximal water flow
-RESDISMAX(s,b,y,m)$(resDisMax0(b,m) gt 0 and not resVolFix0(b,y,m))..
+RESDISMAX(s,b,y,m)$(resDisMax0(b,m) gt 0 and not resVolFix(b,y,m))..
     SUM(bd$resv(bd,b), DIS(s,bd,b,y,m)) * scalem3 =l= scalem3 * resDisMax0(b,m);
 
 * Discharges must be higher than a given minimun level
@@ -129,13 +129,13 @@ RESDISMIN(b,y,m)$resDisMin0(b,m)..
     SUM(s$sW(s), SUM(bd, DIS(s,bd,b,y,m))) * scalem3 =g= resDisMin0(b,m) * scalem3;
 
 * Fix volumes in selected reservoirs in selected months (for baseline)
-RESFIXVOL(s,b,y,m)$resVolFix0(b,y,m)..
-    VOL(s,b,y,m) * scalem3 =e= resVolFix0(b,y,m) * scalem3;
+RESFIXVOL(s,b,y,m)$resVolFix(b,y,m)..
+    VOL(s,b,y,m) * scalem3 =e= resVolFix(b,y,m) * scalem3;
 
 * Fix discharges in selected reservoirs in selected months (for baseline)
 * ### NB: Need to take account for fixed zero discharges - revert to scenario parameter for deciding whether to fix or not
-RESFIXDIS(s,bd,bo,y,m)$resDisFix0(bd,bo,y,m)..
-    FLW(s,bd,bo,y,m) + DIS(s,bd,bo,y,m) * scalem3 =e= resDisFix0(bd,bo,y,m) * scalem3;
+RESFIXDIS(s,bd,bo,y,m)$resDisFix(bd,bo,y,m)..
+    FLW(s,bd,bo,y,m) + DIS(s,bd,bo,y,m) * scalem3 =e= resDisFix(bd,bo,y,m) * scalem3;
 
 * Reservoir unit electricity generation
 * Filled reservoirs produce more per m3 than half empty
@@ -207,7 +207,8 @@ OBJ..   TWV =e=
 
 ;
 
-MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSE, GRNDWATER,
+
+MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa,
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT,
@@ -219,22 +220,19 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSE, GRNDWATER,
 
 beam.optfile        = 1;
 *beam.holdfixed     = yes;
-*beam.solprint       = yes;
 beam.solprint       = no;
 beam.tolinfrep      = 0.001;
-beam.limrow         = 5000;
-beam.limcol         = 5000;
+beam.limrow         = 0;
+beam.limcol         = 0;
 beam.iterlim        = 50000;
 
-*beam.iterlim        = 0;
 IF(debugging,
-*    beam.iterlim        = 0;
     beam.limrow         = 5000;
     beam.limcol         = 0;
 )
 ;
-*beam.iterlim        = 5000;
 
+$ontext
 * =============================================================================
 * Fix unused variables and set levels
 * =============================================================================
@@ -258,3 +256,4 @@ CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) *
 
 
 TPP.up(u,g,y,m) = elyThermal("elyCap",u)*30*segmentHours(g);
+$offtext

@@ -44,7 +44,7 @@ SETS
     sSec                    "Non-agri sectors"      / HH, ind /
     sRtn                    "Return flow types"     / total, irrig, river, lakes/
     sEly                    "Elec. data types"      / elyCap, aCAPEX, aFOPEX, uVOPEX, uFUELEX /
-    sSce                    "Scenarios"             / base, ctrf /
+    sSce                    "Scenarios"             / s01*s50 /
     l                       "Loss types"            / seep, evap /
 ;
 
