@@ -108,10 +108,10 @@ IF(ord(sSce) eq 2,
     DIS.up(s,bd,bo,y,m)$resv(bd,bo)                             = 9999999;
     GRW.fx(b,y,m)$(SUM(ms$mSeason(m,ms), grwtrMax(b,ms)) eq 0)  = 0;
     HPP.fx(b,g,y,m)$(not bResEly(b))                            = 0;
-    CRP.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                    = 0;
+    CRP.fx(b,j,y)$(crp0(b,j) eq 0)                              = 0;
 
 * Lower and upper bounds
-    CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) * crp0(b,j);
+    CRP.lo(b,j,y)$jAF(j)                                        = 0.01$crp0(b,j);
     STO.up(s,b,y,m)$bRes(b)                                     = 99999;
     STO.up(s,b,y,m)$sea(b)                                      = INF;
     TPP.up(u,g,y,m)                                             = elyThermal("elyCap",u)*30*segmentHours(g);

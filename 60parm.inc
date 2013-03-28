@@ -52,12 +52,12 @@ irg0(b,j,y0,m)                  = qAWater(b,j)*agriSeason(b,j,m);
 crp0(b,j)                       = qAquant(b,j);
 lnd0(b,j)                       = qAland(b,j);
 cCrop(b,j)$lnd0(b,j)            = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/lnd0(b,j);
-qValue(b,j)                     = SUM(k, iACosts(b,k,j));
-oCosts(b,j)$crp0(b,j)           = 1000000 * qValue(b,j) / crp0(b,j);
+*qValue(b,j)                     = SUM(k, iACosts(b,k,j));
+*oCosts(b,j)$crp0(b,j)           = 1000000 * qValue(b,j) / crp0(b,j);
 
-iShare(b,k,j)$qValue(b,j)       = iACosts(b,k,j) / qValue(b,j);
-qInputs(b,"land",j)             = qALand(b,j);
-qInputs(b,"watr",j)             = qAWater(b,j);
+*iShare(b,k,j)$qValue(b,j)       = iACosts(b,k,j) / qValue(b,j);
+*qInputs(b,"land",j)             = qALand(b,j);
+*qInputs(b,"watr",j)             = qAWater(b,j);
 * Set water supply to normal year (base year cannot be dry year, as base year agricultural water use is fixed at 2009 level)
 *sup(s,b,m)                      = sup0(s,b,"2009",m);
 pEly("base",y0,m)               = pEly0(y0,m);

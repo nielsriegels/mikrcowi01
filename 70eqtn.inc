@@ -194,8 +194,8 @@ FIXEDLAND(b,j,y)$(lnd0(b,j) AND jAX(j))..
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
-                    SUM((b,j,y)$oCosts(b,j),                    CRP(b,j,y) * pCrop(j)                                       * objAGRweight(b)    ) / 1000000
-                   -SUM((b,j,y)$oCosts(b,j),                    LND(b,j,y) * cCrop(b,j)                                     * objAGRweight(b)    ) / 1000000
+                    SUM((b,j,y)$crp0(b,j),                      CRP(b,j,y) * pCrop(j)                                       * objAGRweight(b)    ) / 1000000
+                   -SUM((b,j,y)$lnd0(b,j),                      LND(b,j,y) * cCrop(b,j)                                     * objAGRweight(b)    ) / 1000000
 * CAUTION: The row below are operating costs depending on water use, e.g. power consumption - correct specification when receiving inv. data from Bekzhod
                    -SUM((b,j,y,m)$irg0(b,j,y,m),                IRG(b,j,y,m)*iInv("usdPerMM3")                              * objAGRweight(b)    ) / 1000000
 * CAUTION: The irrigation investments are probably misspecified: they depend on exogenous land use, not actual - check this!!!

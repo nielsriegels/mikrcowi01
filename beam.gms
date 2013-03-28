@@ -82,9 +82,9 @@ $onlisting
 * =============================================================================
 * Include defition of scenario
 * =============================================================================
-$include "%path%50scenB.inc";
+$include "%path%50scen.inc";
 
-*y(y0)$modelYear(y0)     = YES;
+* Assign additional sets for reservoirs based on data and maps
 bRiv(b)                 = YES$SUM(bd$intk(bd,b), 1);
 bRes(b)                 = YES$SUM(bd$resv(bd,b), 1);
 bPlz(b)                 = YES$SUM(j, qAWater(b,j));
@@ -116,116 +116,11 @@ $include "%path%70eqtn.inc";
 * =============================================================================
 *$include "%path%80lvls.inc";
 
-
 * =============================================================================
 * Define base scenario and solve
 * =============================================================================
 $include "%path%90loop.inc";
 
-
-$ontext
-* We make wheat the only sluggish crop in baseline, thus it will be fixed
-jAF(j)      = 0;
-jAF("wht")  = 1;
-jAX(j) = 1$(not jAF(j));
-IF(not basDisOpt,
-    rFixVol(b,m)                = SUM(y0$baseyear(y0), resVolFix0(b,y0,m));
-    rFixDis(bd,bo,m)            = SUM(y0$baseyear(y0), resDisFix0(bd,bo,y0,m));
-    sup("W","Src_ZAR","m06")    = sup("W","Src_ZAR","m06") + 2000*0;
-);
-
-PUT step;
-PUT "2";
-PUTCLOSE;
-
-*beam.solprint       = yes;
-beam.limrow         = 0;
-beam.limcol         = 0;
-*beam.iterlim        = 0;
-SOLVE beam MAXIMIZING twv USING NLP;
-*abort "Test baseline only";
-modlStatB = beam.modelstat;
-solvStatB = beam.solvestat;
-
-*Parameter iOUTPUT(b,j,y0)         "Index for production of industrial/agricultural goods (1=baseyear)"  ;
-
-*iOUTPUT(b,j,y)  =     ( CRP.l(b,j,y) / crp0(b,j) ) ;
-* =============================================================================
-* Generate output parameter for base scenario
-* =============================================================================
-$include "%path%91out1.inc";
-
-PUT step;
-PUT "3";
-PUTCLOSE;
-
-* =============================================================================
-* Define counterfactual scenario and solve
-* =============================================================================
-
-* Allow flexibility in land allocation
-jAF(j)                  = jAF0(j);
-jAF("fal")              = YES$fallowLand;
-jAF("fal")              = YES;
-jAX(j)                  = 1$(not jAF(j));
-* Set water supply (choose between dry and normal)
-sup(s,b,m)              = SUM(y0$baseyear(y0), sup0(s,b,y0,m));
-* Set minimum inflows according to baseyear
-minInflow0(b,m0)        = minInflowN(b,m0)$baseyear("2009") + minInflowD(b,m0)$baseyear("2001");
-* Set new reservoirs in operation active in counterfactual scenario
-bResNOP(b)              = YES$(resNew(b) AND not resNewOp(b));
-bResSto(b)              = YES$(reservoirs(b,"max") gt reservoirs(b,"min"));
-bResSto(b)$bResNOP(b)   = NO;
-bResEly(b)              = YES$(reservoirs(b,"Ely") > 0 AND not bResNOP(b));
-HPP.up(b,g,y,m)$bResEly(b) = INF;
-* Require extra nature needs for counterfactual
-natExtra(b)             = natExtra0(b);
-* Set counterfactual crop prices
-pCrop(j)                = pCrop0(j,"ctrf");
-* change input prices
-pInput(k)               = pInput0(k);
-* Reset fixed discharge patterns from baseline
-resVolFix0(b,y,m)       = 0;
-resDisFix0(bd,bo,y,m)   = 0;
-* Set irrigation investment costs
-iInv(sInv)              = iInv0(sInv);
-* Set reservoir buildup
-ctrfBuild = ctrfBuild0;
-* Force run-off river for all reservoirs
-*bResSto(b)$scenario("RunOfRiver","ctrf") = NO;
-*bResBuild(b)$scenario("RunOfRiver","ctrf") = NO;
-*irg0(b,"wht",y,m) = irg0(b,"wht",y,m)/20;
-*DISPLAY minInflow0, sup0, sup, baseyear;
-beam.solprint = no;
-beam.limrow = 0;
-SOLVE beam MAXIMIZING twv USING NLP;
-$offtext 
-
-* =============================================================================
-* Generate output parameter for action scenario
-* =============================================================================
-*$include "%path%92out2.inc";
-
-*$ontext
-IF(beam.solvestat eq 1,
-*    DISPLAY rAgriBase, rFlowBase, rEconBase, rAgriCtrf, rFlowCtrf, rEconCtrf;
-*    execute_unload "beamOutput.gdx" rAgriBase, rFlowBase, rEconBase, rAgriCtrf, rFlowCtrf, rEconCtrf;
-*    execute "gdxxrw.exe I=beamOutput.gdx O=beamOutput.xls index=index!d10";
-*    execute "pause";
-);
-*$offtexts
-
-* =============================================================================
-* Include loops for writing csv files to disk
-* =============================================================================
-*$include "%path%93out3.inc";
-
 PUT step;
 PUT "4";
 PUTCLOSE;
-
-* Display check for result of output
-DISPLAY checkoutput, pCrop,cCrop,resDisFix,resVolFix;
-execute "pause";
-
-DISPLAY grwtrMax;
