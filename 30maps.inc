@@ -135,7 +135,7 @@ SYRFER          .Res_FER
 FER_UZB         .Res_FER         
 FER_TAD         .Res_FER         
 CHI_UZB         .Res_AHA         
-CHI_UZB         .Res_CHA         
+Res_CHI         .Res_CHA         
 Res_FAR         .Res_KAR         
 SYRMID          .Res_FAR         
 SYRMID          .Res_AHA         
@@ -161,6 +161,7 @@ Res_TMP         .Res_TMR
 AMUDWN          .Res_TMP         
 KARFIR          .Res_KAF         
 Lak_AMU         .Res_ZAR         
+CHI_UZB         .Res_CHI         
 /;
 
 SET intk(bd,bo) "Intake arcs" / 

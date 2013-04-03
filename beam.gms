@@ -124,3 +124,5 @@ $include "%path%90loop.inc";
 PUT step;
 PUT "4";
 PUTCLOSE;
+
+DISPLAY checkoutput;
