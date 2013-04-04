@@ -1,6 +1,6 @@
 TABLE scenarios(*,sSce) "Scenario definition table"                                     
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
-run     1   0   0   0   0   0   0   0   0   0
+run     1   1   0   0   0   0   0   0   0   0
 iField  0   0   0   0   0   0   0   0   0   0
 iChnl   0   0   0   0   0   0   0   0   0   0
 iDrain  0   0   0   0   0   0   0   0   0   0

@@ -157,8 +157,8 @@ KAS_UZB         .Res_TAL
 ZAR_UZB         .Res_BUK         
 AMU_TUR         .Res_TUR         
 AMU_TUR         .Res_ZD          
-Res_TMP         .Res_TMR         
-AMUDWN          .Res_TMP         
+Res_TMR         .Res_TMP         
+AMUDWN          .Res_TMR         
 KARFIR          .Res_KAF         
 Lak_AMU         .Res_ZAR         
 CHI_UZB         .Res_CHI         
@@ -194,7 +194,7 @@ Res_ZD          .AMUMID
 Res_BUK         .AMUMID          
 Res_TAL         .AMUMID          
 Res_ARN         .SYRMID          
-Res_TMR         .AMUMID          
+Res_TMP         .AMUMID          
 /;
 
 SET  retf(bd,bo) "Return flow arcs" / 
