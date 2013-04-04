@@ -132,6 +132,8 @@ SETS
         InItk           "Water from intakes",
         InRtn           "Water from return flows",
         InTot           "Water from upstream rivers, reservoirs, returns and intakes",
+        OutHHI          "Water used for households and industries",
+        OutIrg          "Water used on field for irrigation",
         OutDem          "Water used for human purposes",
         OutDis          "Water discharged from node",
         OutFlw          "Water to downstream by river",

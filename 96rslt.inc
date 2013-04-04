@@ -15,7 +15,9 @@
     rFlow(sSce,b,"InTot",y,m)                        = rFlow(sSce,b,"InSrc",y,m) + rFlow(sSce,b,"InDis",y,m) + rFlow(sSce,b,"InFlw",y,m) 
                                                       +rFlow(sSce,b,"InItk",y,m) + rFlow(sSce,b,"InRtn",y,m) + rFlow(sSce,b,"InGrw",y,m);
 * Outflows
-    rFlow(sSce,b,"OutDem",y,m)                       = -SUM(j,               IRG.l(b,j,y,m) + SUM((s,sSec)$sW(s), HHI.l(s,sSec,b,y,m)));
+    rFlow(sSce,b,"OutHHI",y,m)                       = -SUM((s,sSec)$sW(s), HHI.l(s,sSec,b,y,m));
+    rFlow(sSce,b,"OutIrg",y,m)                       = -SUM(j,               IRG.l(b,j,y,m));
+    rFlow(sSce,b,"OutDem",y,m)                       = -SUM(j,               IRG.l(b,j,y,m)) - SUM((s,sSec)$sW(s), HHI.l(s,sSec,b,y,m));
     rFlow(sSce,b,"OutSto",y,m)                       = -SUM(s$sW(s),         STO.l(s,b,y,m));
     rFlow(sSce,b,"OutDis",y,m)                       = -SUM((s,bd)$sW(s),    DIS.l(s,bd,b,y,m)$(not sea(bd)) );
     rFlow(sSce,b,"OutFlw",y,m)                       = -SUM((s,bd)$sW(s),    FLW.l(s,bd,b,y,m)$(not sea(bd)) );
