@@ -1,5 +1,6 @@
 
 
+
 * Set model year (demography for demand growth etc)
     y(y0)                   = scenRainYear(sSce,y0);
 
@@ -32,6 +33,9 @@
     bResSto(b)$bResNOP(b)   = NO;
     bResEly(b)              = YES$(reservoirs(b,"Ely") > 0 AND not bResNOP(b));
     HPP.up(b,g,y,m)         = INF$bResEly(b);
+
+* Enable spillways via FLW in all reservoirs
+    flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
 
 * Fix discharge and volumen patterns for selected reservoirs 
     IF(scenarios("opRES",sSce) eq 0,

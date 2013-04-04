@@ -129,4 +129,18 @@ execute_unload "%path%output\BEAM-flows.gdx" rFlow, rsFlow;
 execute "gdxxrw.exe I=%path%output\BEAM-flows.gdx O=%path%output\BEAM-flows.xls par=rFlow rng=rFlow!B10 par=rsFlow rdim=4 rng=rsFlow!B10 rdim=4";
 execute "pause";
 
-DISPLAY IRG.l,HHIuse, checkoutput;
+DISPLAY resv, intk, flow, checkoutput;
+
+PARAMETER testTM(*,bd,bo,m);
+OPTION testTM:0:3:1;
+
+testTM("upDIS","Res_TMR","Res_TMP",m) = SUM((s,y), DIS.up(s,"Res_TMR","Res_TMP",y,m));
+testTM("lvDIS","Res_TMR","Res_TMP",m) = SUM((s,y), DIS.l(s,"Res_TMR","Res_TMP",y,m));
+testTM("upFLW","Res_TMR","Res_TMP",m) = SUM((s,y), FLW.up(s,"Res_TMR","Res_TMP",y,m));
+testTM("lvFLW","Res_TMR","Res_TMP",m) = SUM((s,y), FLW.l(s,"Res_TMR","Res_TMP",y,m));
+testTM("upITK","Res_TMP","AMUMID",m) = SUM((s,y), ITK.up(s,"Res_TMP","AMUMID",y,m));
+testTM("lvITK","Res_TMP","AMUMID",m) = SUM((s,y), ITK.l(s,"Res_TMP","AMUMID",y,m));
+testTM("upFLW","Res_TMP","AMUMID",m) = SUM((s,y), FLW.up(s,"Res_TMP","AMUMID",y,m));
+testTM("lvFLW","Res_TMP","AMUMID",m) = SUM((s,y), FLW.l(s,"Res_TMP","AMUMID",y,m));
+
+DISPLAY testTM, FLW.l, ITK.l, DIS.l;

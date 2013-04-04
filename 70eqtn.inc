@@ -172,7 +172,7 @@ MININFLOW(b,y,m)$minInFlow0(b,m)..
 
 * Monthly minimum outflow requirements (only river nodes)
 MINOUTFLOW(b,y,m)$(minInFlow0(b,m) AND bRiv(b))..
-    SUM((bd,s)$sW(s), FLW(s,bd,b,y,m)$flow(bd,b)) * scalem3 =g= minInFlow0(b,m) * scalem3;
+    SUM((bd,s)$sW(s), (ITK(s,bd,b,y,m)+FLW(s,bd,b,y,m))$flow(bd,b)) * scalem3 =g= minInFlow0(b,m) * scalem3;
 
 * Annual minimum flow requirements
 MININFLOWa(b,y,mA)$(minInFlow0(b,mA) + natExtra(b))..
@@ -204,6 +204,8 @@ OBJ..   TWV =e=
                    -SUM((b,y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       )
                    +SUM((b,g,y,m)$objHPPweight(b,m),            HPP(b,g,y,m)                                                * objHPPweight(b,m)  ) / 1000000
                    +SUM((s,bd,bo,j,y,m)$objDISweight(bo,m),     (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000
+* Subtract a tiny amount from spill flows in reservoirs, so that DIS is preferred above FLW 
+                   -SUM((s,bd,bo,y,m)$resv(bd,bo),              FLW(s,bd,bo,y,m) * 0.001                                                         ) / 1000000
 
 ;
 

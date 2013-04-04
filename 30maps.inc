@@ -120,7 +120,7 @@ AMUUPS          .PYANDJ
 AMUUPS          .KUNDUZ          
 AMUUPS          .KARFIR          
 AMUMID          .AMUUPS          
-Res_TMP         .AMUMID          
+Res_TMR         .AMUMID          
 Lak_ARS         .AMUDWN          
 Res_KOK         .SYRDW1          
 /;
@@ -240,7 +240,7 @@ SET bSec(b,bs) "Basin section-node map" /
 FER_UZB         .SYRUPS          
 SYR_UZB         .SYRMID          
 CHI_UZB         .SYRMID          
-SUR_UZB         .SYRMID          
+SUR_UZB         .AMUMID          
 KAS_UZB         .AMUMID          
 ZAR_UZB         .AMUMID          
 SOU_UZB         .AMUDWN          

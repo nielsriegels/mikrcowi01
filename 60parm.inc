@@ -50,10 +50,10 @@ OPTIONS checkoutput:2:1:1;
 
 
 * Provide baseline for check against former model runs - UPDATE WHEN CHANGE IN totinc IS WARRANTED!
-checkoutput("totinc0","s01")   = 9887382.63;
-checkoutput("totinc0","s02")   = 10160678.26;
-checkoutput("obj0","s01")      = -20160.62;
-checkoutput("obj0","s02")      = -19887.32;
+checkoutput("totinc0","s01")   = 9889769.60;
+checkoutput("totinc0","s02")   = 10163220.54;
+checkoutput("obj0","s01")      = -20158.23;
+checkoutput("obj0","s02")      = -19884.78;
 
 * TEMPORARY - replace Excel names to crp0, lnd0, irg0, cCrop0 and pCrop0
 irg0(b,j,y0,m)                  = qAWater(b,j)*agriSeason(b,j,m);
@@ -81,7 +81,7 @@ resDisMax0(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,
                              )$bResEly(b) + INF$(not bResEly(b));
 * Enable spillways in reservoirs (any overflow is found in variable FLW)
 flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
-OPTION flow:0:0:2;
+
 
 
 * Temporary data for hours in each electricity market segment
