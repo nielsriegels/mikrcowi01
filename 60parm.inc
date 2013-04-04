@@ -1,51 +1,59 @@
 
 PARAMETERS
-    sup(s,b,m)              "Base year supply of river water (mm3/month)"
-    crp0(b,j)            "Base year production agri/industrt quantities (ton/year)"
-    iACosts(b,k,j)          "Base year production agri/industrt input shares quantities (mn usd/year)"
-    qValue(b,j)             "Base year production agri/industrt prod. values (mn usd/year)"
-    qALand(b,j)             "Base year land use in agriculture (ha)"
-    qAWater(b,j)            "Base year water in agriculture (mm3/y)"
-    qmWater(b,m)            "Base year water (mm3/month)"
-    irg0(b,j,y0,m0)         "Base year water for irrigation (mm3/month)"
-    hhiUse(sSec,b,m0)       "Base year water use for households and industries (mm3)"
-    qInputs(b,k,j)          "Base year physical input use (unit/year)"
-    oCosts(b,j)             "Base year production agri/industrt unit cost (usd/ton)"
-    iShare(b,k,j)           "Base year share of input costs (pct of total cost)"
-    lShare(b,j)             "Share of land for free crops in zone (%)"
-    retShare0(bd,bo,*)      "Share of return water (%)"
-    jAF(j)                  "Crops with flexible land allocation 0/1"
-    jAX(j)                  "Crops with fixed land allocation 0/1"
-    gwCorr(b,m)             "Ground water correction (mm3/month)"
-    loss(b,m)               "Water loss from river (mm3/month)"
-    pEly(g,y0,m0)           "Electricity price (USD/MWh)"
-    pCrop(j)                "Crop prices (USD/ton)"
-    pInput(k)               "Index for input prices"
-    resVolFix(b,y0,m)       "Fixed volume for reservoirs (mm3)"
-    resDisFix(bd,bo,y0,m)   "Fixed discharges for reservoirs (mm3/month)"
-    iInv(sInv)              "Irrigation investment data"
-    minInflow0(b,m0)        "Minimum inflow for nature (mm3/month)"
-    resDisMax0(b,m0)        "Maximum reservoir discharge (mm3/month)"
-    crp0(b,j)               "Crop production base year (ton/year)"   
-    lnd0(b,j)               "Land use in base year (ha)"
-    cCrop(b,j)              "Crop costs by land use (USD/ha)"
-    checkoutput(*,sSce)     "Check of output values for no-change control"
-    natExtra(b)             "Nature extra water (mm3/year)"
-    rFlow(b,e_resFlow,y0,m0) "Flow of water through bodies"
-    rAgri(b,e_resAgri,j,y0) "Agricultural results for bodies"
-    rEcon(b,e_resEcon,y0,m0) "Economical results for bodies"
+    sup(s,b,m)                      "Base year supply of river water (mm3/month)"
+    crp0(b,j)                       "Base year production agri/industrt quantities (ton/year)"
+    iACosts(b,k,j)                  "Base year production agri/industrt input shares quantities (mn usd/year)"
+    qValue(b,j)                     "Base year production agri/industrt prod. values (mn usd/year)"
+    qALand(b,j)                     "Base year land use in agriculture (ha)"
+    qAWater(b,j)                    "Base year water in agriculture (mm3/y)"
+    qmWater(b,m)                    "Base year water (mm3/month)"
+    irg0(b,j,y0,m0)                 "Base year water for irrigation (mm3/month)"
+    hhiUse(sSec,b,m0)               "Base year water use for households and industries (mm3)"
+    qInputs(b,k,j)                  "Base year physical input use (unit/year)"
+    oCosts(b,j)                     "Base year production agri/industrt unit cost (usd/ton)"
+    iShare(b,k,j)                   "Base year share of input costs (pct of total cost)"
+    lShare(b,j)                     "Share of land for free crops in zone (%)"
+    retShare0(bd,bo,*)              "Share of return water (%)"
+    jAF(j)                          "Crops with flexible land allocation 0/1"
+    jAX(j)                          "Crops with fixed land allocation 0/1"
+    gwCorr(b,m)                     "Ground water correction (mm3/month)"
+    loss(b,m)                       "Water loss from river (mm3/month)"
+    pEly(g,y0,m0)                   "Electricity price (USD/MWh)"
+    pCrop(j)                        "Crop prices (USD/ton)"
+    pInput(k)                       "Index for input prices"
+    resVolFix(b,y0,m)               "Fixed volume for reservoirs (mm3)"
+    resDisFix(bd,bo,y0,m)           "Fixed discharges for reservoirs (mm3/month)"
+    iInv(sInv)                      "Irrigation investment data"
+    minInflow0(b,m0)                "Minimum inflow for nature (mm3/month)"
+    resDisMax0(b,m0)                "Maximum reservoir discharge (mm3/month)"
+    crp0(b,j)                       "Crop production base year (ton/year)"   
+    lnd0(b,j)                       "Land use in base year (ha)"
+    cCrop(b,j)                      "Crop costs by land use (USD/ha)"
+    checkoutput(*,sSce)             "Check of output values for no-change control"
+    natExtra(b)                     "Nature extra water (mm3/year)"
+    rFlow(sSce,b,e_resFlow,y0,m0)   "Flow of water through bodies"
+    rAgri(sSce,b,e_resAgri,j,y0)    "Agricultural results for bodies"
+    rEcon(sSce,b,e_resEcon,y0,m0)   "Economical results for bodies"
+    rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
+    rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"
+    rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
+    rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
 ;
 OPTIONS rEcon:2:2:2;
 OPTIONS rFlow:2:2:2;
 OPTIONS rAgri:2:2:2;
+OPTIONS rsFlow:2:4:1;
+OPTIONS rsAgri:2:4:1;
+OPTIONS rcAgri:2:4:1;
+OPTIONS rcEcon:2:3:1;
 OPTIONS checkoutput:2:1:1;
 
 
 * Provide baseline for check against former model runs - UPDATE WHEN CHANGE IN totinc IS WARRANTED!
-checkoutput("totinc0","s01")   = 9730178.43;
-checkoutput("totinc0","s02")   = 10002352.91;
-checkoutput("obj0","s01")      = -20317.8216;
-checkoutput("obj0","s02")      = -20045.6471;
+checkoutput("totinc0","s01")   = 9887382.63;
+checkoutput("totinc0","s02")   = 10160678.26;
+checkoutput("obj0","s01")      = -20160.62;
+checkoutput("obj0","s02")      = -19887.32;
 
 * TEMPORARY - replace Excel names to crp0, lnd0, irg0, cCrop0 and pCrop0
 irg0(b,j,y0,m)                  = qAWater(b,j)*agriSeason(b,j,m);

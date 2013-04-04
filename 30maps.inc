@@ -235,6 +235,115 @@ LAK_AMU         .ZAR_TAD
 LAK_AMU         .UPA_AFG         
 /;
 
+SET bSec(b,bs) "Basin section-node map" / 
+                                 
+FER_UZB         .SYRUPS          
+SYR_UZB         .SYRMID          
+CHI_UZB         .SYRMID          
+SUR_UZB         .SYRMID          
+KAS_UZB         .AMUMID          
+ZAR_UZB         .AMUMID          
+SOU_UZB         .AMUDWN          
+SYR_KAZ         .SYRMID          
+CHI_KAZ         .SYRMID          
+NOR_KAZ         .SYRDWN          
+AMU_TUR         .AMUMID          
+SOU_TUR         .AMUKAI          
+FER_KYR         .SYRUPS          
+FER_TAD         .SYRUPS          
+UPA_TAD         .AMUUPS          
+ZAR_TAD         .AMUMID          
+UPA_AFG         .AMUUPS          
+Res_KAM         .SYRUPS          
+Res_TOK         .SYRUPS          
+Res_AND         .SYRUPS          
+Res_KAR         .SYRUPS          
+Res_CHA         .SYRMID          
+Res_SHA         .SYRDWN          
+Res_ROG         .AMUUPS          
+Res_NUR         .AMUUPS          
+Res_TMP         .AMUMID          
+Res_DAS         .AMUUPS          
+Res_ZAR         .AMUMID          
+Res_FER         .SYRUPS          
+Res_TMR         .AMUMID          
+Res_AHA         .SYRMID          
+Res_ARN         .SYRMID          
+Res_KOK         .SYRDWN          
+Res_ARY         .SYRDWN          
+Res_KAF         .AMUUPS          
+Res_ZD          .AMUMID          
+Res_TUR         .AMUKAI          
+Res_SUR         .AMUMID          
+Res_KAS         .AMUMID          
+Res_TAL         .AMUMID          
+Res_BUK         .AMUMID          
+Res_NAR         .SYRUPS          
+Res_FAR         .SYRUPS          
+Res_VAH         .SYRUPS          
+Res_CHI         .SYRMID          
+Src_TOK         .SYRUPS          
+Src_NAR         .SYRUPS          
+Src_AND         .SYRUPS          
+Src_KAR         .SYRUPS          
+Src_FER         .SYRUPS          
+Src_SYR         .SYRMID          
+Src_AHA         .SYRMID          
+Src_CHI         .SYRMID          
+Src_KEL         .SYRMID          
+Src_ARY         .SYRDWN          
+Src_ROG         .AMUUPS          
+Src_VAH         .AMUUPS          
+Src_PYD         .AMUUPS          
+Src_KAF         .AMUUPS          
+Src_ZAR         .AMUUPS          
+Src_SUR         .AMUUPS          
+Src_KAS         .AMUUPS          
+Src_AFG         .AMUUPS          
+Src_TUR         .AMUKAI          
+NARYN           .SYRUPS          
+KRDRYA          .SYRUPS          
+SYRFER          .SYRUPS          
+SYRMID          .SYRMID          
+KELES           .SYRMID          
+SYRDW1          .SYRDWN          
+SYRDW2          .SYRDWN          
+VAKHSH          .AMUUPS          
+PYANDJ          .AMUUPS          
+KUNDUZ          .AMUUPS          
+KARFIR          .AMUUPS          
+AMUUPS          .AMUUPS          
+AMUMID          .AMUMID          
+AMUDWN          .AMUDWN          
+Lak_AYD         .SYRMID          
+Lak_SYR         .SYRDWN          
+Lak_GOL         .AMUKAI          
+Lak_AMU         .AMUMID          
+Lak_ARS         .ARALSO          
+Lak_ARN         .ARALNO          
+/;
+
+SET sXsecIn(bs,bd,bo) /  
+                                                  
+SYRMID          .SYRMID          .Res_FAR         
+SYRDWN          .SYRDW1          .RES_SHA         
+ARALNO          .Lak_ARN         .SYRDW2          
+AMUMID          .AMUMID          .AMUUPS          
+AMUDWN          .AMUDWN          .Res_TMR         
+AMUKAI          .AMU_TUR         .Res_ZD          
+ARALSO          .Lak_ARS         .AMUDWN          
+/;
+
+SET sXsecOut(bs,bd,bo) /  
+                                                  
+SYRUPS          .SYRMID          .Res_FAR         
+SYRMID          .SYRDW1          .Res_SHA         
+SYRDWN          .Lak_ARN         .SYRDW2          
+AMUUPS          .AMUMID          .AMUUPS          
+AMUMID          .AMUDWN          .Res_TMR         
+AMUDWN          .Lak_ARS         .AMUDWN          
+/;
+
 PARAMETER jAF0(j) "Crops with sluggish land allocation" /
 cot                             1.000000E+00    
 wht             1.000000E+00    

@@ -130,3 +130,16 @@ res_VAH
 
 /;
 
+SET bs "Basin sections" /
+                
+SYRUPS          
+SYRMID          
+SYRDWN          
+AMUUPS          
+AMUMID          
+AMUDWN          
+AMUKAI          
+ARALNO          
+ARALSO          
+/;
+
