@@ -37,7 +37,8 @@ PARAMETERS
     rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
     rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
-    rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
+    rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"	
+    iMinLnd(b,j)		     "Index for minimum land use requirements for crops in procent of base"
 ;
 OPTIONS rEcon:2:2:2;
 OPTIONS rFlow:2:2:2;

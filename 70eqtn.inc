@@ -48,7 +48,8 @@ EQUATIONS
     MININFLOW(b,y0,m0)          "Minimum inflow to body"
     MINOUTFLOW(b,y0,m0)         "Minimum outflow from body"
     MININFLOWa(b,y0,m0)         "Minimum inflow to body, annual"
-    INDEXCALCULATOR(b,j,k,y0)     "Index for the relation between new crop output and the old crop output"
+    MINLANDUSE(b,j,y0)          "Annual minimum land use requirements"
+    INDEXCALCULATOR(b,j,k,y0)   "Index for the relation between new crop output and the old crop output"
 * Economical constraints and identities
     LEONTIEF(b,j,y0)            "Ratio between outputs and inputs"
     CETLAND(b,y0)               "Index for physical amount of land"
@@ -91,7 +92,7 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m))..
                           SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) )
 ;
 
-* Irrigation needs - irg0 is base year irrigation, 
+* Irrigation needs - irg0 is base year irrigation,
 IRGACT(b,j,y,m)$irg0(b,j,y,m)..
     IRG(b,j,y,m) =e= (LND(b,j,y)/lnd0(b,j))*irg0(b,j,y,m) * (1-iInv("improve"));
 
@@ -179,6 +180,10 @@ MININFLOWa(b,y,mA)$(minInFlow0(b,mA) + natExtra(b))..
     (SUM((m,s)$sW(s), SUM(bo, DIS(s,b,bo,y,m)$resv(b,bo)+FLW(s,b,bo,y,m)$flow(b,bo)+ITK(s,b,bo,y,m)$intk(b,bo)) + sup(s,b,m))
    +SUM(m, rtn0(b,m))) * scalem3 =g= (minInFlow0(b,mA) + natExtra(b)) * scalem3;
 
+* Annual minimum land use requirements
+MINLANDUSE(b,j,y)..
+LND(b,j,y) =g= lnd0(b,j)* iMinLnd(b,j);
+
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
 LEONTIEF(b,j,y)$lnd0(b,j)..
@@ -187,7 +192,7 @@ LEONTIEF(b,j,y)$lnd0(b,j)..
 * Enforce decreasing returns to scale from deviating away from base year land use patterns
 CETLAND(b,y)$SUM(j$jAF(j), lnd0(b,j))..
     1 =e=  ( SUM(j$lShare(b,j), lShare(b,j)*( CRP(b,j,y) / crp0(b,j) )**rL )**(1/rL) ) ;
- 
+
 * Some crops have a fixed share of land
 FIXEDLAND(b,j,y)$(lnd0(b,j) AND jAX(j))..
     ( CRP(b,j,y) / crp0(b,j) )$jAX(j)   =e= 1;
@@ -204,7 +209,7 @@ OBJ..   TWV =e=
                    -SUM((b,y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       )
                    +SUM((b,g,y,m)$objHPPweight(b,m),            HPP(b,g,y,m)                                                * objHPPweight(b,m)  ) / 1000000
                    +SUM((s,bd,bo,j,y,m)$objDISweight(bo,m),     (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000
-* Subtract a tiny amount from spill flows in reservoirs, so that DIS is preferred above FLW 
+* Subtract a tiny amount from spill flows in reservoirs, so that DIS is preferred above FLW
                    -SUM((s,bd,bo,y,m)$resv(bd,bo),              FLW(s,bd,bo,y,m) * 0.001                                                         ) / 1000000
 
 ;
@@ -212,9 +217,9 @@ OBJ..   TWV =e=
 
 MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
-                MINOUTFLOW, MININFLOW, MININFLOWa,
+                MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT,
-                LEONTIEF, CETLAND, FIXEDLAND, IRGACT, 
+                LEONTIEF, CETLAND, FIXEDLAND, IRGACT,
                 OBJ
                 /;
 

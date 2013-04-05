@@ -58,6 +58,9 @@
     cCrop(b,j)$bPlz(b)      = SUM(k, cCrop0("noReform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) eq 0)
                             + SUM(k, cCrop0("reform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) ne 0);
 
+*  Index for minimum land use for crops in procent of base
+    iMinLnd(b,j)         = SUM(c$bCty(b,c), iMinLnd0(c,j,sSce));
+
 * Reset fixed discharge patterns from line
     resVolFix0(b,y,m)       = 0;
     resDisFix0(bd,bo,y,m)   = 0;
