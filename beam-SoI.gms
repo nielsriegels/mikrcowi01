@@ -1,4 +1,4 @@
-$SETGLOBAL path  "c:\mikr\beam\"
+$SETGLOBAL path  "c:\mikr\mikrcowi01\"
 *option nlp=IPOPT;
 *$SETGLOBAL path  ""
 * =============================================================================
@@ -154,8 +154,8 @@ solvStatB = beam.solvestat;
 
 DISPLAY "Base scenario", HPP.l;
 amuUpsFlow("base",m) = SUM(y, FLW.l("w","AMUMID","AMUUPS",y,m));
-agriVA("base",c) = SUM((b,y)$bCty(b,c), 
-   SUM(j$oCosts(b,j),     iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) )  / 1000000 
+agriVA("base",c) = SUM((b,y)$bCty(b,c),
+   SUM(j$oCosts(b,j),     iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) )  / 1000000
   -SUM((j,k)$oCosts(b,j), iINPUT.l(b,j,k,y)*pInput(k)*iACosts(b,k,j)$(not kLimit(k)) )  );
 cottonIRG("base",c) = SUM((b,y,m)$bCty(b,c), IRG.l(b,"cot",y,m));
 seaSto("base",m) = SUM(y, STO.l("w","Lak_ARN",y,m)*0+STO.l("w","Lak_ARS",y,m));
@@ -211,8 +211,8 @@ beam.limrow = 0;
 SOLVE beam MAXIMIZING twv USING NLP;
 DISPLAY bResEly;
 amuUpsFlow("OptWoRogun",m) = SUM(y, FLW.l("w","AMUMID","AMUUPS",y,m));
-agriVA("OptWoRogun",c) = SUM((b,y)$bCty(b,c), 
-   SUM(j$oCosts(b,j),     iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) )  / 1000000 
+agriVA("OptWoRogun",c) = SUM((b,y)$bCty(b,c),
+   SUM(j$oCosts(b,j),     iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) )  / 1000000
   -SUM((j,k)$oCosts(b,j), iINPUT.l(b,j,k,y)*pInput(k)*iACosts(b,k,j)$(not kLimit(k)) )  );
 cottonIRG("OptWoRogun",c) = SUM((b,y,m)$bCty(b,c), IRG.l(b,"cot",y,m));
 seaSto("OptWoRogun",m) = SUM(y, STO.l("w","Lak_ARN",y,m)*0+STO.l("w","Lak_ARS",y,m));
@@ -230,8 +230,8 @@ STO.up(s,b,y,m)$bRes(b)    = 99999;
 SOLVE beam MAXIMIZING twv USING NLP;
 DISPLAY bResEly;
 amuUpsFlow("OptWiRogun",m) = SUM(y, FLW.l("w","AMUMID","AMUUPS",y,m));
-agriVA("OptWiRogun",c) = SUM((b,y)$bCty(b,c), 
-   SUM(j$oCosts(b,j),     iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) )  / 1000000 
+agriVA("OptWiRogun",c) = SUM((b,y)$bCty(b,c),
+   SUM(j$oCosts(b,j),     iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) )  / 1000000
   -SUM((j,k)$oCosts(b,j), iINPUT.l(b,j,k,y)*pInput(k)*iACosts(b,k,j)$(not kLimit(k)) )  );
 cottonIRG("OptWiRogun",c) = SUM((b,y,m)$bCty(b,c), IRG.l(b,"cot",y,m));
 seaSto("OptWiRogun",m) = SUM(y, STO.l("w","Lak_ARN",y,m)*0+STO.l("w","Lak_ARS",y,m));
@@ -243,8 +243,8 @@ objDISweight("AMUUPS",m) = 0.001$mSum(m) + 1000$mWin(m);
 SOLVE beam MAXIMIZING twv USING NLP;
 DISPLAY bResEly;
 amuUpsFlow("wgtHarm",m) = SUM(y, FLW.l("w","AMUMID","AMUUPS",y,m));
-agriVA("wgtHarm",c) = SUM((b,y)$bCty(b,c), 
-   SUM(j$oCosts(b,j),     iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) )  / 1000000 
+agriVA("wgtHarm",c) = SUM((b,y)$bCty(b,c),
+   SUM(j$oCosts(b,j),     iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) )  / 1000000
   -SUM((j,k)$oCosts(b,j), iINPUT.l(b,j,k,y)*pInput(k)*iACosts(b,k,j)$(not kLimit(k)) )  );
 cottonIRG("wgtharm",c) = SUM((b,y,m)$bCty(b,c), IRG.l(b,"cot",y,m));
 seaSto("wgtharm",m) = SUM(y, STO.l("w","Lak_ARN",y,m)*0+STO.l("w","Lak_ARS",y,m));
@@ -257,8 +257,8 @@ objELYweight      = 1;
 objDISweight("AMUUPS",m) = 0;
 SOLVE beam MAXIMIZING twv USING NLP;
 amuUpsFlow("fixHarm",m) = SUM(y, FLW.l("w","AMUMID","AMUUPS",y,m));
-agriVA("fixHarm",c) = SUM((b,y)$bCty(b,c), 
-   SUM(j$oCosts(b,j),     iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) )  / 1000000 
+agriVA("fixHarm",c) = SUM((b,y)$bCty(b,c),
+   SUM(j$oCosts(b,j),     iOUTPUT.l(b,j,y)*qAQuant(b,j)*pCrop(j) )  / 1000000
   -SUM((j,k)$oCosts(b,j), iINPUT.l(b,j,k,y)*pInput(k)*iACosts(b,k,j)$(not kLimit(k)) )  );
 cottonIRG("fixharm",c) = SUM((b,y,m)$bCty(b,c), IRG.l(b,"cot",y,m));
 seaSto("fixharm",m) = SUM(y, STO.l("w","Lak_ARN",y,m)*0+STO.l("w","Lak_ARS",y,m));

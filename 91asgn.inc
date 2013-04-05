@@ -6,11 +6,11 @@
 
 * Allow flexibility in land allocation and account for any fallow land
 * unless scenario user chose fixed land allocation (opLND=0)
-    IF(scenarios("opLND",sSce) eq 0, 
+    IF(scenarios("opLND",sSce) eq 0,
         jAF(j)                  = NO;
         jAF("wht")              = NO;
     );
-    IF(scenarios("opLND",sSce) gt 0, 
+    IF(scenarios("opLND",sSce) gt 0,
         jAF(j)                  = jAF0(j);
     );
     jAF("fal")              = YES$scenarios("fallow",sSce);
@@ -37,7 +37,7 @@
 * Enable spillways via FLW in all reservoirs
     flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
 
-* Fix discharge and volumen patterns for selected reservoirs 
+* Fix discharge and volumen patterns for selected reservoirs
     IF(scenarios("opRES",sSce) eq 0,
         resVolFix(b,y,m)              = resVolFix0(b,y,m);
         resDisFix(bd,bo,y,m)          = resDisFix0(bd,bo,y,m);
@@ -51,10 +51,12 @@
     natExtra(b)             = natExtra0(b,sSce);
 
 * Set crop prices according to scenario indices for crop price
-    pCrop(j)                = pCrop0("baseprice",j)*ipCrop(j,sSce);
+    pCrop(j)                = pCrop0("economic","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) eq 0)
+                            + pCrop0("financial","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) ne 0);
 
 * Set crop costs according to scenario indices for crop costs
-    cCrop(b,j)$bPlz(b)      = SUM(k, cCrop0(k,j)*icCrop(k,sSce));
+    cCrop(b,j)$bPlz(b)      = SUM(k, cCrop0("noReform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) eq 0)
+                            + SUM(k, cCrop0("reform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) ne 0);
 
 * Reset fixed discharge patterns from line
     resVolFix0(b,y,m)       = 0;
@@ -93,4 +95,3 @@
 * Agricultural variable levels
     LND.l(b,j,y)                = lnd0(b,j);
     CRP.l(b,j,y)                = crp0(b,j);
-
