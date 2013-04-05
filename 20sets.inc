@@ -135,11 +135,11 @@ SET bs "Basin sections" /
 SYRUPS          
 SYRMID          
 SYRDWN          
+ARALNO          
 AMUUPS          
 AMUMID          
 AMUDWN          
 AMUKAI          
-ARALNO          
 ARALSO          
 /;
 

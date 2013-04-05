@@ -143,4 +143,4 @@ testTM("lvITK","Res_TMP","AMUMID",m) = SUM((s,y), ITK.l(s,"Res_TMP","AMUMID",y,m
 testTM("upFLW","Res_TMP","AMUMID",m) = SUM((s,y), FLW.up(s,"Res_TMP","AMUMID",y,m));
 testTM("lvFLW","Res_TMP","AMUMID",m) = SUM((s,y), FLW.l(s,"Res_TMP","AMUMID",y,m));
 
-DISPLAY testTM, FLW.l, ITK.l, DIS.l;
+DISPLAY testTM, FLW.l, ITK.l, DIS.l, STO.l, VOL.l;

@@ -50,10 +50,10 @@ OPTIONS checkoutput:2:1:1;
 
 
 * Provide baseline for check against former model runs - UPDATE WHEN CHANGE IN totinc IS WARRANTED!
-checkoutput("totinc0","s01")   = 9889769.60;
-checkoutput("totinc0","s02")   = 10163220.54;
-checkoutput("obj0","s01")      = -20158.23;
-checkoutput("obj0","s02")      = -19884.78;
+checkoutput("totinc0","s01")   = 9890671.66 ;
+checkoutput("totinc0","s02")   = 10164741.19;
+checkoutput("obj0","s01")      = -20157.33;
+checkoutput("obj0","s02")      = -19883.26;
 
 * TEMPORARY - replace Excel names to crp0, lnd0, irg0, cCrop0 and pCrop0
 irg0(b,j,y0,m)                  = qAWater(b,j)*agriSeason(b,j,m);

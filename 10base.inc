@@ -22,10 +22,10 @@ SETS
     kLimit(k)               "Fixed inputs"          / watr, land /
     kWater(k)               "Water input"           / watr /
     kLand(k)                "Land input"            / land /
-    m0                      "Season"                / m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11, m12, annual, veg, nvg /
+    m0                      "Season"                / m10, m11, m12, m01, m02, m03, m04, m05, m06, m07, m08, m09, annual, veg, nvg /
     m(m0)                   "Season"                / m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11, m12 /
-    mWin(m0)                "Winter months"         / m01, m02, m03,                               m10, m11, m12 /
-    mSum(m0)                "Summer months"         /                m04, m05, m06, m07, m08, m09                /
+    mWin(m0)                "Winter months"         / m10, m11, m12, m01, m02, m03 /
+    mSum(m0)                "Summer months"         / m04, m05, m06, m07, m08, m09 /
     mN                      "Month names"           / oct, nov, dec, jan, feb, mar, apr, may, jun, jul, aug, sep /
     mX(mN,m0)               "Months xref"           / oct.m10, nov.m11, dec.m12, jan.m01, feb.m02, mar.m03, apr.m04, may.m05, jun.m06, jul.m07, aug.m08, sep.m09 /
     mBgn(m0)                "First season month"    / m10 /

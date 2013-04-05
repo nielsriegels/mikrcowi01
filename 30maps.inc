@@ -247,8 +247,8 @@ SOU_UZB         .AMUDWN
 SYR_KAZ         .SYRMID          
 CHI_KAZ         .SYRMID          
 NOR_KAZ         .SYRDWN          
-AMU_TUR         .AMUMID          
-SOU_TUR         .AMUKAI          
+AMU_TUR         .AMUKAI          
+SOU_TUR         .AMUDWN          
 FER_KYR         .SYRUPS          
 FER_TAD         .SYRUPS          
 UPA_TAD         .AMUUPS          
@@ -259,7 +259,7 @@ Res_TOK         .SYRUPS
 Res_AND         .SYRUPS          
 Res_KAR         .SYRUPS          
 Res_CHA         .SYRMID          
-Res_SHA         .SYRDWN          
+Res_SHA         .SYRMID          
 Res_ROG         .AMUUPS          
 Res_NUR         .AMUUPS          
 Res_TMP         .AMUMID          
@@ -296,9 +296,9 @@ Src_ROG         .AMUUPS
 Src_VAH         .AMUUPS          
 Src_PYD         .AMUUPS          
 Src_KAF         .AMUUPS          
-Src_ZAR         .AMUUPS          
-Src_SUR         .AMUUPS          
-Src_KAS         .AMUUPS          
+Src_ZAR         .AMUMID          
+Src_SUR         .AMUMID          
+Src_KAS         .AMUMID          
 Src_AFG         .AMUUPS          
 Src_TUR         .AMUKAI          
 NARYN           .SYRUPS          

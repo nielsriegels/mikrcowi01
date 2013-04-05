@@ -72,7 +72,7 @@
     FLW.l(s,bd,bo,y,m)          = flw0(bd,bo)/12;
     DIS.l(s,bd,bo,y,m)          = dis0(bd,bo)/12;
     LOS.l(s,b,l,y,m)            = lossRivers(b,l,m)*(rtn0(b,m) + sup(s,b,m) + SUM(bo, FLW.l(s,b,bo,y,m)+DIS.l(s,b,bo,y,m)));
-    GRW.l(b,y,m)                = SUM(mS, grwtrMax(b,mS))$(ord(m) eq 1);
+    GRW.l(b,y,m)                = SUM(mS, grwtrMax(b,mS))$mBgn(m);
     HHI.l(s,sSec,b,y,m)         = HHIuse(sSec,b,m);
 
 * Reservoir variable levels
