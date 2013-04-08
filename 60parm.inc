@@ -26,7 +26,7 @@ PARAMETERS
     iInv(sInv)                      "Irrigation investment data"
     minInflow0(b,m0)                "Minimum inflow for nature (mm3/month)"
     resDisMax0(b,m0)                "Maximum reservoir discharge (mm3/month)"
-    crp0(b,j)                       "Crop production base year (ton/year)"   
+    crp0(b,j)                       "Crop production base year (ton/year)"
     lnd0(b,j)                       "Land use in base year (ha)"
     cCrop(b,j)                      "Crop costs by land use (USD/ha)"
     checkoutput(*,sSce)             "Check of output values for no-change control"
@@ -37,8 +37,9 @@ PARAMETERS
     rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
     rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
-    rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"	
-    iMinLnd(b,j)		     "Index for minimum land use requirements for crops in procent of base"
+    rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
+    iMinLnd(b,j)                    "Index for minimum land use requirements for crops in procent of base"
+    conveyanceCost(c)               "Cost of conveyance system"
 ;
 OPTIONS rEcon:2:2:2;
 OPTIONS rFlow:2:2:2;

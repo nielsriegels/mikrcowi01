@@ -82,7 +82,7 @@ WBALANCE(s,b,y,m)..
 ;
 
 * Account for losses to seepage and evaporation
-LOSSES(s,b,l,y,m)$(lossRivers(b,l,m))..
+LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
     LOS(s,b,l,y,m) =e= lossRivers(b,l,m) * (
                           SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
                         + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
@@ -213,7 +213,8 @@ OBJ..   TWV =e=
                    +SUM((s,bd,bo,j,y,m)$objDISweight(bo,m),     (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000
 * Subtract a tiny amount from spill flows in reservoirs, so that DIS is preferred above FLW
                    -SUM((s,bd,bo,y,m)$resv(bd,bo),              FLW(s,bd,bo,y,m) * 0.001                                                         ) / 1000000
-
+* CAPEX and OPEX expends due to conveyance system
+                   -SUM(c, conveyanceCost(c))
 ;
 
 

@@ -1,6 +1,3 @@
-
-
-
 * Set model year (demography for demand growth etc)
     y(y0)                   = scenRainYear(sSce,y0);
 
@@ -23,7 +20,6 @@
     hhiUse("HH",b,m)        = SUM(y0$scenModelYear(sSce,y0),    qHwater(b,m)*(1+demography(y0,"HH") ) );
     hhiUse("ind",b,m)       = SUM(y0$scenModelYear(sSce,y0),    qIwater(b,m)*(1+demography(y0,"ind")) );
 
-
 * Set minimum inflows according to year
     minInflow0(b,m0)        = minInflowN(b,m0)$scenRainYear(sSce,"2009") + minInflowD(b,m0)$scenRainYear(sSce,"2001");
 
@@ -36,6 +32,13 @@
 
 * Enable spillways via FLW in all reservoirs
     flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
+
+* Set Loss in Channels according to investment choices
+    lossChannels(b,l,m) = lossChannels0(b,l,m)$(scenarios("iChnl",sSce))* (1-scenarios("iChnl",sSce))
+                        + lossChannels1(b,l,m)$(scenarios("iChnl",sSce))* scenarios("iChnl",sSce);
+
+* Set conveyance cost according to investment choices
+    conveyanceCost(c) = conveyCost0(c)$(scenarios("iChnl",sSce)= 0) + conveyCost1(c)$scenarios("iChnl",sSce);
 
 * Fix discharge and volumen patterns for selected reservoirs
     IF(scenarios("opRES",sSce) eq 0,
