@@ -3,8 +3,8 @@ POSITIVE VARIABLES
     IRG(b,j,y0,m0)          "Actual irrigation (mm3)"
     HHI(s,sSec,b,y0,m0)     "Water use by households and industries (mm3)"
     LOS(s,b,l,y0,m0)        "Losses to seepage and evaporation (mm3)"
-    ITK(s,bo,bd,y0,m0)      "Water intakes from river nodes to zones (mm3)"
-    FLW(s,bo,bd,y0,m0)      "Flows between river nodes (mm3)"
+    ITK(s,bd,bo,y0,m0)      "Water intakes from river nodes to zones (mm3)"
+    FLW(s,bd,bo,y0,m0)      "Flows between river nodes (mm3)"
     VOL(s,b,y0,m0)          "Reservoir volume levels end of season (mm3)"
     DIS(s,bd,bo,y0,m0)      "Reservoir seasonal discharge (mm3)"
     STO(s,b,y0,m0)          "Reservoir seasonal storage buildup (mm3)"
@@ -88,7 +88,7 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m))..
                         + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
                         + sup(s,b,m)
                         + rtn0(b,m) )
-                      +lossChannels(b,l,m) * (
+                        + lossChannels(b,l,m)* (
                           SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) )
 ;
 
@@ -159,8 +159,10 @@ ELYTPP(u,g,y,m)$elyThermal("elyCap",u)..
 
 * Themal and hydro power production should cover the energy demand in every segment
 ELYMKT(g,y,m)..
-    0.001 * ( SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) + SUM(b$bResEly(b), HPP(b,g,y,m)) )
-    =e=    0.001 * 30 * segmentHours(g) * SUM(c, elyDemand0(c,g,m));
+           0.001 * ( SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) + SUM(b$bResEly(b), HPP(b,g,y,m)) )
+    =e=    0.001 * 30 * segmentHours(g) * SUM(c, elyDemand0(c,g,m))
+           + 0.001 * SUM((s,bd,bo), ITK(s,bd,bo,y,m)* elyPump0(bd,bo));
+
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..

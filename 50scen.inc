@@ -1,4 +1,4 @@
-TABLE scenarios(*,sSce) "Scenario definition table"                                     
+TABLE scenarios(*,sSce) "Scenario definition table"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
 run     1   1   0   0   0   0   0   0   0   0
 iField  0   0   0   0   0   0   0   0   0   0
@@ -15,7 +15,7 @@ fallow  0   0   0   0   0   0   0   0   0   0
 rBuild  0   0   0   0   0   0   0   0   0   0
 ;
 
-TABLE resNewOp(b,sSce) "New reservoir in operation"                                     
+TABLE resNewOp(b,sSce) "New reservoir in operation"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
 Res_DAS 0   0   0   0   0   0   0   0   0   0
 Res_ROG 0   0   0   0   0   0   0   0   0   0
@@ -25,14 +25,14 @@ Res_VAH 0   0   0   0   0   0   0   0   0   0
 Res_NAR 0   0   0   0   0   0   0   0   0   0
 ;
 
-TABLE icCrop(k,sSce) "Indices for crop costs"                                       
+TABLE icCrop(k,sSce) "Indices for crop costs"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
 labr    1   1   1   1   1   1   1   1   1   1
 inpt    1   1   1   1   1   1   1   1   1   1
 cptl    1   1   1   1   1   1   1   1   1   1
 ;
 
-TABLE ipCrop(j,sSce) "Indices for crop prices"                                      
+TABLE ipCrop(j,sSce) "Indices for crop prices"
     s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
 cot 1   1   1   1   1   1   1   1   1   1
 wht 1   1   1   1   1   1   1   1   1   1
@@ -43,7 +43,7 @@ fru 1   1   1   1   1   1   1   1   1   1
 oth 1   1   1   1   1   1   1   1   1   1
 ;
 
-TABLE natExtra0(b,sSce) "Extra nature needs (mm3/year)"                                      
+TABLE natExtra0(b,sSce) "Extra nature needs (mm3/year)"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
 Lak_ARN 0   0   0   0   0   0   0   0   0   0
 Lak_ARS 0   0   0   0   0   0   0   0   0   0
@@ -51,39 +51,72 @@ Lak_GOL 0   0   0   0   0   0   0   0   0   0
 ;
 
 SET scenModelYear(sSce,y0) "Model year for demography and depreciation" /
-s01.2009, s02.2009, s03.2009, s04.2009, s05.2009, s06.2009, s07.2009, s08.2009, s09.2009, s10.2009, 
-s11.2009, s12.2009, s13.2009, s14.2009, s15.2009, s16.2009, s17.2009, s18.2009, s19.2009, s20.2009, 
-s21.2009, s22.2009, s23.2009, s24.2009, s25.2009, s26.2009, s27.2009, s28.2009, s29.2009, s30.2009, 
-s31.2009, s32.2009, s33.2009, s34.2009, s35.2009, s36.2009, s37.2009, s38.2009, s39.2009, s40.2009, 
+s01.2009, s02.2009, s03.2009, s04.2009, s05.2009, s06.2009, s07.2009, s08.2009, s09.2009, s10.2009,
+s11.2009, s12.2009, s13.2009, s14.2009, s15.2009, s16.2009, s17.2009, s18.2009, s19.2009, s20.2009,
+s21.2009, s22.2009, s23.2009, s24.2009, s25.2009, s26.2009, s27.2009, s28.2009, s29.2009, s30.2009,
+s31.2009, s32.2009, s33.2009, s34.2009, s35.2009, s36.2009, s37.2009, s38.2009, s39.2009, s40.2009,
 s41.2009, s42.2009, s43.2009, s44.2009, s45.2009, s46.2009, s47.2009, s48.2009, s49.2009, s50.2009
 /;
 
 SET scenRainYear(sSce,y0) "Rainfall year" /
-s01.2009, s02.2009, s03.2009, s04.2009, s05.2009, s06.2009, s07.2009, s08.2009, s09.2009, s10.2009, 
-s11.2009, s12.2009, s13.2009, s14.2009, s15.2009, s16.2009, s17.2009, s18.2009, s19.2009, s20.2009, 
-s21.2009, s22.2009, s23.2009, s24.2009, s25.2009, s26.2009, s27.2009, s28.2009, s29.2009, s30.2009, 
-s31.2009, s32.2009, s33.2009, s34.2009, s35.2009, s36.2009, s37.2009, s38.2009, s39.2009, s40.2009, 
+s01.2009, s02.2009, s03.2009, s04.2009, s05.2009, s06.2009, s07.2009, s08.2009, s09.2009, s10.2009,
+s11.2009, s12.2009, s13.2009, s14.2009, s15.2009, s16.2009, s17.2009, s18.2009, s19.2009, s20.2009,
+s21.2009, s22.2009, s23.2009, s24.2009, s25.2009, s26.2009, s27.2009, s28.2009, s29.2009, s30.2009,
+s31.2009, s32.2009, s33.2009, s34.2009, s35.2009, s36.2009, s37.2009, s38.2009, s39.2009, s40.2009,
 s41.2009, s42.2009, s43.2009, s44.2009, s45.2009, s46.2009, s47.2009, s48.2009, s49.2009, s50.2009
 /;
 
 TABLE pEly0(y0,m) "Electricity prices USD/MWh"
-                m01             m02             m03             m04             m05             m06             m07             m08             m09             m10             m11             m12             
-2009            7.000000E+01    7.000000E+01    6.000000E+01    5.000000E+01    4.000000E+01    3.000000E+01    3.000000E+01    4.000000E+01    5.000000E+01    5.000000E+01    6.000000E+01    6.500000E+01    
-2020            7.000000E+01    7.000000E+01    6.000000E+01    5.000000E+01    4.000000E+01    3.000000E+01    3.000000E+01    4.000000E+01    5.000000E+01    5.000000E+01    6.000000E+01    6.500000E+01    
-2050            7.000000E+01    7.000000E+01    6.000000E+01    5.000000E+01    4.000000E+01    3.000000E+01    3.000000E+01    4.000000E+01    5.000000E+01    5.000000E+01    6.000000E+01    6.500000E+01    
+                m01             m02             m03             m04             m05             m06             m07             m08             m09             m10             m11             m12
+2009            7.000000E+01    7.000000E+01    6.000000E+01    5.000000E+01    4.000000E+01    3.000000E+01    3.000000E+01    4.000000E+01    5.000000E+01    5.000000E+01    6.000000E+01    6.500000E+01
+2020            7.000000E+01    7.000000E+01    6.000000E+01    5.000000E+01    4.000000E+01    3.000000E+01    3.000000E+01    4.000000E+01    5.000000E+01    5.000000E+01    6.000000E+01    6.500000E+01
+2050            7.000000E+01    7.000000E+01    6.000000E+01    5.000000E+01    4.000000E+01    3.000000E+01    3.000000E+01    4.000000E+01    5.000000E+01    5.000000E+01    6.000000E+01    6.500000E+01
 ;
 
 
 TABLE iMinLnd0(c,j,sSce) "Index for minimum land use for crops in procent of base"
-		s01	s02	s03	s04	s05	s06	s07	s08	s09	s10
-UZB	.cot	0 	0   	0   	0   	0   	0   	0   	0   	0   	0	
-KAZ	.cot	0 	0	0   	0   	0   	0	0   	0   	0   	0
-TUR	.cot	0	0	0	0	0	0	0	0	0	0
-TAD	.cot	0	0	0	0	0	0	0	0	0	0
-KYR	.cot	0	0	0	0	0	0	0	0	0	0
-AFG	.cot	0	0	0	0 	0	0	0	0	0	0
+                s01     s02     s03     s04     s05     s06     s07     s08     s09     s10
+UZB     .cot    0       0       0       0       0       0       0       0       0       0
+KAZ     .cot    0       0       0       0       0       0       0       0       0       0
+TUR     .cot    0       0       0       0       0       0       0       0       0       0
+TAD     .cot    0       0       0       0       0       0       0       0       0       0
+KYR     .cot    0       0       0       0       0       0       0       0       0       0
+AFG     .cot    0       0       0       0       0       0       0       0       0       0
 ;
-	
+
+
+PARAMETER  elyPump0(bd,bo)    "Electricy used to pump water through conveyance (kWh per m3)"    /
+
+FER_KYR        .NARYN            0.001
+FER_KYR        .KRDRYA           0.001
+FER_UZB        .NARYN            0.001
+FER_UZB        .KRDRYA           0.001
+FER_TAD        .SYRFER           0.001
+FER_UZB        .SYRFER           0.001
+FER_KYR        .SYRFER           0.001
+SYR_UZB        .SYRMID           0.001
+SYR_KAZ        .SYRMID           0.001
+CHI_KAZ        .KELES            0.001
+NOR_KAZ        .SYRDW1           0.001
+NOR_KAZ        .SYRDW2           0.001
+UPA_TAD        .VAKHSH           0.001
+UPA_TAD        .PYANDJ           0.001
+UPA_TAD        .KARFIR           0.001
+UPA_AFG        .KUNDUZ           0.001
+SOU_UZB        .AMUDWN           0.001
+SOU_TUR        .AMUDWN           0.001
+SUR_UZB        .AMUMID           0.001
+LAK_GOL        .AMUMID           0.001
+LAK_SYR        .SYRDW2           0.001
+LAK_AMU        .AMUMID           0.001
+LAK_ARN        .SYRDW2           0.001
+LAK_ARS        .AMUDWN           0.001
+Res_ZD         .AMUMID           0.001
+Res_BUK        .AMUMID           0.001
+Res_TAL        .AMUMID           0.001
+Res_ARN        .SYRMID           0.001
+Res_TMR        .AMUMID           0.001
+/;
 
 
 
