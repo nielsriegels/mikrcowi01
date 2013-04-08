@@ -40,6 +40,7 @@ PARAMETERS
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
     iMinLnd(b,j)                    "Index for minimum land use requirements for crops in procent of base"
     conveyanceCost(c)               "Cost of conveyance system"
+    elyPump(bd,bo)                  "Energy required for conveyance (KWh/m^3)"
 ;
 OPTIONS rEcon:2:2:2;
 OPTIONS rFlow:2:2:2;

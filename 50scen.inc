@@ -85,7 +85,40 @@ AFG     .cot    0       0       0       0       0       0       0       0       
 ;
 
 
-PARAMETER  elyPump0(bd,bo)    "Electricy used to pump water through conveyance (kWh per m3)"    /
+PARAMETER  elyPump0(bd,bo)    "Electricy required to pump water through conveyance (kWh per m3)"    /
+
+FER_KYR        .NARYN            0.000
+FER_KYR        .KRDRYA           0.000
+FER_UZB        .NARYN            0.000
+FER_UZB        .KRDRYA           0.000
+FER_TAD        .SYRFER           0.000
+FER_UZB        .SYRFER           0.000
+FER_KYR        .SYRFER           0.000
+SYR_UZB        .SYRMID           0.000
+SYR_KAZ        .SYRMID           0.000
+CHI_KAZ        .KELES            0.000
+NOR_KAZ        .SYRDW1           0.000
+NOR_KAZ        .SYRDW2           0.000
+UPA_TAD        .VAKHSH           0.000
+UPA_TAD        .PYANDJ           0.000
+UPA_TAD        .KARFIR           0.000
+UPA_AFG        .KUNDUZ           0.000
+SOU_UZB        .AMUDWN           0.000
+SOU_TUR        .AMUDWN           0.000
+SUR_UZB        .AMUMID           0.000
+LAK_GOL        .AMUMID           0.000
+LAK_SYR        .SYRDW2           0.000
+LAK_AMU        .AMUMID           0.000
+LAK_ARN        .SYRDW2           0.000
+LAK_ARS        .AMUDWN           0.000
+Res_ZD         .AMUMID           0.000
+Res_BUK        .AMUMID           0.000
+Res_TAL        .AMUMID           0.000
+Res_ARN        .SYRMID           0.000
+Res_TMR        .AMUMID           0.000
+/;
+
+PARAMETER  elyPump1(bd,bo)    "Electricy required to pump water through conveyance (kWh per m3)"    /
 
 FER_KYR        .NARYN            0.000
 FER_KYR        .KRDRYA           0.000

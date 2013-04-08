@@ -33,12 +33,16 @@
 * Enable spillways via FLW in all reservoirs
     flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
 
-* Set Loss in Channels according to investment choices
+* Set loss in channels according to investment choices
     lossChannels(b,l,m) = lossChannels0(b,l,m)$(scenarios("iChnl",sSce))* (1-scenarios("iChnl",sSce))
                         + lossChannels1(b,l,m)$(scenarios("iChnl",sSce))* scenarios("iChnl",sSce);
 
 * Set conveyance cost according to investment choices
     conveyanceCost(c) = conveyCost0(c)$(scenarios("iChnl",sSce)= 0) + conveyCost1(c)$scenarios("iChnl",sSce);
+
+* Change pumping requirements due to investment in chanellosses
+    elyPump(bd,bo) = elyPump0(bd,bo)$(scenarios("iChnl",sSce))* (1-scenarios("iChnl",sSce))
+                   + elyPump1(bd,bo)$(scenarios("iChnl",sSce))* scenarios("iChnl",sSce);
 
 * Fix discharge and volumen patterns for selected reservoirs
     IF(scenarios("opRES",sSce) eq 0,

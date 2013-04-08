@@ -161,7 +161,7 @@ ELYTPP(u,g,y,m)$elyThermal("elyCap",u)..
 ELYMKT(g,y,m)..
            0.001 * ( SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) + SUM(b$bResEly(b), HPP(b,g,y,m)) )
     =e=    0.001 * 30 * segmentHours(g) * SUM(c, elyDemand0(c,g,m))
-           + 0.001 * SUM((s,bd,bo), ITK(s,bd,bo,y,m)* elyPump0(bd,bo));
+           + 0.001 * SUM((s,bd,bo), ITK(s,bd,bo,y,m)* elyPump(bd,bo));
 
 
 * Maximum seasonal ground water extraction
@@ -213,7 +213,7 @@ OBJ..   TWV =e=
                    +SUM((s,bd,bo,j,y,m)$objDISweight(bo,m),     (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000
 * Subtract a tiny amount from spill flows in reservoirs, so that DIS is preferred above FLW
                    -SUM((s,bd,bo,y,m)$resv(bd,bo),              FLW(s,bd,bo,y,m) * 0.001                                                         ) / 1000000
-* CAPEX and OPEX expends due to conveyance system
+* CAPEX and OPEX expense due to conveyance system
                    -SUM(c, conveyanceCost(c))
 ;
 
