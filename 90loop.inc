@@ -27,22 +27,23 @@ IF(ord(sSce) eq 2,
     STO.up(s,b,y,m)                                             = INF$(bRes(b) or sea(b));
     HPP.up(b,g,y,m)                                             = INF$bResEly(b);
     TPP.up(u,g,y,m)                                             = INF$elyThermal("elyCap",u);
-    LOS.up(s,b,l,y0,m0)                                         = INF;
+    LOS.up(s,b,l,y0,m0)                                         = INF$(lossRivers(b,l,m0)+lossChannels(b,l,m0));
     CRP.lo(b,j,y)$jAF(j)                                        = 0.1*crp0(b,j);
     CRP.up(b,j,y)$jAF(j)                                        = 10*crp0(b,j);
 
+LOS.l(s,b,l,y0,m0)$sea(b)                                      = 0;
 
 * Solve model for the give scenario
-    beam.solprint = yes;
+*    beam.solprint = yes;
 *    beam.limrow = 50000;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
     SOLVE beam MAXIMIZING twv USING NLP;
 
-IF(ord(sSce) eq 1, 
+IF(ord(sSce) eq 1 AND beam.modelstat < 3, 
     execute_unload "%path%solutions\base.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, CRP, LND, TWV;
 );
-IF(ord(sSce) eq 2, 
+IF(ord(sSce) eq 2 AND beam.modelstat < 3, 
     execute_unload "%path%solutions\ctrf.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, CRP, LND, TWV;
 );
 

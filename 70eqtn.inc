@@ -62,13 +62,13 @@ EQUATIONS
 * - right hand side is supply
 WBALANCE(s,b,y,m)..
     scalem3 * (
-     SUM(bd$intk(bd,b), ITK(s,bd,b,y,m))
-   + SUM(bd$flow(bd,b), FLW(s,bd,b,y,m))
+     SUM(bd$intk(bd,b),             ITK(s,bd,b,y,m))
+   + SUM(bd$flow(bd,b),             FLW(s,bd,b,y,m))
    + STO(s,b,y,m)$sea(b)
    + STO(s,b,y,m)$bRes(b)
-   + SUM(j$irg0(b,j,y,m), IRG(b,j,y,m))
-   + SUM(sSec,            HHI(s,sSec,b,y,m))
-   + LOS(s,b,"seep",y,m)
+   + SUM(j$irg0(b,j,y,m),           IRG(b,j,y,m))
+   + SUM(sSec$hhiUse(sSec,b,m),     HHI(s,sSec,b,y,m))
+   + LOS(s,b,"seep",y,m)$(lossRivers(b,"seep",m)+lossChannels(b,"seep",m))
 
    ) =e= (
        SUM(bo$intk(b,bo), ITK(s,b,bo,y,m))
@@ -76,7 +76,7 @@ WBALANCE(s,b,y,m)..
       +SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
       +sup(s,b,m)
       +rtn0(b,m)
-      +GRW(b,y,m)
+      +GRW(b,y,m)$SUM(ms, grwtrMax(b,ms))
      ) * scalem3
 ;
 
@@ -101,7 +101,7 @@ HHIUSES(s,sSec,b,y,m)$hhiUse(sSec,b,m)..
 
 * Sea volumes are not restricted to primo level =e= ultimo level
 SEAVOL(s,b,y,m)$sea(b)..
-    VOL(s,b,y,m)  * scalem3 =e= (SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm))$(not mBgn(m)) + STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))) * scalem3;
+    VOL(s,b,y,m) * scalem3 =e= (SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm))$(not mBgn(m)) + STO(s,b,y,m)  ) * scalem3;
 
 * Reservoir is calculated at end of body and end of season
 * In break month we introduce requirements for buildup or rundown of reservoir

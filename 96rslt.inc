@@ -15,7 +15,7 @@
     rFlow(sSce,b,"InTot",y,m)                        = rFlow(sSce,b,"InSrc",y,m) + rFlow(sSce,b,"InDis",y,m) + rFlow(sSce,b,"InFlw",y,m) 
                                                       +rFlow(sSce,b,"InItk",y,m) + rFlow(sSce,b,"InRtn",y,m) + rFlow(sSce,b,"InGrw",y,m);
 * Outflows
-    rFlow(sSce,b,"OutHHI",y,m)                       = -SUM((s,sSec)$sW(s), HHI.l(s,sSec,b,y,m));
+    rFlow(sSce,b,"OutHHI",y,m)                       = -SUM((s,sSec)$sW(s),  HHI.l(s,sSec,b,y,m));
     rFlow(sSce,b,"OutIrg",y,m)                       = -SUM(j,               IRG.l(b,j,y,m));
     rFlow(sSce,b,"OutDem",y,m)                       = -SUM(j,               IRG.l(b,j,y,m)) - SUM((s,sSec)$sW(s), HHI.l(s,sSec,b,y,m));
     rFlow(sSce,b,"OutSto",y,m)                       = -SUM(s$sW(s),         STO.l(s,b,y,m));
@@ -37,18 +37,24 @@
 * - calculate cross basin section flows
 *rsFlow(sSce,bs,y0,e_resFlow,m0)
     rsFlow(sSce,bs,y,e_resFlow,m)                   = SUM(b$bSec(b,bs),     rFlow(sSce,b,e_resFlow,y,m));
+    rsFlow(sSce,bs,y,"ResChg",m)                    = SUM(b$bSec(b,bs),     rFlow(sSce,b,"ResChg",y,m)$(not sea(b)) );
     rsFlow(sSce,bs,y,"InDis",m)                     = SUM((s,bd,bo)$sW(s),  DIS.l(s,bd,bo,y,m)$sXsecIn(bs,bd,bo));
     rsFlow(sSce,bs,y,"InFlw",m)                     = SUM((s,bd,bo)$sW(s),  FLW.l(s,bd,bo,y,m)$sXsecIn(bs,bd,bo));
     rsFlow(sSce,bs,y,"InItk",m)                     = SUM((s,bd,bo)$sW(s),  ITK.l(s,bd,bo,y,m)$sXsecIn(bs,bd,bo));
     rsFlow(sSce,bs,y,"InTot",m)                     = rsFlow(sSce,bs,y,"InSrc",m) + rsFlow(sSce,bs,y,"InDis",m) + rsFlow(sSce,bs,y,"InFlw",m) 
                                                      +rsFlow(sSce,bs,y,"InItk",m) + rsFlow(sSce,bs,y,"InRtn",m) + rsFlow(sSce,bs,y,"InGrw",m);
 
+    rsFlow(sSce,bs,y,"OutSto",m)                    = -SUM((s,bo)$sW(s),     STO.l(s,bo,y,m)$SUM(bd, sXsecOut(bs,bd,bo)) );
     rsFlow(sSce,bs,y,"OutDis",m)                    = -SUM((s,bd,bo)$sW(s),  DIS.l(s,bd,bo,y,m)$sXsecOut(bs,bd,bo));
     rsFlow(sSce,bs,y,"OutFlw",m)                    = -SUM((s,bd,bo)$sW(s),  FLW.l(s,bd,bo,y,m)$sXsecOut(bs,bd,bo));
+    rsFlow(sSce,bs,y,"OutLak",m)                    = -SUM((s,bo)$sW(s),     STO.l(s,bo,y,m)$(bSec(bo,bs) AND sea(bo)) );
     rsFlow(sSce,bs,y,"OutInt",m)                    = -SUM((s,bd,bo)$sW(s),  ITK.l(s,bd,bo,y,m)$sXsecOut(bs,bd,bo));
     rsFlow(sSce,bs,y,"OutTot",m)                    =  rsFlow(sSce,bs,y,"OutDem",m) + rsFlow(sSce,bs,y,"OutDis",m) + rsFlow(sSce,bs,y,"OutFlw",m) 
-                                                      +rsFlow(sSce,bs,y,"OutInt",m) + rsFlow(sSce,bs,y,"OutLos",m) + rsFlow(sSce,bs,y,"OutLak",m)*0;
+                                                      +rsFlow(sSce,bs,y,"OutInt",m) + rsFlow(sSce,bs,y,"OutLos",m) + rsFlow(sSce,bs,y,"OutLak",m);
 
+    rsFlow(sSce,bs,y,"TotDis",m)                    = -SUM((s,bd,bo)$(sW(s) and bSec(bo,bs)),  DIS.l(s,bd,bo,y,m)$(not bResNOP(bo)));
+
+    
     rsFlow(sSce,bs,y,"Balance",m)                   =  round(rsFlow(sSce,bs,y,"InTot",m)+rsFlow(sSce,bs,y,"OutTot",m)-rsFlow(sSce,bs,y,"ResChg",m), 3) ;
     rsFlow(sSce,bs,y,e_resFlow,"annual")            =  SUM(m,            rsFlow(sSce,bs,y,e_resFlow,m));
     rsFlow(sSce,bs,y,"ResVol","annual")             =  rsFlow(sSce,bs,y,"ResVol","annual")  + 0.000001;
@@ -95,3 +101,4 @@
     rcEcon(sSce,y,"HydroGain",c)                 = 0;
     rcEcon(sSce,y,"DischVal",c)                  = 0;
  
+DISPLAY LOS.l;

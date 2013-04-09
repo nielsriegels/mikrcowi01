@@ -188,8 +188,6 @@ SUR_UZB         .AMUMID
 LAK_GOL         .AMUMID          
 LAK_SYR         .SYRDW2          
 LAK_AMU         .AMUMID          
-LAK_ARN         .SYRDW2          
-LAK_ARS         .AMUDWN          
 Res_ZD          .AMUMID          
 Res_BUK         .AMUMID          
 Res_TAL         .AMUMID          
@@ -341,6 +339,7 @@ SYRMID          .SYRDW1          .Res_SHA
 SYRDWN          .Lak_ARN         .SYRDW2          
 AMUUPS          .AMUMID          .AMUUPS          
 AMUMID          .AMUDWN          .Res_TMR         
+AMUMID          .AMU_TUR         .Res_ZD         
 AMUDWN          .Lak_ARS         .AMUDWN          
 /;
 
