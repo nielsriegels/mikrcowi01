@@ -35,8 +35,8 @@
 * Sum up for basin sections 
 * - zero out internal flows within the basin section, 
 * - calculate cross basin section flows
-*rsFlow(sSce,bs,y0,e_resFlow,m0)
     rsFlow(sSce,bs,y,e_resFlow,m)                   = SUM(b$bSec(b,bs),     rFlow(sSce,b,e_resFlow,y,m));
+    rsFlow(sSce,bs,y,"ResVol",m)                    = SUM((b,s)$sW(s),      VOL.l(s,b,y,m)$(bSec(b,bs) and not sea(b)) );
     rsFlow(sSce,bs,y,"ResChg",m)                    = SUM(b$bSec(b,bs),     rFlow(sSce,b,"ResChg",y,m)$(not sea(b)) );
     rsFlow(sSce,bs,y,"InDis",m)                     = SUM((s,bd,bo)$sW(s),  DIS.l(s,bd,bo,y,m)$sXsecIn(bs,bd,bo));
     rsFlow(sSce,bs,y,"InFlw",m)                     = SUM((s,bd,bo)$sW(s),  FLW.l(s,bd,bo,y,m)$sXsecIn(bs,bd,bo));
@@ -60,6 +60,17 @@
     rsFlow(sSce,bs,y,"ResVol","annual")             =  rsFlow(sSce,bs,y,"ResVol","annual")  + 0.000001;
     rsFlow(sSce,bs,y,"Balance","annual")            =  rsFlow(sSce,bs,y,"Balance","annual") + 0.000001;
     
+* Sum up for countries
+* - zero out internal flows within the basin section, 
+* - calculate cross basin section flows
+    rcFlow(sSce,c,y,e_resFlow,m)                    = SUM(b$bCty(b,c),     rFlow(sSce,b,e_resFlow,y,m));
+    rcFlow(sSce,c,y,"TotDis",m)                     = -SUM((s,bd,bo)$(sW(s) and bCty(bo,c)),  DIS.l(s,bd,bo,y,m)$(not bResNOP(bo)));
+    rcFlow(sSce,c,y,"Balance",m)                    =  round(rcFlow(sSce,c,y,"InTot",m)+rcFlow(sSce,c,y,"OutTot",m)-rcFlow(sSce,c,y,"ResChg",m), 3) ;
+    rcFlow(sSce,c,y,e_resFlow,"annual")             =  SUM(m,            rcFlow(sSce,c,y,e_resFlow,m));
+    rcFlow(sSce,c,y,"ResVol","annual")              =  rcFlow(sSce,c,y,"ResVol","annual")  + 0.000001;
+    rcFlow(sSce,c,y,"Balance","annual")             =  rcFlow(sSce,c,y,"Balance","annual") + 0.000001;
+    
+
 
 
 * Agricultural line results

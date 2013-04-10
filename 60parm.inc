@@ -35,6 +35,7 @@ PARAMETERS
     rAgri(sSce,b,e_resAgri,j,y0)    "Agricultural results for bodies"
     rEcon(sSce,b,e_resEcon,y0,m0)   "Economical results for bodies"
     rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
+    rcFlow(sSce,c,y0,e_resFlow,m0)  "Flow of water through basin countries"
     rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
