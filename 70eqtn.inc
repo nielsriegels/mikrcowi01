@@ -12,6 +12,7 @@ POSITIVE VARIABLES
     TPP(u,g0,y0,m0)         "Thermal power production (MWh)"
     CRP(b,j,y0)             "Crop production (ton/year)"
     LND(b,j,y0)             "Land use by crop (ha)"
+    RTN(s,bd,bo,y0,m0)      "Return of water from irrigating the fields (mm3)"
 VARIABLES
     TWV                     "Total water value (USD)"
 ;
@@ -50,6 +51,7 @@ EQUATIONS
     MININFLOWa(b,y0,m0)         "Minimum inflow to body, annual"
     MINLANDUSE(b,j,y0)          "Annual minimum land use requirements"
     INDEXCALCULATOR(b,j,k,y0)   "Index for the relation between new crop output and the old crop output"
+    RETURNWATER(s,b,y0,m0)       "Calculate the returnwater"
 * Economical constraints and identities
     LEONTIEF(b,j,y0)            "Ratio between outputs and inputs"
     CETLAND(b,y0)               "Index for physical amount of land"
@@ -91,6 +93,11 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
                         + lossChannels(b,l,m)* (
                           SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) )
 ;
+
+* Account for return of water due to drainage
+RETURNWATER(s,b,y,m)..
+         SUM(bo$(intk(b,bo)+resv(b,bo)+flow(b,bo)),RTN(s,bo,b,y,m))
+                 =e= 0.0*SUM(j,IRG(b,j,y,m));
 
 * Irrigation needs - irg0 is base year irrigation,
 IRGACT(b,j,y,m)$irg0(b,j,y,m)..
@@ -222,7 +229,7 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT,
-                LEONTIEF, CETLAND, FIXEDLAND, IRGACT,
+                LEONTIEF, CETLAND, FIXEDLAND, IRGACT, RETURNWATER,
                 OBJ
                 /;
 
