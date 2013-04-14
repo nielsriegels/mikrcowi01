@@ -1,6 +1,7 @@
 POSITIVE VARIABLES
     GRW(bd,y0,m0)           "Ground water extraction (mm3)"
     IRG(b,j,y0,m0)          "Actual irrigation (mm3)"
+    YWR(b,j,y0)             "Yield-water response function (index: 1=optimal)"
     HHI(s,sSec,b,y0,m0)     "Water use by households and industries (mm3)"
     LOS(s,b,l,y0,m0)        "Losses to seepage and evaporation (mm3)"
     ITK(s,bd,bo,y0,m0)      "Water intakes from river nodes to zones (mm3)"
@@ -25,7 +26,9 @@ OPTIONS LOS:0:4:1;
 OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
 OPTIONS TPP:0:3:1;
-
+OPTIONS LND:0:1:2;
+OPTIONS CRP:0:1:2;
+OPTIONS YWR:4:1:2;
 
 EQUATIONS
 * Hydrological constraints and identities
@@ -33,6 +36,8 @@ EQUATIONS
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
     LOSSES(s,b,l,y0,m0)         "Losses to seepage and evaporation"
     IRGACT(b,j,y0,m0)           "Actual irrigation need by zone"
+    YIELDWATER1(b,j,y0)         "Yield water response function"
+    YIELDWATER2(b,j,y0,m0)      "Yield water response function upper limit"
     HHIUSES(s,sSec,b,y0,m0)     "Water use by households and industries"
     SEAVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOL(s,b,y0,m0)           "Reservoir level end of season"
@@ -96,12 +101,23 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
 
 * Account for return of water due to drainage
 RETURNWATER(s,b,y,m)..
-         SUM(bo$(intk(b,bo)+resv(b,bo)+flow(b,bo)),RTN(s,bo,b,y,m))
+    SUM(bo$(intk(b,bo)+resv(b,bo)+flow(b,bo)),RTN(s,bo,b,y,m))
                  =e= 0.0*SUM(j,IRG(b,j,y,m));
 
 * Irrigation needs - irg0 is base year irrigation,
 IRGACT(b,j,y,m)$irg0(b,j,y,m)..
     IRG(b,j,y,m) =e= (LND(b,j,y)/lnd0(b,j))*irg0(b,j,y,m) * (1-iInv("improve"));
+
+* Yield water response function
+* Summed over growth phases with appropriate phase weights and phase specific crop yield 
+YIELDWATER1(b,j,y)$lnd0(b,j)..
+    YWR(b,j,y) =l= 1 - SUM(p$etcP(b,j,p),  ( 1 - SUM(m, etcM2P(b,j,p,m)*IRG(b,j,y,m)) / (etcP(b,j,p)*LND(b,j,y)) )
+                                                * wPhase(b,j,p) * kYield(p,j) 
+                                           );
+
+* Ensure that there is no excess watering (to not boost YWR above 1)
+YIELDWATER2(b,j,y,m)$lnd0(b,j)..
+    IRG(b,j,y,m) =l= etcM(b,j,m) * LND(b,j,y) ;
 
 * Use of water by households and industries
 HHIUSES(s,sSec,b,y,m)$hhiUse(sSec,b,m)..
@@ -196,7 +212,7 @@ LND(b,j,y) =g= lnd0(b,j)* iMinLnd(b,j);
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
 LEONTIEF(b,j,y)$lnd0(b,j)..
-    ( CRP(b,j,y) / crp0(b,j) ) =e= (LND(b,j,y)/lnd0(b,j)) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*( CRP(b,jj,y) / crp0(b,jj) ) )$jAF(j) ) ;
+    ( CRP(b,j,y) / crp0(b,j) ) =e= YWR(b,j,y) * (LND(b,j,y)/lnd0(b,j)) * (1$jAX(j) + SUM(jj$lShare(b,jj), lShare(b,jj)*( CRP(b,jj,y) / crp0(b,jj) ) )$jAF(j) ) ;
 
 * Enforce decreasing returns to scale from deviating away from base year land use patterns
 CETLAND(b,y)$SUM(j$jAF(j), lnd0(b,j))..
@@ -204,7 +220,7 @@ CETLAND(b,y)$SUM(j$jAF(j), lnd0(b,j))..
 
 * Some crops have a fixed share of land
 FIXEDLAND(b,j,y)$(lnd0(b,j) AND jAX(j))..
-    ( CRP(b,j,y) / crp0(b,j) )$jAX(j)   =e= 1;
+    ( LND(b,j,y) / lnd0(b,j) )$jAX(j)   =e= 1;
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
@@ -229,7 +245,7 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT,
-                LEONTIEF, CETLAND, FIXEDLAND, IRGACT, RETURNWATER,
+                LEONTIEF, CETLAND, FIXEDLAND, IRGACT, YIELDWATER1, YIELDWATER2, RETURNWATER
                 OBJ
                 /;
 

@@ -41,7 +41,12 @@ PARAMETERS
     iMinLnd(b,j)                    "Index for minimum land use requirements for crops in procent of base"
     conveyanceCost(c)               "Cost of conveyance system"
     elyPump(bd,bo)                  "Energy required for conveyance (KWh/m^3)"
+    wPhase(b,j,p0)                  "Weight for days in growth phase (% of growth days)"
+    etcM2P(b,j,p0,m)                "Map for water use in phases and months (% of monthly water use in phase)"
+    etcP(b,j,p0)                    "Optimal evapotranspiration by phase (mm3/ha)"
+    etcM(b,j,m0)                    "Optimal evapotranspiration by month (mm3/ha)"
 ;
+
 OPTIONS rEcon:2:2:2;
 OPTIONS rFlow:2:2:2;
 OPTIONS rAgri:2:2:2;
@@ -51,15 +56,29 @@ OPTIONS rcAgri:2:4:1;
 OPTIONS rcEcon:2:3:1;
 OPTIONS checkoutput:2:1:1;
 
-
 * Provide baseline for check against former model runs - UPDATE WHEN CHANGE IN totinc IS WARRANTED!
 checkoutput("totinc0","s01")   = 9890671.66 ;
 checkoutput("totinc0","s02")   = 10164741.19;
 checkoutput("obj0","s01")      = -20157.33;
 checkoutput("obj0","s02")      = -19883.26;
 
+* Yield response parameters (etc0 is in mm/day, so scale with x 10 / 1000000 to get to mm3/ha)
+wPhase(b,j,p)       = ( phaseDays(b,p,j) / SUM(pp, phaseDays(b,pp,j)) )$phaseDays(b,p,j); 
+etcP(b,j,p)         = 0.000001 * SUM(m, 10*etc0(b,p,m,j));
+etcM(b,j,m)         = 0.000001 * SUM(p, 10*etc0(b,p,m,j))/1000000;
+etcM2P(b,j,p,m)     = (etc0(b,p,m,j)/SUM(pp, etc0(b,pp,m,j)) )$SUM(pp, etc0(b,pp,m,j));
+
 * TEMPORARY - replace Excel names to crp0, lnd0, irg0, cCrop0 and pCrop0
 irg0(b,j,y0,m)                  = qAWater(b,j)*agriSeason(b,j,m);
+
+* Temporary replacement for etc0
+etcM(b,j,m)         = ( qAWater(b,j)*agriSeason(b,j,m) / qAland(b,j) )$qAland(b,j);
+etcP(b,j,p)         = SUM(m, etcM2P(b,j,p,m) * etcM(b,j,m));
+*etcM2P(b,j,p,m)     = ( etc0(b,p,m,j)/etcP(b,j,p) )$etcP(b,j,p);
+
+
+
+* TEMPOARAY - refine YRW weights - fetch from Excel
 crp0(b,j)                       = qAquant(b,j);
 lnd0(b,j)                       = qAland(b,j);
 cCrop(b,j)$lnd0(b,j)            = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/lnd0(b,j);

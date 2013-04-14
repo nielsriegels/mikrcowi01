@@ -125,22 +125,19 @@ PUT step;
 PUT "4";
 PUTCLOSE;
 
-execute_unload "%path%output\BEAM-flows.gdx" rFlow, rsFlow;
-execute "gdxxrw.exe I=%path%output\BEAM-flows.gdx O=%path%output\BEAM-flows.xls par=rFlow rng=rFlow!B10 par=rsFlow rdim=4 rng=rsFlow!B10 rdim=4";
-execute "pause";
+IF(beam.modelstat < 3,
+    execute_unload "%path%output\BEAM-flows.gdx" rFlow, rsFlow;
+    execute "gdxxrw.exe I=%path%output\BEAM-flows.gdx O=%path%output\BEAM-flows.xls par=rFlow rng=rFlow!B10 par=rsFlow rdim=4 rng=rsFlow!B10 rdim=4";
+    execute "pause";
+);
 
-DISPLAY resv, intk, flow, checkoutput;
+OPTIONS crp0:0:1:1;
+OPTIONS lnd0:0:1:1;
+OPTIONS etcM2P:2:3:1;
+OPTIONS etc0:2:3:1;
+DISPLAY lnd0, LND.l, crp0, CRP.l, YWR.l, etcP, etcM;
 
-PARAMETER testTM(*,bd,bo,m);
-OPTION testTM:0:3:1;
+DISPLAY checkoutput;
 
-testTM("upDIS","Res_TMR","Res_TMP",m) = SUM((s,y), DIS.up(s,"Res_TMR","Res_TMP",y,m));
-testTM("lvDIS","Res_TMR","Res_TMP",m) = SUM((s,y), DIS.l(s,"Res_TMR","Res_TMP",y,m));
-testTM("upFLW","Res_TMR","Res_TMP",m) = SUM((s,y), FLW.up(s,"Res_TMR","Res_TMP",y,m));
-testTM("lvFLW","Res_TMR","Res_TMP",m) = SUM((s,y), FLW.l(s,"Res_TMR","Res_TMP",y,m));
-testTM("upITK","Res_TMP","AMUMID",m) = SUM((s,y), ITK.up(s,"Res_TMP","AMUMID",y,m));
-testTM("lvITK","Res_TMP","AMUMID",m) = SUM((s,y), ITK.l(s,"Res_TMP","AMUMID",y,m));
-testTM("upFLW","Res_TMP","AMUMID",m) = SUM((s,y), FLW.up(s,"Res_TMP","AMUMID",y,m));
-testTM("lvFLW","Res_TMP","AMUMID",m) = SUM((s,y), FLW.l(s,"Res_TMP","AMUMID",y,m));
 
-DISPLAY testTM, FLW.l, ITK.l, DIS.l, STO.l, VOL.l, CRP.l, LOS.l, RTN.L;
+

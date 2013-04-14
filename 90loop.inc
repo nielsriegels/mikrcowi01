@@ -28,22 +28,26 @@ IF(ord(sSce) eq 2,
     HPP.up(b,g,y,m)                                             = INF$bResEly(b);
     TPP.up(u,g,y,m)                                             = INF$elyThermal("elyCap",u);
     LOS.up(s,b,l,y0,m0)                                         = INF;
-    CRP.lo(b,j,y)$jAF(j)                                        = 0.1*crp0(b,j);
-    CRP.up(b,j,y)$jAF(j)                                        = 10*crp0(b,j);
-
+    CRP.lo(b,j,y)$crp0(b,j)                                     = crp0(b,j) * 0.1;
+    CRP.up(b,j,y)$crp0(b,j)                                     = crp0(b,j) * 3 ;
+    LND.lo(b,j,y)$lnd0(b,j)                                     = lnd0(b,j) * 0.1;
+    LND.up(b,j,y)$lnd0(b,j)                                     = lnd0(b,j) * 3 ;
+    LND.l(b,j,y)                                                = lnd0(b,j);
 
 * Solve model for the give scenario
-    beam.solprint = yes;
-*    beam.limrow = 50000;
+*    beam.solprint = yes;
+    beam.limrow = 50000;
 *    beam.limcol = 50000;
-*    beam.iterlim = 0;
+    beam.iterlim = 0;
     SOLVE beam MAXIMIZING twv USING NLP;
 
-IF(ord(sSce) eq 1, 
-    execute_unload "%path%solutions\base.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, CRP, LND, TWV;
-);
-IF(ord(sSce) eq 2, 
-    execute_unload "%path%solutions\ctrf.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, CRP, LND, TWV;
+IF(beam.modelstat < 3,
+    IF(ord(sSce) eq 1, 
+        execute_unload "%path%solutions\base.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, CRP, LND, TWV;
+    );
+    IF(ord(sSce) eq 2, 
+        execute_unload "%path%solutions\ctrf.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, CRP, LND, TWV;
+    );
 );
 
 * Include assignment of scenario results to parameters to be output to Excel

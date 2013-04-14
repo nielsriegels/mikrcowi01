@@ -22,6 +22,9 @@ SETS
     kLimit(k)               "Fixed inputs"          / watr, land /
     kWater(k)               "Water input"           / watr /
     kLand(k)                "Land input"            / land /
+    p0                      "Growth stages"         / init, deve, midi, late, annl /
+    p(p0)                   "Growth stages used"    / init, deve, midi, late  /
+    lc                      "Land suit. class"      / 1vs, 2su, 3ms /
     m0                      "Season"                / m10, m11, m12, m01, m02, m03, m04, m05, m06, m07, m08, m09, annual, veg, nvg /
     m(m0)                   "Season"                / m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11, m12 /
     mWin(m0)                "Winter months"         / m10, m11, m12, m01, m02, m03 /
@@ -54,6 +57,7 @@ ALIAS(m,mm);
 ALIAS(y0,yy0);
 ALIAS(y,yy);
 ALIAS(s,ss);
+ALIAS(p,pp);
 
 * Link between season and months
 SET mSeason(m,mS) / m01.nvg, m02.nvg, m03.nvg, m04.veg, m05.veg, m06.veg, m07.veg, m08.veg, m09.veg, m10.nvg, m11.nvg, m12.nvg /;

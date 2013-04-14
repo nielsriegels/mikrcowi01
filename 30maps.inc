@@ -120,7 +120,7 @@ AMUUPS          .PYANDJ
 AMUUPS          .KUNDUZ          
 AMUUPS          .KARFIR          
 AMUMID          .AMUUPS          
-Res_TMP         .AMUMID          
+Res_TMR         .AMUMID          
 Lak_ARS         .AMUDWN          
 Res_KOK         .SYRDW1          
 /;
@@ -194,7 +194,7 @@ Res_ZD          .AMUMID
 Res_BUK         .AMUMID          
 Res_TAL         .AMUMID          
 Res_ARN         .SYRMID          
-Res_TMR         .AMUMID          
+Res_TMP         .AMUMID          
 /;
 
 SET  retf(bd,bo) "Return flow arcs" / 
@@ -341,6 +341,7 @@ SYRMID          .SYRDW1          .Res_SHA
 SYRDWN          .Lak_ARN         .SYRDW2          
 AMUUPS          .AMUMID          .AMUUPS          
 AMUMID          .AMUDWN          .Res_TMR         
+AMUMID          .AMU_TUR         .Res_ZD          
 AMUDWN          .Lak_ARS         .AMUDWN          
 /;
 

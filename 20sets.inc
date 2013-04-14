@@ -107,7 +107,7 @@ KYR
 AFG             
 /;
 
-SET j "Economic sectors" /
+SET j "Crops" /
                 
 cot             
 wht             
