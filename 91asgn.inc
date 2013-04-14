@@ -81,30 +81,33 @@
 * Set reservoir buildup
     ctrfBuild               = scenarios("rBuild",sSce);
 
+* Set levels if first run
+IF(ord(sSce) eq 1,
 * Flow variable levels
-    IRG.l(b,j,y,m)              = irg0(b,j,y,m);
-    ITK.l(s,bd,bo,y,m)          = itk0(bd,bo)/12;
-    FLW.l(s,bd,bo,y,m)          = flw0(bd,bo)/12;
-    DIS.l(s,bd,bo,y,m)          = dis0(bd,bo)/12;
-    LOS.l(s,b,l,y,m)            = lossRivers(b,l,m)*(rtn0(b,m) + sup(s,b,m) + SUM(bo, FLW.l(s,b,bo,y,m)+DIS.l(s,b,bo,y,m)));
-    GRW.l(b,y,m)                = SUM(mS, grwtrMax(b,mS))$mBgn(m);
-    HHI.l(s,sSec,b,y,m)         = HHIuse(sSec,b,m);
+        IRG.l(b,j,y,m)              = irg0(b,j,y,m);
+        ITK.l(s,bd,bo,y,m)          = itk0(bd,bo)/12;
+        FLW.l(s,bd,bo,y,m)          = flw0(bd,bo)/12;
+        DIS.l(s,bd,bo,y,m)          = dis0(bd,bo)/12;
+        LOS.l(s,b,l,y,m)            = lossRivers(b,l,m)*(rtn0(b,m) + sup(s,b,m) + SUM(bo, FLW.l(s,b,bo,y,m)+DIS.l(s,b,bo,y,m)));
+        GRW.l(b,y,m)                = SUM(mS, grwtrMax(b,mS))$mBgn(m);
+        HHI.l(s,sSec,b,y,m)         = HHIuse(sSec,b,m);
 
 * Reservoir variable levels
-    STO.l(s,b,y,m)$(not sea(b)) = SUM(bd, DIS.l(s,bd,b,y,m));
-    STO.l(s,b,y,m)$sea(b)       = SUM(bo, DIS.l(s,b,bo,y,m)+ITK.l(s,b,bo,y,m)+FLW.l(s,b,bo,y,m)) + rtn0(b,m);
-    VOL.l(s,b,y,m)              = ((reservoirs(b,"max") - reservoirs(b,"min"))/ 2 + reservoirs(b,"min") )$bResSto(b);
-    LOOP(m,
-        VOL.l(s,b,y,m)          = SUM((yy,mm)$mLast(y,m,yy,mm), VOL.l(s,b,yy,mm)) + STO.l(s,b,y,m) - SUM(bd$resv(bd,b), DIS.l(s,bd,b,y,m));
-    );
-    VOL.l(s,b,y,m)$(not bResSto(b)) = 0;
+        STO.l(s,b,y,m)$(not sea(b)) = SUM(bd, DIS.l(s,bd,b,y,m));
+        STO.l(s,b,y,m)$sea(b)       = SUM(bo, DIS.l(s,b,bo,y,m)+ITK.l(s,b,bo,y,m)+FLW.l(s,b,bo,y,m)) + rtn0(b,m);
+        VOL.l(s,b,y,m)              = ((reservoirs(b,"max") - reservoirs(b,"min"))/ 2 + reservoirs(b,"min") )$bResSto(b);
+        LOOP(m,
+            VOL.l(s,b,y,m)          = SUM((yy,mm)$mLast(y,m,yy,mm), VOL.l(s,b,yy,mm)) + STO.l(s,b,y,m) - SUM(bd$resv(bd,b), DIS.l(s,bd,b,y,m));
+        );
+        VOL.l(s,b,y,m)$(not bResSto(b)) = 0;
 
 
 * ELectricity variable levels
-    TPP.l(u,g,y,m)              = elyThermal("elyCap",u) / 2;
-    HPP.l(b,g,y,m)$bResEly(b)   = 0.5*SUM((s,bd)$(resv(bd,b) AND sW(s)),  gravity * reservoirs(b,"coef_eta") * DIS.l(s,bd,b,y,m)
-                                      * ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*VOL.l(s,b,y,m) + reservoirs(b,"coef_c")*POWER(VOL.l(s,b,y,m),2))
-                                  ) / 3600;
+        TPP.l(u,g,y,m)              = elyThermal("elyCap",u) / 2;
+        HPP.l(b,g,y,m)$bResEly(b)   = 0.5*SUM((s,bd)$(resv(bd,b) AND sW(s)),  gravity * reservoirs(b,"coef_eta") * DIS.l(s,bd,b,y,m)
+                                          * ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*VOL.l(s,b,y,m) + reservoirs(b,"coef_c")*POWER(VOL.l(s,b,y,m),2))
+                                      ) / 3600;
 * Agricultural variable levels
-    LND.l(b,j,y)                = lnd0(b,j);
-    CRP.l(b,j,y)                = crp0(b,j);
+        LND.l(b,j,y)                = lnd0(b,j);
+        CRP.l(b,j,y)                = crp0(b,j);
+    );    

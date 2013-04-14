@@ -9,6 +9,9 @@ $SETGLOBAL path  "c:\mikr\mikrcowi01\"
 *
 * =============================================================================
 
+* Set file for renaming solution.gdx
+file sRename /%path%solutions\renameS.cmd/;
+
 * Status text file for web server interaction
 file step /%path%output\step.txt/;
 PUT step;
@@ -137,7 +140,17 @@ OPTIONS etcM2P:2:3:1;
 OPTIONS etc0:2:3:1;
 
 
+* Display checks that results have not changed
+file objvalues /%path%output\objvalues.txt/;
+PUT objvalues;
+PUT "Sc.        TotInc         Obj  Model Status"; PUT /;
+PUT "-------------------------------------------"; PUT /;
+LOOP(sSce$scenarios("run",sSce), 
+    PUT sSce.tl:<5;
+    PUT round(checkOutput("TotInc" ,sSce),2):12:2; 
+    PUT round(checkOutput("Obj"    ,sSce),2):12:2;
+    PUT round(checkOutput("mstat"  ,sSce),0):14:0;
+    PUT /;
+);
+PUTCLOSE;
 DISPLAY checkoutput;
-
-
-

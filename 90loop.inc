@@ -6,14 +6,12 @@ LOOP(sSce$scenarios("run",sSce),
 * Include assigning values to scenario specific parameters
 $include "%path%91asgn.inc";
 
+* Load solution from previous run by copying it into solution.gdx 
+* from the scenario specific name solution-sXX.gdx
+putclose sRename 'copy /Y %path%solutions\solution-' sSce.tl:0 '.gdx %path%solutions\solution.gdx';
+execute '%path%solutions\renameS.cmd';
 
-* Load previous solution to increase computational speed
-IF(ord(sSce) eq 1, 
-    execute_load "%path%solutions\base.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, CRP, LND, TWV;
-);
-IF(ord(sSce) eq 2, 
-    execute_load "%path%solutions\ctrf.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, CRP, LND, TWV;
-);
+execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, YWR, CRP, LND, TWV;
 
 * Fix hydrological variables that can never be non-zero
     FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);
@@ -32,7 +30,6 @@ IF(ord(sSce) eq 2,
     CRP.up(b,j,y)$crp0(b,j)                                     = crp0(b,j) * 3 ;
     LND.lo(b,j,y)$lnd0(b,j)                                     = lnd0(b,j) * 0.1;
     LND.up(b,j,y)$lnd0(b,j)                                     = lnd0(b,j) * 3 ;
-    LND.l(b,j,y)                                                = lnd0(b,j);
 
 * Solve model for the give scenario
 *    beam.solprint = yes;
@@ -41,14 +38,14 @@ IF(ord(sSce) eq 2,
 *    beam.iterlim = 0;
     SOLVE beam MAXIMIZING twv USING NLP;
 
-IF(beam.modelstat < 3,
-    IF(ord(sSce) eq 1, 
-        execute_unload "%path%solutions\base.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, CRP, LND, TWV;
-    );
-    IF(ord(sSce) eq 2, 
-        execute_unload "%path%solutions\ctrf.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, CRP, LND, TWV;
-    );
-);
+
+* Save solution to re-use later
+IF(beam.modelstat le 2, 
+    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, YWR, CRP, LND, TWV;
+    putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
+    execute '%path%solutions\renameS.cmd';
+); 
+
 
 * Include assignment of scenario results to parameters to be output to Excel
 $include "%path%96rslt.inc";
@@ -56,5 +53,6 @@ $include "%path%96rslt.inc";
 * Save total income for check print
     checkoutput("totinc",sSce)                  = SUM((b,y,m), rEcon(sSce,b,"TotInc",y,m));
     checkoutput("obj",sSce)                     = TWV.l;
+    checkoutput("mstat",sSce)                   = beam.modelstat;
 
 );
