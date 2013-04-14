@@ -124,33 +124,18 @@ $include "%path%70eqtn.inc";
 * =============================================================================
 $include "%path%90loop.inc";
 
+* =============================================================================
+* Save various result data files to disk
+* =============================================================================
+$include "%path%99save.inc";
+
 PUT step;
 PUT "4";
 PUTCLOSE;
-
-IF(beam.modelstat < 3,
-    execute_unload "%path%output\BEAM-flows.gdx" rFlow, rsFlow;
-    execute "gdxxrw.exe I=%path%output\BEAM-flows.gdx O=%path%output\BEAM-flows.xls par=rFlow rng=rFlow!B10 par=rsFlow rdim=4 rng=rsFlow!B10 rdim=4";
-    execute "pause";
-);
 
 OPTIONS crp0:0:1:1;
 OPTIONS lnd0:0:1:1;
 OPTIONS etcM2P:2:3:1;
 OPTIONS etc0:2:3:1;
 
-
-* Display checks that results have not changed
-file objvalues /%path%output\objvalues.txt/;
-PUT objvalues;
-PUT "Sc.        TotInc         Obj  Model Status"; PUT /;
-PUT "-------------------------------------------"; PUT /;
-LOOP(sSce$scenarios("run",sSce), 
-    PUT sSce.tl:<5;
-    PUT round(checkOutput("TotInc" ,sSce),2):12:2; 
-    PUT round(checkOutput("Obj"    ,sSce),2):12:2;
-    PUT round(checkOutput("mstat"  ,sSce),0):14:0;
-    PUT /;
-);
-PUTCLOSE;
 DISPLAY checkoutput;
