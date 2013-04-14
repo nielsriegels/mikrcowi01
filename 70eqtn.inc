@@ -75,7 +75,7 @@ WBALANCE(s,b,y,m)..
    + STO(s,b,y,m)$sea(b)
    + STO(s,b,y,m)$bRes(b)
    + SUM(j$irg0(b,j,y,m), IRG(b,j,y,m))
-   + SUM(sSec,            HHI(s,sSec,b,y,m))
+   + SUM(sSec$HHIuse(sSec,b,m), HHI(s,sSec,b,y,m))
    + LOS(s,b,"seep",y,m)
 
    ) =e= (
@@ -84,7 +84,7 @@ WBALANCE(s,b,y,m)..
       +SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
       +sup(s,b,m)
       +rtn0(b,m)
-      +GRW(b,y,m)
+      +GRW(b,y,m)$SUM(ms, grwtrMax(b,ms))
      ) * scalem3
 ;
 
