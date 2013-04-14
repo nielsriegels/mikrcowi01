@@ -1,6 +1,9 @@
 * Set model year (demography for demand growth etc)
     y(y0)                   = scenRainYear(sSce,y0);
 
+* Allow yield response
+    noYWR                   = 1$scenarios("noYWR",sSce);
+
 * Allow flexibility in land allocation and account for any fallow land
 * unless scenario user chose fixed land allocation (opLND=0)
     IF(scenarios("opLND",sSce) eq 0,

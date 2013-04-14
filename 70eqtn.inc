@@ -105,7 +105,7 @@ RETURNWATER(s,b,y,m)..
                  =e= 0.0*SUM(j,IRG(b,j,y,m));
 
 * Irrigation needs - irg0 is base year irrigation,
-IRGACT(b,j,y,m)$irg0(b,j,y,m)..
+IRGACT(b,j,y,m)$(irg0(b,j,y,m) AND noYWR )..
     IRG(b,j,y,m) =e= (LND(b,j,y)/lnd0(b,j))*irg0(b,j,y,m) * (1-iInv("improve"));
 
 * Yield water response function

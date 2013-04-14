@@ -146,6 +146,7 @@ SETS
         OutLos          "Water losses",
         OutLak          "Water to lakes"
         OutTot          "Water stored, used, lost or to intake or downstream river",
+        TotDis          "Total discharge inside section excl non-built reservoirs"
         Balance         "Water balance" /
 
     e_resAgri /

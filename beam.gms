@@ -135,7 +135,7 @@ OPTIONS crp0:0:1:1;
 OPTIONS lnd0:0:1:1;
 OPTIONS etcM2P:2:3:1;
 OPTIONS etc0:2:3:1;
-DISPLAY lnd0, LND.l, crp0, CRP.l, YWR.l, etcP, etcM;
+
 
 DISPLAY checkoutput;
 

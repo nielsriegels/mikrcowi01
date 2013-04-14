@@ -32,9 +32,10 @@ PARAMETERS
     checkoutput(*,sSce)             "Check of output values for no-change control"
     natExtra(b)                     "Nature extra water (mm3/year)"
     rFlow(sSce,b,e_resFlow,y0,m0)   "Flow of water through bodies"
+    rcFlow(sSce,c,y0,e_resFlow,m0)  "Flow of water by country"
+    rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
     rAgri(sSce,b,e_resAgri,j,y0)    "Agricultural results for bodies"
     rEcon(sSce,b,e_resEcon,y0,m0)   "Economical results for bodies"
-    rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
     rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
@@ -45,6 +46,7 @@ PARAMETERS
     etcM2P(b,j,p0,m)                "Map for water use in phases and months (% of monthly water use in phase)"
     etcP(b,j,p0)                    "Optimal evapotranspiration by phase (mm3/ha)"
     etcM(b,j,m0)                    "Optimal evapotranspiration by month (mm3/ha)"
+    noYWR                           "Disable yield-water response function (0/1)"
 ;
 
 OPTIONS rEcon:2:2:2;
