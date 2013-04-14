@@ -24,7 +24,6 @@ PARAMETERS
     resVolFix(b,y0,m)               "Fixed volume for reservoirs (mm3)"
     resDisFix(bd,bo,y0,m)           "Fixed discharges for reservoirs (mm3/month)"
     iInv(sInv)                      "Irrigation investment data"
-    minInflow0(b,m0)                "Minimum inflow for nature (mm3/month)"
     resDisMax0(b,m0)                "Maximum reservoir discharge (mm3/month)"
     crp0(b,j)                       "Crop production base year (ton/year)"
     lnd0(b,j)                       "Land use in base year (ha)"
@@ -49,6 +48,11 @@ PARAMETERS
     noYWR                           "Disable yield-water response function (0/1)"
 ;
 
+
+OPTIONS crp0:0:1:1;
+OPTIONS lnd0:0:1:1;
+OPTIONS etcM2P:2:3:1;
+OPTIONS etc0:2:3:1;
 OPTIONS rEcon:2:2:2;
 OPTIONS rFlow:2:2:2;
 OPTIONS rAgri:2:2:2;

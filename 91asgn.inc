@@ -1,6 +1,9 @@
 * Set model year (demography for demand growth etc)
     y(y0)                   = scenRainYear(sSce,y0);
 
+* Set elasticity of transformation 
+    rL = (scenarios("sT",sSce)+1)/scenarios("sT",sSce);
+
 * Allow yield response
     noYWR                   = 1$scenarios("noYWR",sSce);
 
@@ -22,9 +25,6 @@
     sup(s,b,m)              = SUM(y0$scenRainYear(sSce,y0),     sup0(s,b,y0,m));
     hhiUse("HH",b,m)        = SUM(y0$scenModelYear(sSce,y0),    qHwater(b,m)*(1+demography(y0,"HH") ) );
     hhiUse("ind",b,m)       = SUM(y0$scenModelYear(sSce,y0),    qIwater(b,m)*(1+demography(y0,"ind")) );
-
-* Set minimum inflows according to year
-    minInflow0(b,m0)        = minInflowN(b,m0)$scenRainYear(sSce,"2009") + minInflowD(b,m0)$scenRainYear(sSce,"2001");
 
 * Set new reservoirs in operation according to scenario definition
     bResNOP(b)              = YES$(resNew(b) AND not resNewOp(b,sSce));

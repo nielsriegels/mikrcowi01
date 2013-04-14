@@ -55,4 +55,11 @@ $include "%path%96rslt.inc";
     checkoutput("obj",sSce)                     = TWV.l;
     checkoutput("mstat",sSce)                   = beam.modelstat;
 
+
+checkYRW(sSce,b,j)$lnd0(b,j) = SUM(y, 1 - SUM(p$etcP(b,j,p),  ( 1 - SUM(m, etcM2P(b,j,p,m)*IRG.l(b,j,y,m)) / (etcP(b,j,p)*LND.l(b,j,y)) )
+                                                * wPhase(b,j,p) * kYield(p,j) 
+                                           ));
+
+
+
 );

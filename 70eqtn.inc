@@ -192,18 +192,18 @@ GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
     SUM(m$mSeason(m,ms), GRW(b,y,m)) * scalem3 =e= grwtrMax(b,ms) * scalem3;
 
 * Monthly minimum inflow requirements
-MININFLOW(b,y,m)$minInFlow0(b,m)..
+MININFLOW(b,y,m)$minInFlow0(b,y,m)..
     (SUM((bo,s)$sW(s), DIS(s,b,bo,y,m)$resv(b,bo)+FLW(s,b,bo,y,m)$flow(b,bo)+ITK(s,b,bo,y,m)$intk(b,bo))
-   +SUM(s$sW(s), sup(s,b,m)) + rtn0(b,m)  ) * scalem3 =g= minInFlow0(b,m) * scalem3;
+   +SUM(s$sW(s), sup(s,b,m)) + rtn0(b,m)  ) * scalem3 =g= minInFlow0(b,y,m) * scalem3;
 
 * Monthly minimum outflow requirements (only river nodes)
-MINOUTFLOW(b,y,m)$(minInFlow0(b,m) AND bRiv(b))..
-    SUM((bd,s)$sW(s), (ITK(s,bd,b,y,m)+FLW(s,bd,b,y,m))$flow(bd,b)) * scalem3 =g= minInFlow0(b,m) * scalem3;
+MINOUTFLOW(b,y,m)$(minInFlow0(b,y,m) AND bRiv(b))..
+    SUM((bd,s)$sW(s), (ITK(s,bd,b,y,m)+FLW(s,bd,b,y,m))$flow(bd,b)) * scalem3 =g= minInFlow0(b,y,m) * scalem3;
 
 * Annual minimum flow requirements
-MININFLOWa(b,y,mA)$(minInFlow0(b,mA) + natExtra(b))..
+MININFLOWa(b,y,mA)$(minInFlow0(b,y,mA) + natExtra(b))..
     (SUM((m,s)$sW(s), SUM(bo, DIS(s,b,bo,y,m)$resv(b,bo)+FLW(s,b,bo,y,m)$flow(b,bo)+ITK(s,b,bo,y,m)$intk(b,bo)) + sup(s,b,m))
-   +SUM(m, rtn0(b,m))) * scalem3 =g= (minInFlow0(b,mA) + natExtra(b)) * scalem3;
+   +SUM(m, rtn0(b,m))) * scalem3 =g= (minInFlow0(b,y,mA) + natExtra(b)) * scalem3;
 
 * Annual minimum land use requirements
 MINLANDUSE(b,j,y)..
