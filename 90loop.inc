@@ -36,9 +36,9 @@ IF(ord(sSce) eq 2,
 
 * Solve model for the give scenario
 *    beam.solprint = yes;
-    beam.limrow = 50000;
+*    beam.limrow = 50000;
 *    beam.limcol = 50000;
-    beam.iterlim = 0;
+*    beam.iterlim = 0;
     SOLVE beam MAXIMIZING twv USING NLP;
 
 IF(beam.modelstat < 3,
