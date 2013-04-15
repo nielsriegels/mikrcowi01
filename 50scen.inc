@@ -1,6 +1,6 @@
 TABLE scenarios(*,sSce) "Scenario definition table"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
-run     1   1   1   1   1   0   0   0   0   0
+run     0   0   0   0   0   1   1   1   1   0
 iField  0   0   0   0   0   0   0   0   0   0
 iChnl   0   0   0   0   0   0   0   0   0   0
 iDrain  0   0   0   0   0   0   0   0   0   0
@@ -9,18 +9,19 @@ iELY    0   0   0   0   0   0   0   0   0   0
 iWSS    0   0   0   0   0   0   0   0   0   0
 rLnd    0   0   0   0   0   0   0   0   0   0
 rMkt    0   0   0   0   0   0   0   0   0   0
-opLND   0   1   1   1   1   0   0   0   0   0
-opRES   0   1   1   1   1   0   0   0   0   0
+opLND   0   1   1   1   1   1   1   1   1   0
+opRES   0   1   1   1   1   1   1   1   1   0
 fallow  0   0   0   0   0   0   0   0   0   0
 rBuild  0   0   0   0   0   0   0   0   0   0
 noYWR   1   1   0   0   0   0   0   0   0   0
-sT      0.5 0.5 0.5 5   5   0   0   0   0   0
+sT      0.5 0.5 0.5 5   5   0.5 0.5 0.5 0.5 0.5 
+wDISwin 0   0   0   0   0   0   1   0   1   0   
 ;
 
 TABLE resNewOp(b,sSce) "New reservoir in operation"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
 Res_DAS 0   0   0   0   0   0   0   0   0   0
-Res_ROG 0   0   0   0   0   0   0   0   0   0
+Res_ROG 0   0   0   0   0   0   0   1   1   0
 Res_KAM 0   0   0   0   0   0   0   0   0   0
 Res_ZAR 0   0   0   0   0   0   0   0   0   0
 Res_VAH 0   0   0   0   0   0   0   0   0   0

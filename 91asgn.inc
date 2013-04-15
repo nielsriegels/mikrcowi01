@@ -52,7 +52,7 @@
         resVolFix(b,y,m)              = resVolFix0(b,y,m);
         resDisFix(bd,bo,y,m)          = resDisFix0(bd,bo,y,m);
     );
-    IF(scenarios("opRES",sSce) eq 1,
+    IF(scenarios("opRES",sSce) ne 0,
         resVolFix(b,y,m)              = 0;
         resDisFix(bd,bo,y,m)          = 0;
     );
