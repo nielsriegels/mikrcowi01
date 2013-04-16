@@ -31,27 +31,9 @@ execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, 
     LND.lo(b,j,y)$lnd0(b,j)                                     = lnd0(b,j) * 0.1;
     LND.up(b,j,y)$lnd0(b,j)                                     = lnd0(b,j) * 3 ;
 
-* Constrained optimisation - maximise winter discharges
-    IF(scenarios("wDISwin",sSce),
-* Set objective weights for agri, ely and discharges/flows
-        objAGRweight(b)             = 0.001;
-        objELYweight                = 0.001;
-        objDISweight("AMUUPS",m)    = 0.001$mSum(m) + 1000$mWin(m); 
-        objDISweight("Res_TOK",m)   = 0.001$mSum(m) + 1000$mWin(m); 
- 
-* Run model with altered weighting of objective parts
-        SOLVE beam MAXIMIZING twv USING NLP;
 
-* Reset objective weights
-        objAGRweight(b)             = 1;
-        objELYweight                = 1;
-        objDISweight(b,m)           = 0; 
- 
-* Set fixes for 2nd optimisation run    
-        resDisFix0(bd,"Res_ROG",y,m)   = DIS.l("w",bd,"Res_ROG",y,m);
-        resDisFix0(bd,"Res_TOK",y,m)   = DIS.l("w",bd,"Res_TOK",y,m); 
-    );
-
+* Include module for constrained optimisation
+$include "%path%92cstr.inc";
 
 * Solve model for the give scenario
 *    beam.solprint = yes;

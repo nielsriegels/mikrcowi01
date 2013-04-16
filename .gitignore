@@ -2,4 +2,4 @@
 *.lst
 *.csv
 output/beamOutput.xls
-solution/*.gdx
+solutions/*.gdx

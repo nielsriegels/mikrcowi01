@@ -1,56 +1,59 @@
 TABLE scenarios(*,sSce) "Scenario definition table"
-        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
-run     0   0   0   0   0   1   1   1   1   0
-iField  0   0   0   0   0   0   0   0   0   0
-iChnl   0   0   0   0   0   0   0   0   0   0
-iDrain  0   0   0   0   0   0   0   0   0   0
-iTRX    0   0   0   0   0   0   0   0   0   0
-iELY    0   0   0   0   0   0   0   0   0   0
-iWSS    0   0   0   0   0   0   0   0   0   0
-rLnd    0   0   0   0   0   0   0   0   0   0
-rMkt    0   0   0   0   0   0   0   0   0   0
-opLND   0   1   1   1   1   1   1   1   1   0
-opRES   0   1   1   1   1   1   1   1   1   0
-fallow  0   0   0   0   0   0   0   0   0   0
-rBuild  0   0   0   0   0   0   0   0   0   0
-noYWR   1   1   0   0   0   0   0   0   0   0
-sT      0.5 0.5 0.5 5   5   0.5 0.5 0.5 0.5 0.5 
-wDISwin 0   0   0   0   0   0   1   0   1   0   
+        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
+run     1   1   0   0   0   0   0   0   0   0   0   0
+sT      0.5 0.5 0.5 5   5   0.5 0.5 0.5 0.5 0.5 0.5 0.5 
+iField  0   0   0   0   0   0   0   0   0   0   0   0
+iChnl   0   0   0   0   0   0   0   0   0   0   0   0
+iDrain  0   0   0   0   0   0   0   0   0   0   0   0
+iTRX    0   0   0   0   0   0   0   0   0   0   0   0
+iELY    0   0   0   0   0   0   0   0   0   0   0   0
+iWSS    0   0   0   0   0   0   0   0   0   0   0   0
+rLnd    0   0   0   0   0   0   0   0   0   0   0   0
+rMkt    0   0   0   0   0   0   0   0   0   0   0   0
+opLND   0   1   1   1   1   1   1   1   1   1   1   1
+opRES   0   1   1   1   1   1   1   1   1   1   1   1
+fallow  0   0   0   0   0   0   0   0   0   0   0   0
+rBuild  0   0   0   0   0   0   0   0   0   0   0   0
+noYWR   1   1   0   0   0   0   0   0   0   0   0   0
+wDISwin 0   0   0   0   0   0   1   0   1   0   0   0   
+wHPPall 0   0   0   0   0   0   0   0   0   1   0   0   
+wHPPwin 0   0   0   0   0   0   0   0   0   0   1   0   
+wDISsum 0   0   0   0   0   0   0   0   0   0   0   1   
 ;
 
 TABLE resNewOp(b,sSce) "New reservoir in operation"
-        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
-Res_DAS 0   0   0   0   0   0   0   0   0   0
-Res_ROG 0   0   0   0   0   0   0   1   1   0
-Res_KAM 0   0   0   0   0   0   0   0   0   0
-Res_ZAR 0   0   0   0   0   0   0   0   0   0
-Res_VAH 0   0   0   0   0   0   0   0   0   0
-Res_NAR 0   0   0   0   0   0   0   0   0   0
+        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
+Res_DAS 0   0   0   0   0   0   0   0   0   0   0   0
+Res_ROG 0   0   0   0   0   0   0   1   1   1   1   1
+Res_KAM 0   0   0   0   0   0   0   0   0   0   0   0
+Res_ZAR 0   0   0   0   0   0   0   0   0   0   0   0
+Res_VAH 0   0   0   0   0   0   0   0   0   0   0   0
+Res_NAR 0   0   0   0   0   0   0   0   0   0   0   0
 ;
 
 TABLE icCrop(k,sSce) "Indices for crop costs"
-        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
-labr    1   1   1   1   1   1   1   1   1   1
-inpt    1   1   1   1   1   1   1   1   1   1
-cptl    1   1   1   1   1   1   1   1   1   1
+        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
+labr    1   1   1   1   1   1   1   1   1   1   1   1
+inpt    1   1   1   1   1   1   1   1   1   1   1   1
+cptl    1   1   1   1   1   1   1   1   1   1   1   1
 ;
 
 TABLE ipCrop(j,sSce) "Indices for crop prices"
-    s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
-cot 1   1   1   1   1   1   1   1   1   1
-wht 1   1   1   1   1   1   1   1   1   1
-ric 1   1   1   1   1   1   1   1   1   1
-alf 1   1   1   1   1   1   1   1   1   1
-veg 1   1   1   1   1   1   1   1   1   1
-fru 1   1   1   1   1   1   1   1   1   1
-oth 1   1   1   1   1   1   1   1   1   1
+        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
+cot     1   1   1   1   1   1   1   1   1   1   1   1
+wht     1   1   1   1   1   1   1   1   1   1   1   1
+ric     1   1   1   1   1   1   1   1   1   1   1   1
+alf     1   1   1   1   1   1   1   1   1   1   1   1
+veg     1   1   1   1   1   1   1   1   1   1   1   1
+fru     1   1   1   1   1   1   1   1   1   1   1   1
+oth     1   1   1   1   1   1   1   1   1   1   1   1
 ;
 
 TABLE natExtra0(b,sSce) "Extra nature needs (mm3/year)"
-        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10
-Lak_ARN 0   0   0   0   0   0   0   0   0   0
-Lak_ARS 0   0   0   0   0   0   0   0   0   0
-Lak_GOL 0   0   0   0   0   0   0   0   0   0
+        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
+Lak_ARN 0   0   0   0   0   0   0   0   0   0   0   0
+Lak_ARS 0   0   0   0   0   0   0   0   0   0   0   0
+Lak_GOL 0   0   0   0   0   0   0   0   0   0   0   0
 ;
 
 SET scenModelYear(sSce,y0) "Model year for demography and depreciation" /
@@ -78,13 +81,13 @@ TABLE pEly0(y0,m) "Electricity prices USD/MWh"
 
 
 TABLE iMinLnd0(c,j,sSce) "Index for minimum land use for crops in procent of base"
-                s01     s02     s03     s04     s05     s06     s07     s08     s09     s10
-UZB     .cot    0       0       0       0       0       0       0       0       0       0
-KAZ     .cot    0       0       0       0       0       0       0       0       0       0
-TUR     .cot    0       0       0       0       0       0       0       0       0       0
-TAD     .cot    0       0       0       0       0       0       0       0       0       0
-KYR     .cot    0       0       0       0       0       0       0       0       0       0
-AFG     .cot    0       0       0       0       0       0       0       0       0       0
+                s01     s02     s03     s04     s05     s06     s07     s08     s09     s10    s11     s12
+UZB     .cot    0       0       0       0       0       0       0       0       0       0      0       0
+KAZ     .cot    0       0       0       0       0       0       0       0       0       0      0       0
+TUR     .cot    0       0       0       0       0       0       0       0       0       0      0       0
+TAD     .cot    0       0       0       0       0       0       0       0       0       0      0       0
+KYR     .cot    0       0       0       0       0       0       0       0       0       0      0       0
+AFG     .cot    0       0       0       0       0       0       0       0       0       0      0       0
 ;
 
 

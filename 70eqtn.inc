@@ -132,7 +132,7 @@ SEAVOL(s,b,y,m)$sea(b)..
 RESVOL(s,b,y,m)$(bRes(b) and (not resVolFix(b,y,m))  )..
     ( VOL(s,b,y,m) - SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)) ) * scalem3$bResSto(b)
         =e=   (
-                                           +STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
+                                           +STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m)+FLW(s,bd,b,y,m))
                                            -ctrfBuild*reservoirs(b,"max")$(mBgn(m) AND bResBuild(b))
                                           ) * scalem3;
 
