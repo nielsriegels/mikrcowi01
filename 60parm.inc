@@ -1,18 +1,17 @@
 
 PARAMETERS
     sup(s,b,m)                      "Base year supply of river water (mm3/month)"
-    crp0(b,j)                       "Base year production agri/industrt quantities (ton/year)"
     iACosts(b,k,j)                  "Base year production agri/industrt input shares quantities (mn usd/year)"
     qValue(b,j)                     "Base year production agri/industrt prod. values (mn usd/year)"
     qALand(b,j)                     "Base year land use in agriculture (ha)"
     qAWater(b,j)                    "Base year water in agriculture (mm3/y)"
     qmWater(b,m)                    "Base year water (mm3/month)"
-    irg0(b,j,y0,m0)                 "Base year water for irrigation (mm3/month)"
+    irg0(b,q,j,y0,m0)               "Base year water for irrigation (mm3/month)"
     hhiUse(sSec,b,m0)               "Base year water use for households and industries (mm3)"
     qInputs(b,k,j)                  "Base year physical input use (unit/year)"
     oCosts(b,j)                     "Base year production agri/industrt unit cost (usd/ton)"
     iShare(b,k,j)                   "Base year share of input costs (pct of total cost)"
-    lShare(b,j)                     "Share of land for free crops in zone (%)"
+    lShare(b,q,j)                   "Share of land for free crops in zone (%)"
     retShare0(bd,bo,*)              "Share of return water (%)"
     jAF(j)                          "Crops with flexible land allocation 0/1"
     jAX(j)                          "Crops with fixed land allocation 0/1"
@@ -25,8 +24,6 @@ PARAMETERS
     resDisFix(bd,bo,y0,m)           "Fixed discharges for reservoirs (mm3/month)"
     iInv(sInv)                      "Irrigation investment data"
     resDisMax0(b,m0)                "Maximum reservoir discharge (mm3/month)"
-    crp0(b,j)                       "Crop production base year (ton/year)"
-    lnd0(b,j)                       "Land use in base year (ha)"
     cCrop(b,j)                      "Crop costs by land use (USD/ha)"
     checkoutput(*,sSce)             "Check of output values for no-change control"
     natExtra(b)                     "Nature extra water (mm3/year)"
@@ -49,8 +46,8 @@ PARAMETERS
 ;
 
 
-OPTIONS crp0:0:1:1;
-OPTIONS lnd0:0:1:1;
+OPTIONS crp0:0:2:1;
+OPTIONS lnd0:0:2:1;
 OPTIONS etcM2P:2:3:1;
 OPTIONS etc0:2:3:1;
 OPTIONS rEcon:2:2:2;
@@ -75,7 +72,7 @@ etcM(b,j,m)         = 0.000001 * SUM(p, 10*etc0(b,p,m,j))/1000000;
 etcM2P(b,j,p,m)     = (etc0(b,p,m,j)/SUM(pp, etc0(b,pp,m,j)) )$SUM(pp, etc0(b,pp,m,j));
 
 * TEMPORARY - replace Excel names to crp0, lnd0, irg0, cCrop0 and pCrop0
-irg0(b,j,y0,m)                  = qAWater(b,j)*agriSeason(b,j,m);
+irg0(b,q,j,y0,m)    = ( qAWater(b,j)*agriSeason(b,j,m) * lnd0(b,q,j) / SUM(qq, lnd0(b,qq,j)) )$lnd0(b,q,j);
 
 * Temporary replacement for etc0
 etcM(b,j,m)         = ( qAWater(b,j)*agriSeason(b,j,m) / qAland(b,j) )$qAland(b,j);
@@ -85,9 +82,9 @@ etcP(b,j,p)         = SUM(m, etcM2P(b,j,p,m) * etcM(b,j,m));
 
 
 * TEMPOARAY - refine YRW weights - fetch from Excel
-crp0(b,j)                       = qAquant(b,j);
-lnd0(b,j)                       = qAland(b,j);
-cCrop(b,j)$lnd0(b,j)            = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/lnd0(b,j);
+*crp0(b,j)                       = qAquant(b,j);
+*lnd0(b,j)                       = qAland(b,j);
+cCrop(b,j)$SUM(q, lnd0(b,q,j))   = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/SUM(q, lnd0(b,q,j));
 *qValue(b,j)                     = SUM(k, iACosts(b,k,j));
 *oCosts(b,j)$crp0(b,j)           = 1000000 * qValue(b,j) / crp0(b,j);
 

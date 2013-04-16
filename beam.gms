@@ -119,7 +119,7 @@ $include "%path%70eqtn.inc";
 * =============================================================================
 *$include "%path%80lvls.inc";
 
-PARAMETER checkYRW(sSce,b,j);
+PARAMETER checkYRW(sSce,b,q,j);
 
 * =============================================================================
 * Define base scenario and solve

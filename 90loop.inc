@@ -11,25 +11,25 @@ $include "%path%91asgn.inc";
 putclose sRename 'copy /Y %path%solutions\solution-' sSce.tl:0 '.gdx %path%solutions\solution.gdx';
 execute '%path%solutions\renameS.cmd';
 
-execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, YWR, CRP, LND, TWV;
+*execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, YWR, CRP, LND, TWV;
 
 * Fix hydrological variables that can never be non-zero
     FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);
     ITK.up(s,bd,bo,y,m)                                         = INF$intk(bd,bo);
     DIS.up(s,bd,bo,y,m)                                         = INF$resv(bd,bo);
-    IRG.up(b,j,y,m)                                             = INF$irg0(b,j,y,m);
+    IRG.up(b,q,j,y,m)                                           = INF$irg0(b,q,j,y,m);
     HHI.up(s,sSec,b,y,m)                                        = INF$HHIuse(sSec,b,m);
     GRW.up(b,y,m)                                               = INF$SUM(ms$mSeason(m,ms), grwtrMax(b,ms));
-    LND.up(b,j,y)                                               = INF$lnd0(b,j);
     VOL.up(s,b,y,m)                                             = INF$(bRes(b) or sea(b));
     STO.up(s,b,y,m)                                             = INF$(bRes(b) or sea(b));
     HPP.up(b,g,y,m)                                             = INF$bResEly(b);
     TPP.up(u,g,y,m)                                             = INF$elyThermal("elyCap",u);
     LOS.up(s,b,l,y0,m0)                                         = INF;
-    CRP.lo(b,j,y)$crp0(b,j)                                     = crp0(b,j) * 0.1;
-    CRP.up(b,j,y)$crp0(b,j)                                     = crp0(b,j) * 3 ;
-    LND.lo(b,j,y)$lnd0(b,j)                                     = lnd0(b,j) * 0.1;
-    LND.up(b,j,y)$lnd0(b,j)                                     = lnd0(b,j) * 3 ;
+    YWR.up(b,q,j,y)                                             = 1;
+    CRP.lo(b,q,j,y)$crp0(b,q,j)                                 = crp0(b,q,j) * 0.1;
+    CRP.up(b,q,j,y)$crp0(b,q,j)                                 = crp0(b,q,j) * 3 ;
+    LND.lo(b,q,j,y)$lnd0(b,q,j)                                 = lnd0(b,q,j) * 0.1;
+    LND.up(b,q,j,y)$lnd0(b,q,j)                                 = lnd0(b,q,j) * 3 ;
 
 
 * Include module for constrained optimisation
@@ -60,7 +60,7 @@ $include "%path%96rslt.inc";
     checkoutput("mstat",sSce)                   = beam.modelstat;
 
 
-checkYRW(sSce,b,j)$lnd0(b,j) = SUM(y, 1 - SUM(p$etcP(b,j,p),  ( 1 - SUM(m, etcM2P(b,j,p,m)*IRG.l(b,j,y,m)) / (etcP(b,j,p)*LND.l(b,j,y)) )
+checkYRW(sSce,b,q,j)$lnd0(b,q,j) = SUM(y, 1 - SUM(p$etcP(b,j,p),  ( 1 - SUM(m, etcM2P(b,j,p,m)*IRG.l(b,q,j,y,m)) / (etcP(b,j,p)*LND.l(b,q,j,y)) )
                                                 * wPhase(b,j,p) * kYield(p,j) 
                                            ));
 

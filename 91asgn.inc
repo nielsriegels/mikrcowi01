@@ -18,8 +18,8 @@
     );
     jAF("fal")              = YES$scenarios("fallow",sSce);
     jAX(j)                  = 1$(not jAF(j));
-    lnd0(b,"fal")           = SUM(j$jAF(j), lnd0(b,j)) * scenarios("fallow",sSce);
-    lShare(b,j)$jAF(j)      = (qALand(b,j) / SUM(jj$jAF(jj), qALand(b,jj)))$SUM(jj$jAF(jj), qALand(b,jj));
+    lnd0(b,q,"fal")         = SUM(j$jAF(j), lnd0(b,q,j)) * scenarios("fallow",sSce);
+    lShare(b,q,j)$jAF(j)    = (lnd0(b,q,j) / SUM(jj$jAF(jj), lnd0(b,q,jj)))$SUM(jj$jAF(jj), lnd0(b,q,jj));
 
 * Set water supply (choose between dry and normal)
     sup(s,b,m)              = SUM(y0$scenRainYear(sSce,y0),     sup0(s,b,y0,m));
@@ -84,7 +84,8 @@
 * Set levels if first run
 IF(ord(sSce) eq 1,
 * Flow variable levels
-        IRG.l(b,j,y,m)              = irg0(b,j,y,m);
+        YWR.l(b,q,j,y)              = 1;
+        IRG.l(b,q,j,y,m)            = irg0(b,q,j,y,m);
         ITK.l(s,bd,bo,y,m)          = itk0(bd,bo)/12;
         FLW.l(s,bd,bo,y,m)          = flw0(bd,bo)/12;
         DIS.l(s,bd,bo,y,m)          = dis0(bd,bo)/12;
@@ -108,6 +109,6 @@ IF(ord(sSce) eq 1,
                                           * ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*VOL.l(s,b,y,m) + reservoirs(b,"coef_c")*POWER(VOL.l(s,b,y,m),2))
                                       ) / 3600;
 * Agricultural variable levels
-        LND.l(b,j,y)                = lnd0(b,j);
-        CRP.l(b,j,y)                = crp0(b,j);
+        LND.l(b,q,j,y)              = lnd0(b,q,j);
+        CRP.l(b,q,j,y)              = crp0(b,q,j);
     );    

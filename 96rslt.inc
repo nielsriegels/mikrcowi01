@@ -16,8 +16,8 @@
                                                       +rFlow(sSce,b,"InItk",y,m) + rFlow(sSce,b,"InRtn",y,m) + rFlow(sSce,b,"InGrw",y,m);
 * Outflows
     rFlow(sSce,b,"OutHHI",y,m) = -SUM((s,sSec)$sW(s), HHI.l(s,sSec,b,y,m));
-    rFlow(sSce,b,"OutIrg",y,m) = -SUM(j, IRG.l(b,j,y,m));
-    rFlow(sSce,b,"OutDem",y,m) = -SUM(j, IRG.l(b,j,y,m)) - SUM((s,sSec)$sW(s), HHI.l(s,sSec,b,y,m));
+    rFlow(sSce,b,"OutIrg",y,m) = -SUM((q,j), IRG.l(b,q,j,y,m));
+    rFlow(sSce,b,"OutDem",y,m) = -SUM((q,j), IRG.l(b,q,j,y,m)) - SUM((s,sSec)$sW(s), HHI.l(s,sSec,b,y,m));
     rFlow(sSce,b,"OutSto",y,m) = -SUM(s$sW(s), STO.l(s,b,y,m));
     rFlow(sSce,b,"OutDis",y,m) = -SUM((s,bd)$sW(s), DIS.l(s,bd,b,y,m)$(not sea(bd)) );
     rFlow(sSce,b,"OutFlw",y,m) = -SUM((s,bd)$sW(s), FLW.l(s,bd,b,y,m)$(not sea(bd)) );
@@ -74,18 +74,18 @@
 
 
 * Agricultural line results
-    rAgri(sSce,b,"WaterUse",j,y) = SUM(m, IRG.l(b,j,y,m));
+    rAgri(sSce,b,"WaterUse",j,y)            = SUM((q,m), IRG.l(b,q,j,y,m));
     rAgri(sSce,b,"LandEff",j,y)$bPlz(b) = 0;
     rAgri(sSce,b,"LandEff",j,y)$(not jAF(j)) = 0;
-    rAgri(sSce,b,"LandUse",j,y) = LND.l(b,j,y);
-    rAgri(sSce,b,"AgriSales",j,y) = 1000 * CRP.l(b,j,y) * pCrop(j) / 1000000;
-    rAgri(sSce,b,"AgriCosts",j,y) = -1000 * LND.l(b,j,y) * cCrop(b,j) / 1000000;
-    rAgri(sSce,b,"IrrInvCost",j,y) = -1000 * ( iInv("usdPerHa")*LND.l(b,j,y) + iInv("usdPerMM3")*SUM(m, IRG.l(b,j,y,m)) )/1000000 ;
+    rAgri(sSce,b,"LandUse",j,y)             = SUM(q, LND.l(b,q,j,y));
+    rAgri(sSce,b,"AgriSales",j,y)           =  1000 * SUM(q, CRP.l(b,q,j,y) * pCrop(j)  ) / 1000000;
+    rAgri(sSce,b,"AgriCosts",j,y)           = -1000 * SUM(q, LND.l(b,q,j,y) * cCrop(b,j)) / 1000000;
+    rAgri(sSce,b,"IrrInvCost",j,y)          = -1000 * ( iInv("usdPerHa")*SUM(q, LND.l(b,q,j,y)) + iInv("usdPerMM3")*SUM((q,m), IRG.l(b,q,j,y,m)) )/1000000 ;
     rAgri(sSce,b,"AgriIncome",j,y) = rAgri(sSce,b,"AgriSales",j,y) + rAgri(sSce,b,"AgriCosts",j,y) + rAgri(sSce,b,"IrrInvCost",j,y);
-    rAgri(sSce,b,"AgriProd",j,y) = CRP.l(b,j,y);
+    rAgri(sSce,b,"AgriProd",j,y)            = SUM(q, CRP.l(b,q,j,y));
     rAgri(sSce,b,"LandIncome",j,y) = ( 1000000*rAgri(sSce,b,"AgriIncome",j,y) / rAgri(sSce,b,"LandUse",j,y) )$rAgri(sSce,b,"LandUse",j,y);
     rAgri(sSce,b,"WatrIncome",j,y) = ( 1000000*rAgri(sSce,b,"AgriIncome",j,y) / rAgri(sSce,b,"WaterUse",j,y))$rAgri(sSce,b,"WaterUse",j,y);
-    rAgri(sSce,b,"LabrUse",j,y)$lnd0(b,j) = 1000*LND.l(b,j,y)/lnd0(b,j);
+    rAgri(sSce,b,"LabrUse",j,y)             = (1000*SUM(q, LND.l(b,q,j,y))/SUM(q, lnd0(b,q,j)) )$SUM(q, lnd0(b,q,j)) ;
 
 * Economic results, line
     rEcon(sSce,b,"AgriSales",y,m) = SUM(j, rAgri(sSce,b,"AgriSales",j,y) ) / 12;
