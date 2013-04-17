@@ -13,20 +13,34 @@ PARAMETERS
     iShare(b,k,j)                   "Base year share of input costs (pct of total cost)"
     lShare(b,q0,j)                  "Share of land for free crops in zone (%)"
     retShare0(bd,bo,*)              "Share of return water (%)"
-    jAF(j)                          "Crops with flexible land allocation 0/1"
-    jAX(j)                          "Crops with fixed land allocation 0/1"
-    gwCorr(b,m)                     "Ground water correction (mm3/month)"
-    loss(b,m)                       "Water loss from river (mm3/month)"
     pEly(g,y0,m0)                   "Electricity price (USD/MWh)"
     pCrop(j)                        "Crop prices (USD/ton)"
     pInput(k)                       "Index for input prices"
+    cCrop(b,j)                      "Crop costs by land use (USD/ha)"
+* Irrigation system costs
+    iInv(sInv)                      "Irrigation investment data"
+    conveyanceCost(c)               "Cost of conveyance system"
+    elyPump(bd,bo)                  "Energy required for conveyance (KWh/m^3)"
+* Irrigation system physical assumptions
+    resDisMax0(b,m0)                "Maximum reservoir discharge (mm3/month)"
+    natExtra(b)                     "Nature extra water (mm3/year)"
+    iMinLnd(b,j)                    "Index for minimum land use requirements for crops in procent of base"
+    wPhase(b,j,p0)                  "Weight for days in growth phase (% of growth days)"
+    etcM2P(b,j,p0,m)                "Map for water use in phases and months (% of monthly water use in phase)"
+    etcP(b,j,p0)                    "Optimal evapotranspiration by phase (mm3/ha)"
+    etcM(b,j,m0)                    "Optimal evapotranspiration by month (mm3/ha)"
     resVolFix(b,y0,m)               "Fixed volume for reservoirs (mm3)"
     resDisFix(bd,bo,y0,m)           "Fixed discharges for reservoirs (mm3/month)"
-    iInv(sInv)                      "Irrigation investment data"
-    resDisMax0(b,m0)                "Maximum reservoir discharge (mm3/month)"
-    cCrop(b,j)                      "Crop costs by land use (USD/ha)"
-    checkoutput(*,sSce)             "Check of output values for no-change control"
-    natExtra(b)                     "Nature extra water (mm3/year)"
+* Parameters for control of model scenarios 
+    jAF(j)                          "Crops with flexible land allocation 0/1"
+    jAX(j)                          "Crops with fixed land allocation 0/1"
+    objDISweight(b,m)               "Constrained optimisation objective weights for discharges"
+    objHPPweight(b,m)               "Constrained optimisation objective weights for hydro power"
+    objELYweight                    "Constrained optimisation objective weights for electricity"
+    objAGRweight(b)                 "Constrained optimisation objective weights for agriculture"
+    noYWR                           "Disable yield-water response function (0/1)"
+    useCET                          "Use CET function for land yield response"
+* Parameters for reporting of results to Excel
     rFlow(sSce,b,e_resFlow,y0,m0)   "Flow of water through bodies"
     rcFlow(sSce,c,y0,e_resFlow,m0)  "Flow of water by country"
     rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
@@ -35,15 +49,7 @@ PARAMETERS
     rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
-    iMinLnd(b,j)                    "Index for minimum land use requirements for crops in procent of base"
-    conveyanceCost(c)               "Cost of conveyance system"
-    elyPump(bd,bo)                  "Energy required for conveyance (KWh/m^3)"
-    wPhase(b,j,p0)                  "Weight for days in growth phase (% of growth days)"
-    etcM2P(b,j,p0,m)                "Map for water use in phases and months (% of monthly water use in phase)"
-    etcP(b,j,p0)                    "Optimal evapotranspiration by phase (mm3/ha)"
-    etcM(b,j,m0)                    "Optimal evapotranspiration by month (mm3/ha)"
-    noYWR                           "Disable yield-water response function (0/1)"
-    useCET                          "Use CET function for land yield response"
+    checkoutput(*,sSce)             "Check of output values for no-change control"
 ;
 
 
@@ -121,10 +127,6 @@ flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF) 
 PARAMETER segmentHours(g) / base 16, peak 8 /;
 
 * Temporary data for objective weights
-PARAMETER objDISweight(b,m)       "Constrained optimisation objective weights for discharges";
-PARAMETER objHPPweight(b,m)       "Constrained optimisation objective weights for hydro power";
-PARAMETER objELYweight            "Constrained optimisation objective weights for electricity";
-PARAMETER objAGRweight(b)         "Constrained optimisation objective weights for agriculture";
 objDISweight(b,m)   = 0;
 objHPPweight(b,m)   = 0;
 objELYweight        = 1;
