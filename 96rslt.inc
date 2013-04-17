@@ -111,3 +111,25 @@
     rcEcon(sSce,y,"HydroHead",c)            = 0;
     rcEcon(sSce,y,"HydroGain",c)            = 0;
     rcEcon(sSce,y,"DischVal",c)             = 0;
+    
+
+$ontext    
+    rIrg(sSce,"irg0",b,q0,j)                = SUM((y,m), irg0(b,q0,j,y,m));
+    rIrg(sSce,"IRG.l",b,q0,j)               = SUM((y,m), IRG.l(b,q0,j,y,m));
+    rIrg(sSce,"IRG.l (p)",b,q0,j)           = SUM((p,y,m), etcM2P(b,j,p,m)*IRG.l(b,q0,j,y,m));
+    rIrg(sSce,"dIRG.l",b,q0,j)$SUM((y,m), irg0(b,q0,j,y,m))              = SUM((y,m), IRG.l(b,q0,j,y,m))/SUM((y,m), irg0(b,q0,j,y,m));
+    rIrg(sSce,"dLnd",b,q0,j)$lnd0(b,q0,j)    = SUM(y,     LND.l(b,q0,j,y))/lnd0(b,q0,j);
+    rIrg(sSce,"dCrp",b,q0,j)$crp0(b,q0,j)    = SUM(y,     CRP.l(b,q0,j,y))/crp0(b,q0,j);
+
+
+    rIrg1(sSce,"etcM",q0)                = SUM((b,j,m), etcM(b,j,m)*lnd0(b,q0,j));
+    rIrg1(sSce,"etcP",q0)                = SUM((b,j,p), etcP(b,j,p)*lnd0(b,q0,j));
+    rIrg1(sSce,"irg0",q0)                = SUM((b,j,y,m), irg0(b,q0,j,y,m));
+    rIrg1(sSce,"IRG.l",q0)               = SUM((b,j,y,m), IRG.l(b,q0,j,y,m));
+    rIrg1(sSce,"IRG.l (p)",q0)           = SUM((b,j,p,y,m), etcM2P(b,j,p,m)*IRG.l(b,q0,j,y,m));
+
+    rIrg2(sSce,b,q,j,p,"eta0")                = SUM((m,y), etcM2P(b,j,p,m)*irg0(b,q,j,y,m));
+    rIrg2(sSce,b,q,j,p,"etc0")                = SUM(y, etcP(b,j,p)*lnd0(b,q,j));
+    rIrg2(sSce,b,q,j,p,"iet0")                = ( rIrg2(sSce,b,q,j,p,"eta0") / rIrg2(sSce,b,q,j,p,"etc0") )$rIrg2(sSce,b,q,j,p,"etc0");
+    rIrg2(sSce,b,q,j,p,"iETl")                = SUM(y, iET.l(b,q,j,p,y));
+$offtext    

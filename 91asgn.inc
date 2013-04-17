@@ -7,18 +7,34 @@
 * Allow yield response
     noYWR                   = 1$scenarios("noYWR",sSce);
 
+* Disable CET function by scenario choice
+    useCET                  = 1$scenarios("useCET",sSce);
+
 * Allow flexibility in land allocation and account for any fallow land
 * unless scenario user chose fixed land allocation (opLND=0)
-    IF(scenarios("opLND",sSce) eq 0,
+    IF(scenarios("fixLND",sSce) gt 0,
         jAF(j)                  = NO;
-        jAF("wht")              = NO;
+*        jAF("wht")              = YES;
     );
-    IF(scenarios("opLND",sSce) gt 0,
+    IF(scenarios("fixLND",sSce) eq 0,
         jAF(j)                  = jAF0(j);
     );
     jAF("fal")              = YES$scenarios("fallow",sSce);
     jAX(j)                  = 1$(not jAF(j));
     lnd0(b,q,"fal")         = SUM(j$jAF(j), lnd0(b,q,j)) * scenarios("fallow",sSce);
+
+* Disable average yields and enable partitioning by soil suitability class
+    q(qAvg)                 = YES$scenarios("avgSoil",sSce);
+    q(qPar)                 = YES$(not scenarios("avgSoil",sSce));
+
+    CRP.l(b,q0,j,y)$(not q(q0))         = 0;
+    LND.l(b,q0,j,y)$(not q(q0))         = 0;
+
+
+*  Index for minimum land use for crops in procent of base
+    iMinLnd(b,j)         = SUM(c$bCty(b,c), iMinLnd0(c,j,sSce));
+
+* Calculate land share for CET function
     lShare(b,q,j)$jAF(j)    = (lnd0(b,q,j) / SUM(jj$jAF(jj), lnd0(b,q,jj)))$SUM(jj$jAF(jj), lnd0(b,q,jj));
 
 * Set water supply (choose between dry and normal)
@@ -48,11 +64,11 @@
                    + elyPump1(bd,bo)$(scenarios("iChnl",sSce))* scenarios("iChnl",sSce);
 
 * Fix discharge and volumen patterns for selected reservoirs
-    IF(scenarios("opRES",sSce) eq 0,
+    IF(scenarios("fixRES",sSce) ne 0,
         resVolFix(b,y,m)              = resVolFix0(b,y,m);
         resDisFix(bd,bo,y,m)          = resDisFix0(bd,bo,y,m);
     );
-    IF(scenarios("opRES",sSce) ne 0,
+    IF(scenarios("fixRES",sSce) eq 0,
         resVolFix(b,y,m)              = 0;
         resDisFix(bd,bo,y,m)          = 0;
     );
@@ -68,13 +84,6 @@
     cCrop(b,j)$bPlz(b)      = SUM(k, cCrop0("noReform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) eq 0)
                             + SUM(k, cCrop0("reform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) ne 0);
 
-*  Index for minimum land use for crops in procent of base
-    iMinLnd(b,j)         = SUM(c$bCty(b,c), iMinLnd0(c,j,sSce));
-
-* Reset fixed discharge patterns from line
-    resVolFix0(b,y,m)       = 0;
-    resDisFix0(bd,bo,y,m)   = 0;
-
 * Set irrigation investment costs
     iInv(sInv)              = 0;
 
@@ -84,7 +93,7 @@
 * Set levels if first run
 IF(ord(sSce) eq 1,
 * Flow variable levels
-        YWR.l(b,q,j,y)              = 1;
+        YWR.l(b,q0,j,y)             = 1;
         IRG.l(b,q,j,y,m)            = irg0(b,q,j,y,m);
         ITK.l(s,bd,bo,y,m)          = itk0(bd,bo)/12;
         FLW.l(s,bd,bo,y,m)          = flw0(bd,bo)/12;

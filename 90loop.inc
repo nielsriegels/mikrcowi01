@@ -11,7 +11,9 @@ $include "%path%91asgn.inc";
 putclose sRename 'copy /Y %path%solutions\solution-' sSce.tl:0 '.gdx %path%solutions\solution.gdx';
 execute '%path%solutions\renameS.cmd';
 
-*execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, YWR, CRP, LND, TWV;
+execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, YWR, CRP, LND, TWV;
+
+
 
 * Fix hydrological variables that can never be non-zero
     FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);
@@ -25,12 +27,16 @@ execute '%path%solutions\renameS.cmd';
     HPP.up(b,g,y,m)                                             = INF$bResEly(b);
     TPP.up(u,g,y,m)                                             = INF$elyThermal("elyCap",u);
     LOS.up(s,b,l,y0,m0)                                         = INF;
-    YWR.up(b,q,j,y)                                             = 1;
-    CRP.lo(b,q,j,y)$crp0(b,q,j)                                 = crp0(b,q,j) * 0.1;
-    CRP.up(b,q,j,y)$crp0(b,q,j)                                 = crp0(b,q,j) * 3 ;
-    LND.lo(b,q,j,y)$lnd0(b,q,j)                                 = lnd0(b,q,j) * 0.1;
-    LND.up(b,q,j,y)$lnd0(b,q,j)                                 = lnd0(b,q,j) * 3 ;
-
+*    YWR.up(b,q,j,y)                                             = 1;
+    CRP.lo(b,q,j,y)                                             = crp0(b,q,j) * 0.1;
+    CRP.up(b,q,j,y)                                             = crp0(b,q,j) * 3 ;
+    LND.lo(b,q,j,y)                                             = lnd0(b,q,j) * 0.1;
+    LND.up(b,q,j,y)                                             = lnd0(b,q,j) * 3 ;
+    CRP.fx(b,q0,j,y)$(not q(q0))                                = 0;
+    LND.fx(b,q0,j,y)$(not q(q0))                                = 0;
+    IRG.fx(b,q0,j,y,m)$(not q(q0))                              = 0;
+*    iET.up(b,q0,j,p,y)$(lnd0(b,q0,j) AND etcP(b,j,p) )          = 1;
+    iET.l(b,q0,j,p,y) = 1$(lnd0(b,q0,j) AND etcP(b,j,p) );
 
 * Include module for constrained optimisation
 $include "%path%92cstr.inc";
@@ -40,12 +46,12 @@ $include "%path%92cstr.inc";
 *    beam.limrow = 50000;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
+    
     SOLVE beam MAXIMIZING twv USING NLP;
-
 
 * Save solution to re-use later
 IF(beam.modelstat le 2, 
-    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, YWR, CRP, LND, TWV;
+    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, YWR, iET, CRP, LND, TWV;
     putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
     execute '%path%solutions\renameS.cmd';
 ); 
@@ -58,12 +64,5 @@ $include "%path%96rslt.inc";
     checkoutput("totinc",sSce)                  = SUM((b,y,m), rEcon(sSce,b,"TotInc",y,m));
     checkoutput("obj",sSce)                     = TWV.l;
     checkoutput("mstat",sSce)                   = beam.modelstat;
-
-
-checkYRW(sSce,b,q,j)$lnd0(b,q,j) = SUM(y, 1 - SUM(p$etcP(b,j,p),  ( 1 - SUM(m, etcM2P(b,j,p,m)*IRG.l(b,q,j,y,m)) / (etcP(b,j,p)*LND.l(b,q,j,y)) )
-                                                * wPhase(b,j,p) * kYield(p,j) 
-                                           ));
-
-
 
 );

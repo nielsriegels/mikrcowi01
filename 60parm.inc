@@ -6,12 +6,12 @@ PARAMETERS
     qALand(b,j)                     "Base year land use in agriculture (ha)"
     qAWater(b,j)                    "Base year water in agriculture (mm3/y)"
     qmWater(b,m)                    "Base year water (mm3/month)"
-    irg0(b,q,j,y0,m0)               "Base year water for irrigation (mm3/month)"
+    irg0(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
     hhiUse(sSec,b,m0)               "Base year water use for households and industries (mm3)"
     qInputs(b,k,j)                  "Base year physical input use (unit/year)"
     oCosts(b,j)                     "Base year production agri/industrt unit cost (usd/ton)"
     iShare(b,k,j)                   "Base year share of input costs (pct of total cost)"
-    lShare(b,q,j)                   "Share of land for free crops in zone (%)"
+    lShare(b,q0,j)                  "Share of land for free crops in zone (%)"
     retShare0(bd,bo,*)              "Share of return water (%)"
     jAF(j)                          "Crops with flexible land allocation 0/1"
     jAX(j)                          "Crops with fixed land allocation 0/1"
@@ -43,6 +43,7 @@ PARAMETERS
     etcP(b,j,p0)                    "Optimal evapotranspiration by phase (mm3/ha)"
     etcM(b,j,m0)                    "Optimal evapotranspiration by month (mm3/ha)"
     noYWR                           "Disable yield-water response function (0/1)"
+    useCET                          "Use CET function for land yield response"
 ;
 
 
@@ -66,39 +67,46 @@ checkoutput("obj0","s01")      = -20157.33;
 checkoutput("obj0","s02")      = -19883.26;
 
 * Yield response parameters (etc0 is in mm/day, so scale with x 10 / 1000000 to get to mm3/ha)
+* We'd probably want to scale to 1000m3/ha to get figures around 1 (better solver scaling)
 wPhase(b,j,p)       = ( phaseDays(b,p,j) / SUM(pp, phaseDays(b,pp,j)) )$phaseDays(b,p,j); 
 etcP(b,j,p)         = 0.000001 * SUM(m, 10*etc0(b,p,m,j));
 etcM(b,j,m)         = 0.000001 * SUM(p, 10*etc0(b,p,m,j))/1000000;
 etcM2P(b,j,p,m)     = (etc0(b,p,m,j)/SUM(pp, etc0(b,pp,m,j)) )$SUM(pp, etc0(b,pp,m,j));
+irg0(b,q0,j,y0,m)   = ( etcM(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$SUM(q00$qAvg(q00), lnd0(b,q00,j));
+
+* TEMPORARY: etcP is not compatible with agriSeason, so we re-map our phases to something simple that will always work
+etcM2P(b,j,p,m) = 0;
+etcM2P(b,j,"init","m01") = 1;
+etcM2P(b,j,"init","m02") = 1;
+etcM2P(b,j,"init","m03") = 1;
+etcM2P(b,j,"deve","m04") = 1;
+etcM2P(b,j,"deve","m05") = 1;
+etcM2P(b,j,"deve","m06") = 1;
+etcM2P(b,j,"midi","m07") = 1;
+etcM2P(b,j,"midi","m08") = 1;
+etcM2P(b,j,"midi","m09") = 1;
+etcM2P(b,j,"late","m10") = 1;
+etcM2P(b,j,"late","m11") = 1;
+etcM2P(b,j,"late","m12") = 1;
 
 * TEMPORARY - replace Excel names to crp0, lnd0, irg0, cCrop0 and pCrop0
-irg0(b,q,j,y0,m)    = ( qAWater(b,j)*agriSeason(b,j,m) * lnd0(b,q,j) / SUM(qq, lnd0(b,qq,j)) )$lnd0(b,q,j);
+irg0(b,q0,j,y0,m)    = ( qAWater(b,j)*agriSeason(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$lnd0(b,q0,j);
 
 * Temporary replacement for etc0
 etcM(b,j,m)         = ( qAWater(b,j)*agriSeason(b,j,m) / qAland(b,j) )$qAland(b,j);
 etcP(b,j,p)         = SUM(m, etcM2P(b,j,p,m) * etcM(b,j,m));
 *etcM2P(b,j,p,m)     = ( etc0(b,p,m,j)/etcP(b,j,p) )$etcP(b,j,p);
+* TEMPORARY calculation of weights - replace with FAO data
+wPhase(b,j,p)$bPlz(b) = ( SUM(m$etcM2P(b,j,p,m), 1$etcM(b,j,m))
+                         /SUM(m,                 1$etcM(b,j,m)) 
+                        )$SUM(m,                 1$etcM(b,j,m)) ; 
 
-
-
-* TEMPOARAY - refine YRW weights - fetch from Excel
-*crp0(b,j)                       = qAquant(b,j);
-*lnd0(b,j)                       = qAland(b,j);
 cCrop(b,j)$SUM(q, lnd0(b,q,j))   = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/SUM(q, lnd0(b,q,j));
-*qValue(b,j)                     = SUM(k, iACosts(b,k,j));
-*oCosts(b,j)$crp0(b,j)           = 1000000 * qValue(b,j) / crp0(b,j);
 
-*iShare(b,k,j)$qValue(b,j)       = iACosts(b,k,j) / qValue(b,j);
-*qInputs(b,"land",j)             = qALand(b,j);
-*qInputs(b,"watr",j)             = qAWater(b,j);
-* Set water supply to normal year (base year cannot be dry year, as base year agricultural water use is fixed at 2009 level)
-*sup(s,b,m)                      = sup0(s,b,"2009",m);
+
+* TEMPORARY: For valuation of electricity in reporting
 pEly("base",y0,m)               = pEly0(y0,m);
 pEly("peak",y0,m)               = pEly0(y0,m)*elyPeakFac;
-
-* Ground water correction: Data on groundwater leaves too much water in some planning zones in some months, below is corrected for that
-*qmWater(b,m)$bPlz(b)            = SUM(j, qAWater(b,j)*agriSeason(b,j,m)) + qIwater(b,m) + qHwater(b,m) - sup("W",b,m);
-*gwCorr(b,m)                     = min(0,qmWater(b,m));
 
 * Set maximum discharge capacity
 resDisMax0(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,

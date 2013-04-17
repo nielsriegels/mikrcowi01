@@ -2,6 +2,7 @@ POSITIVE VARIABLES
     GRW(bd,y0,m0)           "Ground water extraction (mm3)"
     IRG(b,q0,j,y0,m0)       "Actual irrigation (mm3)"
     YWR(b,q0,j,y0)          "Yield-water response function (index: 1=optimal)"
+    iET(b,q0,j,p,y0)        "Index for actual ET relative to optimal ET (index: 1=optimal)"
     CRP(b,q0,j,y0)          "Crop production (ton/year)"
     LND(b,q0,j,y0)          "Land use by crop and suitability class (ha)"
     HHI(s,sSec,b,y0,m0)     "Water use by households and industries (mm3)"
@@ -26,9 +27,10 @@ OPTIONS LOS:0:4:1;
 OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
 OPTIONS TPP:0:3:1;
-OPTIONS LND:0:1:2;
-OPTIONS CRP:0:1:2;
-OPTIONS YWR:4:1:2;
+OPTIONS LND:0:2:2;
+OPTIONS CRP:0:2:2;
+OPTIONS YWR:4:2:2;
+OPTIONS iET:4:3:2;
 
 EQUATIONS
 * Hydrological constraints and identities
@@ -58,10 +60,11 @@ EQUATIONS
     IRGACT(b,q0,j,y0,m0)        "Actual irrigation need by zone"
     YIELDWATER1(b,q0,j,y0)      "Yield water response function"
     YIELDWATER2(b,q0,j,y0,m0)   "Yield water response function upper limit"
+    iEVAPOTRANS(b,q0,j,p,y0)    "Calculate index for actual ET ratio to optimal ET"
     LEONTIEF(b,q0,j,y0)         "Ratio between outputs and inputs"
     CETLAND(b,y0)               "Index for physical amount of land"
-    FIXEDLAND(b,q,j,y0)         "Fixed land shares"
-* Objective functions
+    FIXEDLAND(b,q0,j,y0)        "Fixed land shares"
+    LANDLIMIT(b,y0)             "Maximum land use"
     OBJ                         "Objective function"
 ;
 
@@ -105,18 +108,25 @@ RETURNWATER(s,b,y,m)..
                  =e= 0.0*SUM((q,j),IRG(b,q,j,y,m));
 
 * Irrigation needs - irg0 is base year irrigation,
-IRGACT(b,q,j,y,m)$(irg0(b,q,j,y,m) AND noYWR )..
+* Not used when we enable Yield-Water response
+IRGACT(b,q,j,y,m)$(irg0(b,q,j,y,m) AND noYWR and useCET)..
     IRG(b,q,j,y,m) =e= (LND(b,q,j,y)/lnd0(b,q,j))*irg0(b,q,j,y,m) * (1-iInv("improve"));
 
 * Yield water response function
 * Summed over growth phases with appropriate phase weights and phase specific crop yield 
-YIELDWATER1(b,q,j,y)$lnd0(b,q,j)..
-    YWR(b,q,j,y) =l= 1 - SUM(p$etcP(b,j,p),  ( 1 - SUM(m, etcM2P(b,j,p,m)*IRG(b,q,j,y,m)) / (etcP(b,j,p)*LND(b,q,j,y)) )
-                                                * wPhase(b,j,p) * kYield(p,j) 
-                                           );
+YIELDWATER1(b,q,j,y)$((not noYWR) AND lnd0(b,q,j))..
+*    YWR(b,q,j,y) =e= 1 - SUM(p$etcP(b,j,p),  wPhase(b,j,p) * (1 - kYield(p,j) * iET(b,q,j,p,y))  );
+    YWR(b,q,j,y) =e=     SUM(p$etcP(b,j,p),  wPhase(b,j,p) * (1 - kYield(p,j)*(1-iET(b,q,j,p,y)))  );
+
+* TEMPORARY equation for eva / evc index
+iEVAPOTRANS(b,q,j,p,y)$(lnd0(b,q,j) AND etcP(b,j,p) AND (not noYWR) )..
+    iET(b,q,j,p,y) =e= SUM(m, etcM2P(b,j,p,m)*IRG(b,q,j,y,m)) / (etcP(b,j,p)*LND(b,q,j,y))  ;
+
+
+
 
 * Ensure that there is no excess watering (to not boost YWR above 1)
-YIELDWATER2(b,q,j,y,m)$lnd0(b,q,j)..
+YIELDWATER2(b,q,j,y,m)$((not noYWR) AND lnd0(b,q,j))..
     IRG(b,q,j,y,m) =l= etcM(b,j,m) * LND(b,q,j,y) ;
 
 * Use of water by households and industries
@@ -213,15 +223,22 @@ SUM(q, LND(b,q,j,y)) =g= SUM(q, lnd0(b,q,j)* iMinLnd(b,j));
 * Also correct for the fall in yield caused by the CET function.
 LEONTIEF(b,q,j,y)$lnd0(b,q,j)..
     ( CRP(b,q,j,y) / crp0(b,q,j) ) =e= 
-        YWR(b,q,j,y) * (LND(b,q,j,y)/lnd0(b,q,j)) * (1$jAX(j) + SUM(jj$lShare(b,q,jj), lShare(b,q,jj)*( CRP(b,q,jj,y) / crp0(b,q,jj) ) )$jAF(j) ) ;
+        YWR(b,q,j,y) * (LND(b,q,j,y)/lnd0(b,q,j)) * (1$jAX(j) 
+                                                     +useCET*SUM(jj$lShare(b,q,jj), lShare(b,q,jj)*( CRP(b,q,jj,y) / crp0(b,q,jj) ) )$jAF(j) 
+                                                     +1$((not useCET) AND jAF(j))
+                                                     ) ;
 
 * Enforce decreasing returns to scale from deviating away from base year land use patterns
-CETLAND(b,y)$SUM((q,j)$jAF(j), lnd0(b,q,j))..
-    1 =e=  ( SUM((j,q)$lShare(b,q,j), lShare(b,q,j)*( CRP(b,q,j,y) / crp0(b,q,j) )**rL )**(1/rL) ) ;
+CETLAND(b,y)$(SUM((q,j)$jAF(j), lnd0(b,q,j)) AND useCET)..
+    1$useCET =e=  ( SUM((j,q)$lShare(b,q,j), lShare(b,q,j)*( CRP(b,q,j,y) / crp0(b,q,j) )**rL )**(1/rL) ) ;
 
-* Some crops have a fixed share of land
+* Some fixed crops have a fixed share of land
 FIXEDLAND(b,q,j,y)$(lnd0(b,q,j) AND jAX(j))..
     ( LND(b,q,j,y) / lnd0(b,q,j) )$jAX(j)   =e= 1;
+
+* Total land use need to stay at or below available land use
+LANDLIMIT(b,y)$SUM((q,j), lnd0(b,q,j))..
+    SUM((q,j), LND(b,q,j,y)) =l= SUM((q,j), lnd0(b,q,j));
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
@@ -246,7 +263,7 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYTPP, ELYMKT,
-                LEONTIEF, CETLAND, FIXEDLAND, IRGACT, YIELDWATER1, YIELDWATER2, RETURNWATER
+                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, RETURNWATER
                 OBJ
                 /;
 

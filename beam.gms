@@ -78,8 +78,8 @@ SETS
 * =============================================================================
 * Include data tables on water flows, agriculture and economics
 * =============================================================================
-$include "%path%40data.inc";
 $offlisting
+$include "%path%40data.inc";
 $onlisting
 
 * =============================================================================
@@ -119,8 +119,6 @@ $include "%path%70eqtn.inc";
 * =============================================================================
 *$include "%path%80lvls.inc";
 
-PARAMETER checkYRW(sSce,b,q,j);
-
 * =============================================================================
 * Define base scenario and solve
 * =============================================================================
@@ -135,6 +133,4 @@ PUT step;
 PUT "4";
 PUTCLOSE;
 
-DISPLAY checkYRW;
-
-DISPLAY checkoutput;
+DISPLAY checkOutput;
