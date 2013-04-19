@@ -14,6 +14,8 @@ POSITIVE VARIABLES
     STO(s,b,y0,m0)          "Reservoir seasonal storage buildup (mm3)"
     HPP(b,g0,y0,m0)         "Hydro power production (MWh)"
     TPP(u,g0,y0,m0)         "Thermal power production (MWh)"
+    USD(g0,c,d0,y0,m0)      "Unserved demand (MWh)"
+    TRX(c,cc,g0,y0,m0)      "Export of electricity from c to cc (MWh)"
     RTN(s,bd,bo,y0,m0)      "Return of water from irrigating the fields (mm3)"
 VARIABLES
     TWV                     "Total water value (USD)"
@@ -49,7 +51,9 @@ EQUATIONS
     ELYHEAD(b,y0,m)             "Unit Electricity generation, reservoir state dependent"
     ELYHPP(b,g0,y0,m0)          "Hydro power production"
     ELYTPP(u,g0,y0,m0)          "Thermal power production"
-    ELYMKT(g,y0,m0)             "Power market balance"
+    ELYUSD(g0,c,d0,y0,m0)       "Unserved demand steps"
+    ELYTRX(c,cc,g0,y0,m0)       "Export of electricity from c to cc"
+    ELYMKT(c,g,y0,m0)           "Power market balance"
     MININFLOW(b,y0,m0)          "Minimum inflow to body"
     MINOUTFLOW(b,y0,m0)         "Minimum outflow from body"
     MININFLOWa(b,y0,m0)         "Minimum inflow to body, annual"
@@ -190,12 +194,29 @@ ELYHPP(b,g,y,m)$bResEly(b)..
 ELYTPP(u,g,y,m)$elyThermal("elyCap",u)..
     0.001 * TPP(u,g,y,m) =l= 0.001 * 30 * elyThermal("elyCap",u) * segmentHours(g);
 
-* Themal and hydro power production should cover the energy demand in every segment
-ELYMKT(g,y,m)..
-           0.001 * ( SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) + SUM(b$bResEly(b), HPP(b,g,y,m)) )
-    =e=    0.001 * 30 * segmentHours(g) * SUM(c, elyDemand0(c,g,m))
-           + 0.001 * SUM((s,bd,bo), ITK(s,bd,bo,y,m)* elyPump(bd,bo));
+* Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
+ELYUSD(g,c,d,y,m)..
+    0.001 * USD(g,c,d,y,m) =l= 0 * segmentHours(g);
 
+* Themal and hydro power production should cover the energy demand in every segment
+* Note: We might want to enter availability of TPP as a parameter which can increase
+*       if trade possibilities makes the plant more attractive
+* RHS is supply, LHS is demand, unit is GWh
+ELYMKT(c,g,y,m)..
+           0.001 * SUM(cc, TRX(cc,c,g,y,m) )
+*         + 0.001 * SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)$tppMap(u,c)) 
+          + 0.001 * SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) 
+
+         + 0.001 * SUM(b$bResEly(b),             HPP(b,g,y,m)$bCty(b,c))
+    =e=    
+           0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m)
+         - 0.001 * SUM(d, USD(g,c,d,y,m))
+         + 0.001 * SUM((s,bd,bo), ITK(s,bd,bo,y,m)* elyPump(bd,bo))
+         + 0.001 * SUM(cc, TRX(c,cc,g,y,m) );
+
+* Transmission constraints between countries
+ELYTRX(c,cc,g,y,m)$trx0(c,cc)..
+    TRX(c,cc,g,y,m) =l= trx0(c,cc)$transx;
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..

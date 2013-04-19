@@ -50,6 +50,10 @@ PARAMETERS
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
     checkoutput(*,sSce)             "Check of output values for no-change control"
+
+* Temporary - to be replaced or deleted
+    trx0(c,cc)
+    transx
 ;
 
 

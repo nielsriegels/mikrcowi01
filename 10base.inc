@@ -45,6 +45,8 @@ SETS
     g(g0)                   "Energy demand segment" / base, peak /
     u0                      "Energy prod. units"    / u01*u99 /
     u(u0)                   "Energy prod. units"    / u01*u20 /
+    d0                      "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45, d40, d35, d30 /
+    d(d0)                   "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45, d40, d35, d30 /
     sBal                    "Balance table cols"    / Demand, FromSrc, DisTo, FromUp, FromIn, Return, ToIn, DisFrom, ToDwn, ToLoss /
     sInv                    "Irrigation investment" / usdPerMM3, usdPerHa, improve /
     sSec                    "Non-agri sectors"      / HH, ind /
@@ -55,6 +57,7 @@ SETS
 ;
 
 * Aliases 
+ALIAS(c,cc);
 ALIAS(m0,mm0);
 ALIAS(m,mm);
 ALIAS(y0,yy0);
@@ -63,6 +66,7 @@ ALIAS(s,ss);
 ALIAS(p,pp);
 ALIAS(q,qq);
 ALIAS(q0,q00);
+
 
 * Link between season and months
 SET mSeason(m,mS) / m01.nvg, m02.nvg, m03.nvg, m04.veg, m05.veg, m06.veg, m07.veg, m08.veg, m09.veg, m10.nvg, m11.nvg, m12.nvg /;
