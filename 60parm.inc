@@ -31,7 +31,7 @@ PARAMETERS
     etcM(b,j,m0)                    "Optimal evapotranspiration by month (mm3/ha)"
     resVolFix(b,y0,m)               "Fixed volume for reservoirs (mm3)"
     resDisFix(bd,bo,y0,m)           "Fixed discharges for reservoirs (mm3/month)"
-* Parameters for control of model scenarios 
+* Parameters for control of model scenarios
     jAF(j)                          "Crops with flexible land allocation 0/1"
     jAX(j)                          "Crops with fixed land allocation 0/1"
     objDISweight(b,m)               "Constrained optimisation objective weights for discharges"
@@ -49,7 +49,9 @@ PARAMETERS
     rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
+    result(sSce,*,g0,c,y0,m0)       "Results for countries in each month for each scenario"
     checkoutput(*,sSce)             "Check of output values for no-change control"
+
 
 * Temporary - to be replaced or deleted
     trx0(c,cc)
@@ -78,7 +80,7 @@ checkoutput("obj0","s02")      = -19883.26;
 
 * Yield response parameters (etc0 is in mm/day, so scale with x 10 / 1000000 to get to mm3/ha)
 * We'd probably want to scale to 1000m3/ha to get figures around 1 (better solver scaling)
-wPhase(b,j,p)       = ( phaseDays(b,p,j) / SUM(pp, phaseDays(b,pp,j)) )$phaseDays(b,p,j); 
+wPhase(b,j,p)       = ( phaseDays(b,p,j) / SUM(pp, phaseDays(b,pp,j)) )$phaseDays(b,p,j);
 etcP(b,j,p)         = 0.000001 * SUM(m, 10*etc0(b,p,m,j));
 etcM(b,j,m)         = 0.000001 * SUM(p, 10*etc0(b,p,m,j))/1000000;
 etcM2P(b,j,p,m)     = (etc0(b,p,m,j)/SUM(pp, etc0(b,pp,m,j)) )$SUM(pp, etc0(b,pp,m,j));
@@ -108,8 +110,8 @@ etcP(b,j,p)         = SUM(m, etcM2P(b,j,p,m) * etcM(b,j,m));
 *etcM2P(b,j,p,m)     = ( etc0(b,p,m,j)/etcP(b,j,p) )$etcP(b,j,p);
 * TEMPORARY calculation of weights - replace with FAO data
 wPhase(b,j,p)$bPlz(b) = ( SUM(m$etcM2P(b,j,p,m), 1$etcM(b,j,m))
-                         /SUM(m,                 1$etcM(b,j,m)) 
-                        )$SUM(m,                 1$etcM(b,j,m)) ; 
+                         /SUM(m,                 1$etcM(b,j,m))
+                        )$SUM(m,                 1$etcM(b,j,m)) ;
 
 cCrop(b,j)$SUM(q, lnd0(b,q,j))   = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/SUM(q, lnd0(b,q,j));
 

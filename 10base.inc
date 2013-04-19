@@ -43,8 +43,8 @@ SETS
     yB(y0)                  "Base year"
     g0                      "Energy demand segment" / base, peak /
     g(g0)                   "Energy demand segment" / base, peak /
-    u0                      "Energy prod. units"    / u01*u99 /
-    u(u0)                   "Energy prod. units"    / u01*u20 /
+    u0                      "Energy prod. units"    / u01*u90 /
+    u(u0)                   "Energy prod. units"    / u01*u44 /
     d0                      "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45, d40, d35, d30 /
     d(d0)                   "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45, d40, d35, d30 /
     sBal                    "Balance table cols"    / Demand, FromSrc, DisTo, FromUp, FromIn, Return, ToIn, DisFrom, ToDwn, ToLoss /
@@ -56,7 +56,7 @@ SETS
     l                       "Loss types"            / seep, evap /
 ;
 
-* Aliases 
+* Aliases
 ALIAS(c,cc);
 ALIAS(m0,mm0);
 ALIAS(m,mm);
@@ -187,4 +187,3 @@ SETS
         WaterVal        "Marginal value of water USD/mm3" /
 
 ;
-
