@@ -82,6 +82,11 @@ $offlisting
 $include "%path%40data.inc";
 $onlisting
 
+* TEMPORARY - replace with Excel entries
+SET cot(j) / cot /;
+SET wht(j) / wht /;
+SET veg(j) / veg /;
+
 * =============================================================================
 * Include defition of scenario
 * =============================================================================

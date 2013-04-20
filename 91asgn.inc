@@ -10,6 +10,9 @@
 * Disable CET function by scenario choice
     useCET                  = 1$scenarios("useCET",sSce);
 
+* Allow transmission according to transmission limits in trx0
+    transx                  = 1$scenarios("transx",sSce);
+
 * Allow flexibility in land allocation and account for any fallow land
 * unless scenario user chose fixed land allocation (opLND=0)
     IF(scenarios("fixLND",sSce) gt 0,
@@ -113,7 +116,7 @@ IF(ord(sSce) eq 1,
 
 
 * ELectricity variable levels
-        TPP.l(u,g,y,m)              = elyThermal("elyCap",u) / 2;
+        TPP.l(c,u,g,y,m)$tppMap(c,u)= elyThermal("elyCap",u) / 2;
         HPP.l(b,g,y,m)$bResEly(b)   = 0.5*SUM((s,bd)$(resv(bd,b) AND sW(s)),  gravity * reservoirs(b,"coef_eta") * DIS.l(s,bd,b,y,m)
                                           * ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*VOL.l(s,b,y,m) + reservoirs(b,"coef_c")*POWER(VOL.l(s,b,y,m),2))
                                       ) / 3600;

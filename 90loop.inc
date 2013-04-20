@@ -11,8 +11,7 @@ $include "%path%91asgn.inc";
 putclose sRename 'copy /Y %path%solutions\solution-' sSce.tl:0 '.gdx %path%solutions\solution.gdx';
 execute '%path%solutions\renameS.cmd';
 
-execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, YWR, CRP, LND, TWV;
-
+execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, TRX, USD, YWR, iET, CRP, LND, TWV ;
 
 
 * Fix hydrological variables that can never be non-zero
@@ -25,7 +24,8 @@ execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, 
     VOL.up(s,b,y,m)                                             = INF$(bRes(b) or sea(b));
     STO.up(s,b,y,m)                                             = INF$(bRes(b) or sea(b));
     HPP.up(b,g,y,m)                                             = INF$bResEly(b);
-    TPP.up(u,g,y,m)                                             = INF$elyThermal("elyCap",u);
+    TPP.up(c,u,g,y,m)                                           = INF$(elyThermal("elyCap",u) and tppMap(c,u));
+    TRX.up(c,cc,g,y,m)                                           = INF$trx0(c,cc);
     LOS.up(s,b,l,y0,m0)                                         = INF;
 *    YWR.up(b,q,j,y)                                             = 1;
     CRP.lo(b,q,j,y)                                             = crp0(b,q,j) * 0.1;
@@ -46,12 +46,13 @@ $include "%path%92cstr.inc";
 *    beam.limrow = 50000;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
+*    if(ord(ssce) eq 6,    beam.solprint = yes; );
     
     SOLVE beam MAXIMIZING twv USING NLP;
 
 * Save solution to re-use later
 IF(beam.modelstat le 2, 
-    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, YWR, iET, CRP, LND, TWV;
+    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, TPP, USD, TRX, YWR, iET, CRP, LND, TWV;
     putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
     execute '%path%solutions\renameS.cmd';
 ); 

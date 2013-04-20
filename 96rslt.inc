@@ -138,15 +138,10 @@ $offtext
 
 *  what is dem0 ?  result(sSce,"Notional elec. demand (GWh)",c,m0)           = -dem0(c,m0);
 *  what is dem0 ?  result(sSce,"Supplied elec. demand (GWh)",c,m0)           = -dem0(c,m0) + SUM(d, USD.l(c,d,m0));
-
-
     result(sSce,"Unserved elec. demand (GWh)",g0,c,y0,m0)      = SUM(d, USD.l(g0,c,d,y0,m0));
     result(sSce,"Net electricity trade (GWh)",g0,c,y0,m0)      = -SUM(cc, TRX.l(c,cc,g0,y0,m0)-TRX.l(cc,c,g0,y0,m0)) ;
 *    result(sSce,"Outside elec. export (GWh)",c,m)             = -qExp0(c,m);
 *    result(sSce,"Outside elec. export (GWh)",c,"annual")      = SUM(m, qExp0(c,m));
-
-
-
 * TPP is not defined over C    result(sSce,"Electricity production(GWh)",g0,c,y0,m0)     = HPP.l(m0)$cUps(c) + SUM(u, TPP.l(c,u,m0));;
     result(sSce,"HEPS electricity (GWh)",g0,c,y0,m0)                 = SUM(b$bCty(b,c),HPP.l(b,g0,y0,m0));
 * TPP is not defined over C      result(sSce,"Thermal power prod. (GWh)",g0,c,y0,m0)              = SUM(u, TPP.l(c,u,g0,y0,m0));
@@ -171,8 +166,6 @@ $offtext
 
 * TPP is not defined over C     result(sSce,"Thermal power old (GWh)",g0,c,y0,m0)               = SUM(u, TPP.l(c,u,m0)$(TNI.l(c,u) eq 0) );
 * TPP is not defined over C     result(sSce,"Thermal power new (GWh)",g0,c,y0,m0)               = SUM(u, TPP.l(c,u,m0)$(TNI.l(c,u) gt 0));
-
-
 * TPP is not defined over C     result(sSce,"Thermal economic costs (mUSD)",g0,c,y0,m0)        = -SUM(u,         TPP.l(c,u,m0)*tpp0(c,u,"SRMC")/1000 + TNI.l(c,u)*tpp0(c,u,"CAPX")*TNIweight(m0)) ;
 
 result(sSce,"Unmet demand costs (mUSD)",g,c,y0,m0)            = -SUM(d0,         USD.l(g,c,d0,y0,m0)*USD0(c,g,d0))/1000 ;
@@ -190,7 +183,7 @@ result(sSce,"Unmet demand costs (mUSD)",g,c,y0,m0)            = -SUM(d0,        
 
     result(sSce,"Marg. prod. cost (USD/MWh)",g,c,y0,m)            = - ELYMKT.m(c,g,y0,m)*1000;
 *    result(sSce,"Marg. prod. cost (USD/MWh)",g0,c,y0,m)            = -ELYMARKET.m(c,m)*1000;
-    result(sSce,"CAPS trade value (mUSD)",g,c,y0,m)                = ELYMKT.m(c,g,y0,m) * result(sSce,"Net electricity trade (GWh)",g,c,y0,m) ;
+*    result(sSce,"CAPS trade value (mUSD)",g,c,y0,m)                = ELYMKT.m(c,g,y0,m) * result(sSce,"Net electricity trade (GWh)",g,c,y0,m) ;
 *    result(sSce,"CAPS trade value (mUSD)",g0,c,y0,m)                = ELYMARKET.m(c,m) * result(sSce,"Net electricity trade (GWh)",;
 *    result(sSce,"Transmission value (mUSD)",c,m)              = SUM(cc, TRANSMISSION.m(c,cc,m)*(TRX.l(c,cc,m)-TRX.l(cc,c,m))) ;
 *    result(sSce,"HEPS surplus (mUSD)",c,m)                    = -ELYMARKET.m(c,m)*HPP.l(m)$cUps(c);
@@ -206,6 +199,43 @@ result(sSce,"Unmet demand costs (mUSD)",g,c,y0,m0)            = -SUM(d0,        
 * elyvalue needs definition    result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0)      = 1000*(         elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,g,d0)) ) / 1000000 ;
 *    result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0)      = 1000*(         elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,d,"wtp")) ) / 1000000 ;
 *    result(sSce,"Electricity cons. surpl. (mUSD)",c,"annual") = SUM(m, result(sSce,"Electricity cons. surpl. (mUSD)",c,m));
-    result(sSce,"Electricity value added (mUSD)",g0,c,y0,m0)      = result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0)  + result(sSce,"Thermal economic costs (mUSD)",g0,c,y0,m0)
-                                                             +result(sSce,"External elec. export (mUSD)",g0,c,y0,m0) ;
-    result(sSce,"Total value added (mUSD)",g0,c,y0,m0)             = result(sSce,"Electricity value added (mUSD)",g0,c,y0,m0)  + result(sSce,"Agricultural value added (mUSD)",g0,c,y0,m0) ;
+*    result(sSce,"Electricity value added (mUSD)",g0,c,y0,m0)      = result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0)  + result(sSce,"Thermal economic costs (mUSD)",g0,c,y0,m0)
+*                                                             +result(sSce,"External elec. export (mUSD)",g0,c,y0,m0) ;
+*    result(sSce,"Total value added (mUSD)",g0,c,y0,m0)             = result(sSce,"Electricity value added (mUSD)",g0,c,y0,m0)  + result(sSce,"Agricultural value added (mUSD)",g0,c,y0,m0) ;
+
+
+    rcView(sSce,y,"AgriSales",c)            =  SUM((b,q,j)$bCty(b,c),   CRP.l(b,q,j,y) * pCrop(j)  ) / 1000000;
+    rcView(sSce,y,"AgriCosts",c)            = -SUM((b,q,j)$bCty(b,c),   LND.l(b,q,j,y) * cCrop(b,j)) / 1000000;
+    rcView(sSce,y,"AgriVA",c)               = rcView(sSce,y,"AgriSales",c) - rcView(sSce,y,"AgriCosts",c);
+    rcView(sSce,y,"AgriCot",c)              = SUM((b,q,j)$bCty(b,c),    CRP.l(b,q,j,y)$cot(j));
+    rcView(sSce,y,"AgriWht",c)              = SUM((b,q,j)$bCty(b,c),    CRP.l(b,q,j,y)$wht(j));
+    rcView(sSce,y,"AgriVeg",c)              = SUM((b,q,j)$bCty(b,c),    CRP.l(b,q,j,y)$veg(j));
+    rcView(sSce,y,"AgriWater",c)            = SUM((b,q,j,m)$bCty(b,c),  IRG.l(b,q,j,y,m));
+    rcView(sSce,y,"AgriWaterSum",c)         = SUM((b,q,j,m)$bCty(b,c),  IRG.l(b,q,j,y,m)$mSum(m));
+    rcView(sSce,y,"AgriWaterWin",c)         = SUM((b,q,j,m)$bCty(b,c),  IRG.l(b,q,j,y,m)$mWin(m));
+*    rcView(sSce,y,"HHIuse",c)               = SUM((b,sSec,m)$bCty(b,c), HHI.l(b,sSec,y,m));
+    rcView(sSce,y,"Losses",c)               = 0;
+    rcView(sSce,y,"Nature",c)               = 0;
+    rcView(sSce,y,"Amu-TAD-TUR",c)          = 0;
+    rcView(sSce,y,"Amu-TUR-UZB",c)          = 0;
+    rcView(sSce,y,"Syr-KYR-UZB",c)          = 0;
+    rcView(sSce,y,"Syr-UZB-KAZ",c)          = 0;
+    rcView(sSce,y,"cTherm",c)               = 0;
+    rcView(sSce,y,"iTherm",c)               = 0;
+    rcView(sSce,y,"sTherm",c)               = 0;
+    rcView(sSce,y,"cField",c)               = 0;
+    rcView(sSce,y,"iField",c)               = 0;
+    rcView(sSce,y,"cConvey",c)              = 0;
+    rcView(sSce,y,"iConvey",c)              = 0;
+    rcView(sSce,y,"cHydro",c)               = 0;
+    rcView(sSce,y,"iHydro",c)               = 0;
+    rcView(sSce,y,"aggWTP",c)               = 0;
+    rcView(sSce,y,"CSur",c)                 = 0;
+    rcView(sSce,y,"PSur",c)                 = 0;
+    rcView(sSce,y,"qTherm",c)               = 0;
+    rcView(sSce,y,"qThermWin",c)            = 0;
+    rcView(sSce,y,"qThermSum",c)            = 0;
+    rcView(sSce,y,"qHydro",c)               = 0;
+    rcView(sSce,y,"qHydroWin",c)            = 0;
+    rcView(sSce,y,"qHydroSum",c)            = 0;
+

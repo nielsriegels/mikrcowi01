@@ -3,3 +3,4 @@
 *.csv
 output/beamOutput.xls
 solutions/*.gdx
+output/*.gdx

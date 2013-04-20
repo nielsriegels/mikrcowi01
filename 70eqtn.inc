@@ -12,10 +12,10 @@ POSITIVE VARIABLES
     VOL(s,b,y0,m0)          "Reservoir volume levels end of season (mm3)"
     DIS(s,bd,bo,y0,m0)      "Reservoir seasonal discharge (mm3)"
     STO(s,b,y0,m0)          "Reservoir seasonal storage buildup (mm3)"
-    HPP(b,g0,y0,m0)         "Hydro power production (MWh)"
-    TPP(u,g0,y0,m0)         "Thermal power production (MWh)"
-    USD(g0,c,d0,y0,m0)      "Unserved demand (MWh)"
-    TRX(c,cc,g0,y0,m0)      "Export of electricity from c to cc (MWh)"
+    HPP(b,g0,y0,m0)         "Hydro power production (GWh)"
+    TPP(c,u,g0,y0,m0)       "Thermal power production (GWh)"
+    USD(g0,c,d0,y0,m0)      "Unserved demand (GWh)"
+    TRX(c,cc,g0,y0,m0)      "Export of electricity from c to cc (GWh)"
     RTN(s,bd,bo,y0,m0)      "Return of water from irrigating the fields (mm3)"
 VARIABLES
     TWV                     "Total water value (USD)"
@@ -50,7 +50,7 @@ EQUATIONS
     RESFIXVOL(s,b,y0,m0)        "Fix Reservoir Volume level"
     ELYHEAD(b,y0,m)             "Unit Electricity generation, reservoir state dependent"
     ELYHPP(b,g0,y0,m0)          "Hydro power production"
-    ELYTPP(u,g0,y0,m0)          "Thermal power production"
+    ELYTPP(c,u,g0,y0,m0)        "Thermal power production"
     ELYUSD(g0,c,d0,y0,m0)       "Unserved demand steps"
     ELYTRX(c,cc,g0,y0,m0)       "Export of electricity from c to cc"
     ELYMKT(c,g,y0,m0)           "Power market balance"
@@ -175,7 +175,7 @@ RESFIXVOL(s,b,y,m)$resVolFix(b,y,m)..
 RESFIXDIS(s,bd,bo,y,m)$resDisFix(bd,bo,y,m)..
     FLW(s,bd,bo,y,m) + DIS(s,bd,bo,y,m) * scalem3 =e= resDisFix(bd,bo,y,m) * scalem3;
 
-* Reservoir unit electricity generation
+* Reservoir unit electricity generation - transform from MWh to GWh
 * Filled reservoirs produce more per m3 than half empty
 * OBS: Check how average volume is calcuated in the start and end months!
 ELYHEAD(b,y,m)$bResEly(b)..
@@ -184,39 +184,37 @@ ELYHEAD(b,y,m)$bResEly(b)..
                       * ( reservoirs(b,"coef_a")
                          +reservoirs(b,"coef_b") *      (VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2
                          +reservoirs(b,"coef_c") *POWER((VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2,2)
-                        ) / 3.6 );
+                        ) / 3.6 ) * 0.001;
 
-* Hydro power production (in MWh) by time segment is capped by hours in each segment according to maximum effect (in MW)
+* Hydro power production (in GWh) by time segment is capped by hours in each segment according to maximum effect (in MW)
 ELYHPP(b,g,y,m)$bResEly(b)..
-    0.001*HPP(b,g,y,m) =l= 0.001 * 30 * reservoirs(b,"effect") * segmentHours(g);
+    HPP(b,g,y,m) =l= 0.001 * 30 * reservoirs(b,"effect") * segmentHours(g);
 
 * Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
-ELYTPP(u,g,y,m)$elyThermal("elyCap",u)..
-    0.001 * TPP(u,g,y,m) =l= 0.001 * 30 * elyThermal("elyCap",u) * segmentHours(g);
+ELYTPP(c,u,g,y,m)$(elyThermal("elyCap",u) and tppMap(c,u))..
+    TPP(c,u,g,y,m) =l= 0.001 * 30 * elyThermal("elyCap",u) * segmentHours(g);
 
 * Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
-ELYUSD(g,c,d,y,m)..
-    0.001 * USD(g,c,d,y,m) =l= 0 * segmentHours(g);
+ELYUSD(g,c,d,y,m)$usd0(c,g,d)..
+    USD(g,c,d,y,m) =l= 0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m) * usdSh(d);
 
 * Themal and hydro power production should cover the energy demand in every segment
 * Note: We might want to enter availability of TPP as a parameter which can increase
 *       if trade possibilities makes the plant more attractive
 * RHS is supply, LHS is demand, unit is GWh
 ELYMKT(c,g,y,m)..
-           0.001 * SUM(cc, TRX(cc,c,g,y,m) )
-*         + 0.001 * SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)$tppMap(u,c)) 
-          + 0.001 * SUM(u$elyThermal("elyCap",u), TPP(u,g,y,m)) 
-
-         + 0.001 * SUM(b$bResEly(b),             HPP(b,g,y,m)$bCty(b,c))
+           SUM(cc$trx0(cc,c),       TRX(cc,c,g,y,m) )
+         + SUM(u$tppMap(c,u),       TPP(c,u,g,y,m)) 
+         + SUM(b$bResEly(b),        HPP(b,g,y,m)$bCty(b,c))
     =e=    
            0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m)
-         - 0.001 * SUM(d, USD(g,c,d,y,m))
-         + 0.001 * SUM((s,bd,bo), ITK(s,bd,bo,y,m)* elyPump(bd,bo))
-         + 0.001 * SUM(cc, TRX(c,cc,g,y,m) );
+         - SUM(d,                   USD(g,c,d,y,m))
+         + SUM((s,bd,bo),           0.001*ITK(s,bd,bo,y,m)* elyPump(bd,bo))
+         + SUM(cc$trx0(c,cc),       TRX(c,cc,g,y,m) );
 
-* Transmission constraints between countries
-ELYTRX(c,cc,g,y,m)$trx0(c,cc)..
-    TRX(c,cc,g,y,m) =l= trx0(c,cc)$transx;
+* Transmission constraints between countries (trx0 in MW, TRX in GW)
+ELYTRX(c,cc,g,y,m)$(trx0(c,cc) AND 0)..
+    TRX(c,cc,g,y,m) =l= 0.001*trx0(c,cc)$transx;
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
@@ -269,7 +267,8 @@ OBJ..   TWV =e=
                    -SUM((b,q,j,y,m)$irg0(b,q,j,y,m),            IRG(b,q,j,y,m)*iInv("usdPerMM3")                            * objAGRweight(b)    ) / 1000000
 * CAUTION: The irrigation investments are probably misspecified: they depend on exogenous land use, not actual - check this!!!
                    -SUM((b,q,j,y)$lnd0(b,q,j),                  LND(b,q,j,y) * iInv("usdPerHa")                             * objAGRweight(b)    ) / 1000000
-                   -SUM((u,g,y,m)$elyThermal("elyCap",u),       TPP(u,g,y,m)*elyThermal("uFUELEX",u)                        * objELYweight       ) / 1000000
+                   -SUM((c,u,g,y,m)$tppMap(c,u),                TPP(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000                 * objELYweight       ) / 1000000
+                   -SUM((c,d,g,y,m)$usd0(c,g,d),                USD(g,c,d,y,m)*usd0(c,g,d)*1000                             * objELYweight       ) / 1000000
                    -SUM((b,y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       )
                    +SUM((b,g,y,m)$objHPPweight(b,m),            HPP(b,g,y,m)                                                * objHPPweight(b,m)  ) / 1000000
                    +SUM((s,bd,bo,j,y,m)$objDISweight(bo,m),     (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000

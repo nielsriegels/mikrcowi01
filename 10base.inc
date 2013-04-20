@@ -51,7 +51,7 @@ SETS
     sInv                    "Irrigation investment" / usdPerMM3, usdPerHa, improve /
     sSec                    "Non-agri sectors"      / HH, ind /
     sRtn                    "Return flow types"     / total, irrig, river, lakes/
-    sEly                    "Elec. data types"      / elyCap, aCAPEX, aFOPEX, uVOPEX, uFUELEX /
+    sEly                    "Elec. data types"      / elyCap, aCAPEX, aFOPEX, uVOPEX, uFUELEX, rHEAT /
     sSce                    "Scenarios"             / s01*s50 /
     l                       "Loss types"            / seep, evap /
 ;
@@ -186,4 +186,43 @@ SETS
         DischVal        "Unit wlectricity earnings (USD/mm3)"
         WaterVal        "Marginal value of water USD/mm3" /
 
+* by scenario and country
+    e_resView /
+        AgriSales       "Sales value of crops"
+        AgriCosts       "Cost of crop production"
+        AgriVA          "Value added of agriculture"
+        AgriCot         "Cotton production"
+        AgriWht         "Wheat production"
+        AgriVeg         "Vegetables production"
+        AgriWater       "Water for agriculture"
+        AgriWaterSum    "Water for agriculture, summer"
+        AgriWaterWin    "Water for agriculture, winter"
+        HHIuse          "Water use by households and industries"
+        Losses          "Losses to ground water and evaporation"
+        Nature          "Water allocated to nature"
+        Amu-TAD-TUR     "Amu Water flows from TAD to TUR"
+        Amu-TUR-UZB     "Amu Water flows from TUR to UZB"
+        Syr-KYR-UZB     "Amu Water flows from KYR to UZB"
+        Syr-UZB-KAZ     "Amu Water flows from UZB to KAZ"
+        cTherm          "Thermal fuel and OM costs"
+        iTherm          "Thermal capital costs"
+        sTherm          "Thermal subsidies"
+        cField          "Field level OM costs"
+        iField          "Field level capital costs"
+        cConvey         "Conveyence OM costs"
+        iConvey         "Conveyence capital costs"
+        cHydro          "HPP OM costs"
+        iHydro          "HPP capital costs"
+        aggWTP          "Aggregate Willingness to Pay"
+        CSur            "Consumer surplus"
+        PSur            "Producer surplus"
+        qTherm          "Thermal production total"
+        qThermWin       "Thermal production winter"
+        qThermSum       "Thermal production summer"
+        qHydro          "Hydro production total"
+        qHydroWin       "Hydro production winter"  
+        qHydroSum       "Hydro production summer" /
 ;
+
+PARAMETER usdSh(d0) "Share of demand in step unserved"
+/ d95 0.05, d90 0.05, d85 0.05, d80 0.05, d75 0.05, d70 0.05, d65 0.05, d60 0.05, d55 0.05, d50 0.05, d45 0.5 /;

@@ -1,0 +1,27 @@
+# Clone repository (make a new copy of the model) 
+git clone https://github.com/mikkelakromann/mikrcowi01.git
+
+
+# Checkout another branch for the first time linking to GitHub    
+git branch some_branch
+git checkout some_branch
+git branch --set-upstream-to=origin/some_branch
+git pull
+
+
+# Checkout to another branch  git checkout some_branch
+    
+# Commit changes and synchronise to GitHub repository git add -A
+git commit -m "Message explaining what changed in this commit"
+git push
+
+   
+# Reverting to the GitHub repository for branch   
+git reset --hard HEAD
+
+# Un-track file
+git update-index --assume-unchanged path/to/file
+
+
+# Merge   <To be filled in later, when we get information from KAOL>
+# Stash   <To be filled in later, when we get information from KAOL>

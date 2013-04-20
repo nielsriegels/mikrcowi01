@@ -21,6 +21,7 @@ wHPPwin 0   0   0   0   0   0   0   0   0   0   1   0
 wDISsum 0   0   0   0   0   0   0   0   0   0   0   1   
 avgSoil 1   1   1   1   0   0   0   0   0   0   0   0   
 useCET  1   1   1   0   1   0   0   0   0   0   0   0   
+transx  0   0   0   0   0   0   0   0   0   0   0   0   
 ;
 
 TABLE resNewOp(b,sSce) "New reservoir in operation"
