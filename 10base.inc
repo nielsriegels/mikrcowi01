@@ -214,14 +214,18 @@ SETS
         cHydro          "HPP OM costs"
         iHydro          "HPP capital costs"
         aggWTP          "Aggregate Willingness to Pay"
-        CSur            "Consumer surplus"
-        PSur            "Producer surplus"
+        elyCS           "Consumer surplus electricity market"
+        elyPS           "Producer surplus electricity market"
         qTherm          "Thermal production total"
         qThermWin       "Thermal production winter"
         qThermSum       "Thermal production summer"
         qHydro          "Hydro production total"
         qHydroWin       "Hydro production winter"  
-        qHydroSum       "Hydro production summer" /
+        qHydroSum       "Hydro production summer" 
+        qElyCons        "Electricity consumption"
+        Invest          "Total investments"
+        OandM           "Total O and M except thermal fuel"
+        Surplus         "Total surplus" /
 ;
 
 PARAMETER usdSh(d0) "Share of demand in step unserved"

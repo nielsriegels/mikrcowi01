@@ -83,9 +83,14 @@ $include "%path%40data.inc";
 $onlisting
 
 * TEMPORARY - replace with Excel entries
-SET cot(j) / cot /;
-SET wht(j) / wht /;
-SET veg(j) / veg /;
+SET cot(j)  / cot /;
+SET wht(j)  / wht /;
+SET veg(j)  / veg /;
+SET fru(j)  / fru /;
+SET ric(j)  / ric /;
+SET alf(j)  / alf /;
+SET oth(j)  / oth /;
+SET bNat(b) / Lak_ARS, Lak_ARN, Lak_Ayd /;
 
 * =============================================================================
 * Include defition of scenario
