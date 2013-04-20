@@ -12,6 +12,7 @@ POSITIVE VARIABLES
     VOL(s,b,y0,m0)          "Reservoir volume levels end of season (mm3)"
     DIS(s,bd,bo,y0,m0)      "Reservoir seasonal discharge (mm3)"
     STO(s,b,y0,m0)          "Reservoir seasonal storage buildup (mm3)"
+    HHD(b,y0,m0)            "Hydro power reservoir head (m)"
     HPP(b,g0,y0,m0)         "Hydro power production (GWh)"
     TPP(c,u,g0,y0,m0)       "Thermal power production (GWh)"
     USD(g0,c,d0,y0,m0)      "Unserved demand (GWh)"
@@ -49,7 +50,8 @@ EQUATIONS
     RESFIXDIS(s,bd,bo,y0,m0)    "Fix Reservoir Discharge level"
     RESFIXVOL(s,b,y0,m0)        "Fix Reservoir Volume level"
     ELYHEAD(b,y0,m)             "Unit Electricity generation, reservoir state dependent"
-    ELYHPP(b,g0,y0,m0)          "Hydro power production"
+    ELYHPP(b,y0,m0)             "Hydro power production"
+    ELYSEG(b,g0,y0,m0)          "Hydro power production by segment"
     ELYTPP(c,u,g0,y0,m0)        "Thermal power production"
     ELYUSD(g0,c,d0,y0,m0)       "Unserved demand steps"
     ELYTRX(c,cc,g0,y0,m0)       "Export of electricity from c to cc"
@@ -179,16 +181,21 @@ RESFIXDIS(s,bd,bo,y,m)$resDisFix(bd,bo,y,m)..
 * Filled reservoirs produce more per m3 than half empty
 * OBS: Check how average volume is calcuated in the start and end months!
 ELYHEAD(b,y,m)$bResEly(b)..
-    SUM(g, HPP(b,g,y,m))
-                =e= SUM(s$sW(s),  gravity * reservoirs(b,"coef_eta") * SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
-                      * ( reservoirs(b,"coef_a")
+    HHD(b,y,m)  =e= SUM(s$sW(s),  
+                          reservoirs(b,"coef_a")
                          +reservoirs(b,"coef_b") *      (VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2
                          +reservoirs(b,"coef_c") *POWER((VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2,2)
-                        ) / 3.6 ) * 0.001;
+                        )  ;
 
 * Hydro power production (in GWh) by time segment is capped by hours in each segment according to maximum effect (in MW)
-ELYHPP(b,g,y,m)$bResEly(b)..
-    HPP(b,g,y,m) =l= 0.001 * 30 * reservoirs(b,"effect") * segmentHours(g);
+ELYSEG(b,g,y,m)$bResEly(b)..
+    HPP(b,g,y,m) =l= 0.001 * 30 * reservoirs(b,"effect") * segmentHours(g) ;
+
+* HPP production is 1 kg * m * m/s^2 = 1 Joule 
+* Since we use million m3 (=billion kg) as weight unit, the energy unit is GJ
+* We convert to GWh using 1 GWh = 3.6 TJ 
+ELYHPP(b,y,m)$bResEly(b)..
+    SUM(g, HPP(b,g,y,m)) =e= 0.001 * gravity * reservoirs(b,"coef_eta") * SUM((s,bd)$resv(bd,b), DIS(s,bd,b,y,m)$sW(s)) * HHD(b,y,m) / 3.6;
 
 * Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
 ELYTPP(c,u,g,y,m)$(elyThermal("elyCap",u) and tppMap(c,u))..
@@ -208,7 +215,7 @@ ELYMKT(c,g,y,m)..
          + SUM(b$bResEly(b),        HPP(b,g,y,m)$bCty(b,c))
     =e=    
            0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m)
-         - SUM(d,                   USD(g,c,d,y,m))
+         - SUM(d$usd0(c,g,d),       USD(g,c,d,y,m))
          + SUM((s,bd,bo),           0.001*ITK(s,bd,bo,y,m)* elyPump(bd,bo))
          + SUM(cc$trx0(c,cc),       TRX(c,cc,g,y,m) );
 

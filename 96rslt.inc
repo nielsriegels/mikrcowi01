@@ -241,9 +241,10 @@ result(sSce,"Unmet demand costs (mUSD)",g,c,y0,m0)            = -SUM(d0,        
     rcView(sSce,y,"qElyCons",c)             = SUM((g,m), 0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m) - SUM(d, USD.l(g,c,d,y,m)) );
     rcView(sSce,y,"aggWTP",c)               = ( SUM((d,g,m)$usd0(c,g,d), usd0(c,g,d) * 30 * segmentHours(g) * elyDemand0(c,g,m) * usdSh(d) )
                                                -SUM((d,g,m)$usd0(c,g,d), usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) )/1000000;
-    rcView(sSce,y,"elyCS",c)                 = rcView(sSce,y,"aggWTP",c) - SUM((g,m), ELYMKT.m(c,g,y,m) * (0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m) - SUM(d, USD.l(g,c,d,y,m))) )/1000000;
-    rcView(sSce,y,"elyPS",c)                 = SUM((g,m), ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m)) ) - rcView(sSce,y,"cTherm",c);
-    rcView(sSce,y,"Invest",c)               = rcView(sSce,y,"iTherm",c) + rcView(sSce,y,"iField",c) + rcView(sSce,y,"iField",c) + rcView(sSce,y,"iHydro",c);
-    rcView(sSce,y,"OandM",c)                = rcView(sSce,y,"cTherm",c) + rcView(sSce,y,"cField",c) + rcView(sSce,y,"cField",c) + rcView(sSce,y,"cHydro",c);
+    rcView(sSce,y,"elyCS",c)                = rcView(sSce,y,"aggWTP",c) - SUM((g,m), ELYMKT.m(c,g,y,m) * (0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m) - SUM(d, USD.l(g,c,d,y,m))) )/1000000;
+    rcView(sSce,y,"elyVal",c)               = SUM((g,m), ELYMKT.m(c,g,y,m) * (0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m) - SUM(d, USD.l(g,c,d,y,m))) );
+    rcView(sSce,y,"elyPS",c)                = SUM((g,m), ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m)) ) - rcView(sSce,y,"cTherm",c);
+    rcView(sSce,y,"Invest",c)               = rcView(sSce,y,"iField",c) + rcView(sSce,y,"iConvey",c) + rcView(sSce,y,"iHydro",c) + rcView(sSce,y,"iTherm",c) ;
+    rcView(sSce,y,"OandM",c)                = rcView(sSce,y,"cField",c) + rcView(sSce,y,"cConvey",c) + rcView(sSce,y,"cHydro",c);
     rcView(sSce,y,"Surplus",c)              = rcView(sSce,y,"AgriVA",c) + rcView(sSce,y,"elyCS",c) + rcView(sSce,y,"elyPS",c) - rcView(sSce,y,"Invest",c) - rcView(sSce,y,"OandM",c);
     
