@@ -232,19 +232,31 @@ result(sSce,"Unmet demand costs (mUSD)",g,c,y0,m0)            = -SUM(d0,        
     rcView(sSce,y,"iConvey",c)              = 0;
     rcView(sSce,y,"cHydro",c)               = 0;
     rcView(sSce,y,"iHydro",c)               = 0;
-    rcView(sSce,y,"qTherm",c)               = SUM((u,g,m)$tppMap(c,u),  TPP.l(c,u,g,y,m));
-    rcView(sSce,y,"qThermWin",c)            = SUM((u,g,m)$tppMap(c,u),  TPP.l(c,u,g,y,m)$mWin(m));
-    rcView(sSce,y,"qThermSum",c)            = SUM((u,g,m)$tppMap(c,u),  TPP.l(c,u,g,y,m)$mSum(m));
-    rcView(sSce,y,"qHydro",c)               = SUM((b,g,m)$bCty(b,c),    HPP.l(b,g,y,m));
-    rcView(sSce,y,"qHydroWin",c)            = SUM((b,g,m)$bCty(b,c),    HPP.l(b,g,y,m)$mWin(m));
-    rcView(sSce,y,"qHydroSum",c)            = SUM((b,g,m)$bCty(b,c),    HPP.l(b,g,y,m)$mSum(m));
-    rcView(sSce,y,"qElyCons",c)             = SUM((g,m), 0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m) - SUM(d, USD.l(g,c,d,y,m)) );
-    rcView(sSce,y,"aggWTP",c)               = ( SUM((d,g,m)$usd0(c,g,d), usd0(c,g,d) * 30 * segmentHours(g) * elyDemand0(c,g,m) * usdSh(d) )
-                                               -SUM((d,g,m)$usd0(c,g,d), usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) )/1000000;
-    rcView(sSce,y,"elyCS",c)                = rcView(sSce,y,"aggWTP",c) - SUM((g,m), ELYMKT.m(c,g,y,m) * (0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m) - SUM(d, USD.l(g,c,d,y,m))) )/1000000;
-    rcView(sSce,y,"elyVal",c)               = SUM((g,m), ELYMKT.m(c,g,y,m) * (0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m) - SUM(d, USD.l(g,c,d,y,m))) );
-    rcView(sSce,y,"elyPS",c)                = SUM((g,m), ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m)) ) - rcView(sSce,y,"cTherm",c);
+    rcView(sSce,y,"qTherm",c)               = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m));
+    rcView(sSce,y,"qThermWin",c)            = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mWin(m));
+    rcView(sSce,y,"qThermSum",c)            = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mSum(m));
+    rcView(sSce,y,"qHydro",c)               = SUM((b,g,m)$bCty(b,c),        HPP.l(b,g,y,m));
+    rcView(sSce,y,"qHydroWin",c)            = SUM((b,g,m)$bCty(b,c),        HPP.l(b,g,y,m)$mWin(m));
+    rcView(sSce,y,"qHydroSum",c)            = SUM((b,g,m)$bCty(b,c),        HPP.l(b,g,y,m)$mSum(m));
+    rcView(sSce,y,"qElyCons",c)             = SUM((g,m)$elyDemand0(c,g,m),  DEM.l(g,c,y,m));
+
+    rcView(sSce,y,"usdVal",c)               =-SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
+    rcView(sSce,y,"aggWTP",c)               = SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcView(sSce,y,"usdVal",c) ;
+    rcView(sSce,y,"demVal",c)               = SUM((g,m)$elyDemand0(c,g,m),  -ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
+    rcView(sSce,y,"tppVal",c)               = SUM((g,m),                    -ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
+
+    rcView(sSce,y,"elyCS",c)                = rcView(sSce,y,"aggWTP",c) - rcView(sSce,y,"demVAL",c);
+    rcView(sSce,y,"tppPS",c)                = rcView(sSce,y,"tppVal",c) + rcView(sSce,y,"cTherm",c);
+    rcView(sSce,y,"elyPS",c)                = rcView(sSce,y,"demVAL",c) + rcView(sSce,y,"cTherm",c) + rcView(sSce,y,"cHydro",c);
+
     rcView(sSce,y,"Invest",c)               = rcView(sSce,y,"iField",c) + rcView(sSce,y,"iConvey",c) + rcView(sSce,y,"iHydro",c) + rcView(sSce,y,"iTherm",c) ;
     rcView(sSce,y,"OandM",c)                = rcView(sSce,y,"cField",c) + rcView(sSce,y,"cConvey",c) + rcView(sSce,y,"cHydro",c);
     rcView(sSce,y,"Surplus",c)              = rcView(sSce,y,"AgriVA",c) + rcView(sSce,y,"elyCS",c) + rcView(sSce,y,"elyPS",c) - rcView(sSce,y,"Invest",c) - rcView(sSce,y,"OandM",c);
     
+    checkElybal(sSce,g,c,y,"TPP",m)               = SUM(u$tppMap(c,u),  TPP.l(c,u,g,y,m));
+    checkElybal(sSce,g,c,y,"HPP",m)               = SUM(b$bCty(b,c),    HPP.l(b,g,y,m));
+    checkElybal(sSce,g,c,y,"DEM",m)               = -DEM.l(g,c,y,m);
+    checkElybal(sSce,g,c,y,"TRX",m)               = -SUM(cc, TRX.l(c,cc,g,y,m));
+    checkElybal(sSce,g,c,y,"USD",m)               = SUM(d, USD.l(g,c,d,y,m));
+    checkElybal(sSce,g,c,y,"bal",m)               =   checkElybal(sSce,g,c,y,"TPP",m) + checkElybal(sSce,g,c,y,"HPP",m) + checkElybal(sSce,g,c,y,"USD",m)
+                                                    + checkElybal(sSce,g,c,y,"DEM",m) + checkElybal(sSce,g,c,y,"TRX",m);

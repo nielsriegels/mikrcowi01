@@ -11,8 +11,8 @@ $include "%path%91asgn.inc";
 putclose sRename 'copy /Y %path%solutions\solution-' sSce.tl:0 '.gdx %path%solutions\solution.gdx';
 execute '%path%solutions\renameS.cmd';
 
-execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, HHD, TPP, TRX, USD, YWR, iET, CRP, LND, TWV ;
-
+execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, HHD, TPP, TRX, DEM, USD, YWR, iET, CRP, LND, TWV ;
+USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 
 * Fix hydrological variables that can never be non-zero
     FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);
@@ -42,17 +42,17 @@ execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, 
 $include "%path%92cstr.inc";
 
 * Solve model for the give scenario
-*    beam.solprint = yes;
+    beam.solprint = yes;
 *    beam.limrow = 50000;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
-*    if(ord(ssce) eq 6,    beam.solprint = yes; );
+*    if(ord(ssce) eq 3,    beam.solprint = yes; );
     
     SOLVE beam MAXIMIZING twv USING NLP;
 
 * Save solution to re-use later
 IF(beam.modelstat le 2, 
-    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, TRX, YWR, iET, CRP, LND, TWV;
+    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, YWR, iET, CRP, LND, TWV;
     putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
     execute '%path%solutions\renameS.cmd';
 ); 

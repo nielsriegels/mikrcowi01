@@ -46,12 +46,12 @@ SETS
     u0                      "Energy prod. units"    / u01*u90 /
     u(u0)                   "Energy prod. units"    / u01*u44 /
     d0                      "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45, d40, d35, d30 /
-    d(d0)                   "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45, d40, d35, d30 /
+    d(d0)                   "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45 /
     sBal                    "Balance table cols"    / Demand, FromSrc, DisTo, FromUp, FromIn, Return, ToIn, DisFrom, ToDwn, ToLoss /
     sInv                    "Irrigation investment" / usdPerMM3, usdPerHa, improve /
     sSec                    "Non-agri sectors"      / HH, ind /
     sRtn                    "Return flow types"     / total, irrig, river, lakes/
-    sEly                    "Elec. data types"      / elyCap, aCAPEX, aFOPEX, uVOPEX, uFUELEX, rHEAT /
+    sEly                    "Elec. data types"      / elyCap, aCAPEX, aFOPEX, uVOPEX, uFUELEX, eELEC, eHEAT, rHEAT /
     sSce                    "Scenarios"             / s01*s50 /
     l                       "Loss types"            / seep, evap /
 ;
@@ -220,7 +220,11 @@ SETS
         aggWTP          "Aggregate Willingness to Pay"
         elyCS           "Consumer surplus electricity market"
         elyPS           "Producer surplus electricity market"
+        tppPS           "Thermal producer surplus"
+        tppVal          "Thermal power value at marg. cost"
         elyVal          "Value of electricity at marg. cost"
+        usdVal          "Value of unserved demand"
+        demVal          "Value of served demand at marg. cost"
         qTherm          "Thermal production total"
         qThermWin       "Thermal production winter"
         qThermSum       "Thermal production summer"
@@ -231,7 +235,8 @@ SETS
         Invest          "Total investments"
         OandM           "Total O and M except thermal fuel"
         Surplus         "Total surplus" /
+
 ;
 
 PARAMETER usdSh(d0) "Share of demand in step unserved"
-/ d95 0.05, d90 0.05, d85 0.05, d80 0.05, d75 0.05, d70 0.05, d65 0.05, d60 0.05, d55 0.05, d50 0.05, d45 0.5 /;
+/ d95 0.05, d90 0.05, d85 0.05, d80 0.05, d75 0.05, d70 0.05, d65 0.05, d60 0.05, d55 0.05, d50 0.05, d45 0.50 /;

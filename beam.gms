@@ -129,6 +129,9 @@ $include "%path%70eqtn.inc";
 * =============================================================================
 *$include "%path%80lvls.inc";
 
+PARAMETER checkElybal(sSce,g,c,y0,*,m0) ;
+OPTIONS checkElyBal:1:4:1;
+
 * =============================================================================
 * Define base scenario and solve
 * =============================================================================
@@ -142,5 +145,6 @@ $include "%path%99save.inc";
 PUT step;
 PUT "4";
 PUTCLOSE;
+DISPLAY checkElybal, USD.l, ELYMKT.m;
 
 DISPLAY checkOutput;

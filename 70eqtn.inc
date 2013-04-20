@@ -16,6 +16,7 @@ POSITIVE VARIABLES
     HPP(b,g0,y0,m0)         "Hydro power production (GWh)"
     TPP(c,u,g0,y0,m0)       "Thermal power production (GWh)"
     USD(g0,c,d0,y0,m0)      "Unserved demand (GWh)"
+    DEM(g0,c,y0,m0)         "Served demand (GWh)"
     TRX(c,cc,g0,y0,m0)      "Export of electricity from c to cc (GWh)"
     RTN(s,bd,bo,y0,m0)      "Return of water from irrigating the fields (mm3)"
 VARIABLES
@@ -29,7 +30,8 @@ OPTIONS IRG:0:3:1;
 OPTIONS LOS:0:4:1;
 OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
-OPTIONS TPP:0:3:1;
+OPTIONS TPP:0:4:1;
+OPTIONS USD:0:4:1;
 OPTIONS LND:0:2:2;
 OPTIONS CRP:0:2:2;
 OPTIONS YWR:4:2:2;
@@ -53,6 +55,7 @@ EQUATIONS
     ELYHPP(b,y0,m0)             "Hydro power production"
     ELYSEG(b,g0,y0,m0)          "Hydro power production by segment"
     ELYTPP(c,u,g0,y0,m0)        "Thermal power production"
+    ELYDEM(c,g0,y0,m0)          "Electricity demand"
     ELYUSD(g0,c,d0,y0,m0)       "Unserved demand steps"
     ELYTRX(c,cc,g0,y0,m0)       "Export of electricity from c to cc"
     ELYMKT(c,g,y0,m0)           "Power market balance"
@@ -189,7 +192,7 @@ ELYHEAD(b,y,m)$bResEly(b)..
 
 * Hydro power production (in GWh) by time segment is capped by hours in each segment according to maximum effect (in MW)
 ELYSEG(b,g,y,m)$bResEly(b)..
-    HPP(b,g,y,m) =l= 0.001 * 30 * reservoirs(b,"effect") * segmentHours(g) ;
+    HPP(b,g,y,m) =l= 0.001 * 30 * reservoirs(b,"effect") * SUM(c$bCty(b,c), elyHours(c,g,m)) ;
 
 * HPP production is 1 kg * m * m/s^2 = 1 Joule 
 * Since we use million m3 (=billion kg) as weight unit, the energy unit is GJ
@@ -199,11 +202,15 @@ ELYHPP(b,y,m)$bResEly(b)..
 
 * Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
 ELYTPP(c,u,g,y,m)$(elyThermal("elyCap",u) and tppMap(c,u))..
-    TPP(c,u,g,y,m) =l= 0.001 * 30 * elyThermal("elyCap",u) * segmentHours(g);
+    TPP(c,u,g,y,m) =l= 0.001 * 30 * elyThermal("elyCap",u) * elyHours(c,g,m);
 
 * Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
 ELYUSD(g,c,d,y,m)$usd0(c,g,d)..
-    USD(g,c,d,y,m) =l= 0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m) * usdSh(d);
+    USD(g,c,d,y,m) =l= 0.001 * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d);
+
+* Electricity demand
+ELYDEM(c,g,y,m)$elyDemand0(c,g,m)..
+    DEM(g,c,y,m)   =e= 0.001 * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) ;
 
 * Themal and hydro power production should cover the energy demand in every segment
 * Note: We might want to enter availability of TPP as a parameter which can increase
@@ -213,15 +220,15 @@ ELYMKT(c,g,y,m)..
            SUM(cc$trx0(cc,c),       TRX(cc,c,g,y,m) )
          + SUM(u$tppMap(c,u),       TPP(c,u,g,y,m)) 
          + SUM(b$bResEly(b),        HPP(b,g,y,m)$bCty(b,c))
+         + SUM(d$usd0(c,g,d),       USD(g,c,d,y,m))
     =e=    
-           0.001 * 30 * segmentHours(g) * elyDemand0(c,g,m)
-         - SUM(d$usd0(c,g,d),       USD(g,c,d,y,m))
+           DEM(g,c,y,m)
          + SUM((s,bd,bo),           0.001*ITK(s,bd,bo,y,m)* elyPump(bd,bo))
          + SUM(cc$trx0(c,cc),       TRX(c,cc,g,y,m) );
 
 * Transmission constraints between countries (trx0 in MW, TRX in GW)
-ELYTRX(c,cc,g,y,m)$(trx0(c,cc) AND 0)..
-    TRX(c,cc,g,y,m) =l= 0.001*trx0(c,cc)$transx;
+ELYTRX(c,cc,g,y,m)$trx0(c,cc)..
+    TRX(c,cc,g,y,m) =l= 0 * 0.001 * 30 *trx0(c,cc) * elyHours(c,g,m)$transx;
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
@@ -289,7 +296,7 @@ OBJ..   TWV =e=
 MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
-                ELYHEAD, ELYHPP, ELYTPP, ELYMKT,
+                ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX
                 LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, RETURNWATER
                 OBJ
                 /;
