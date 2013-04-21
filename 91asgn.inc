@@ -13,6 +13,11 @@
 * Allow transmission according to transmission limits in trx0
     transx                  = 1$scenarios("transx",sSce);
 
+* Reset country and node weights to their normal 1's
+    objCTYweight(c)         = 1;
+    objNODEweight(b)        = 1;
+
+
 * Allow flexibility in land allocation and account for any fallow land
 * unless scenario user chose fixed land allocation (opLND=0)
     IF(scenarios("fixLND",sSce) gt 0,
@@ -54,6 +59,7 @@
 
 * Enable spillways via FLW in all reservoirs
     flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
+flow(bd,bo)$resv(bd,bo)                 = NO;
 
 * Set loss in channels according to investment choices
     lossChannels(b,l,m) = lossChannels0(b,l,m)$(scenarios("iChnl",sSce))* (1-scenarios("iChnl",sSce))

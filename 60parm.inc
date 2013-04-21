@@ -38,6 +38,8 @@ PARAMETERS
     objHPPweight(b,m)               "Constrained optimisation objective weights for hydro power"
     objELYweight                    "Constrained optimisation objective weights for electricity"
     objAGRweight(b)                 "Constrained optimisation objective weights for agriculture"
+    objNODEweight(b)                "Constrained optimisation objective weights for specific nodes (agri+resv. only)"
+    objCTYweight(c)                 "Constrained optimisation objective weights for specific countries (tpp only)"
     noYWR                           "Disable yield-water response function (0/1)"
     useCET                          "Use CET function for land yield response"
 * Parameters for reporting of results to Excel

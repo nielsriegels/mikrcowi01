@@ -145,6 +145,6 @@ $include "%path%99save.inc";
 PUT step;
 PUT "4";
 PUTCLOSE;
-DISPLAY checkElybal, USD.l, ELYMKT.m;
+DISPLAY flow;
 
 DISPLAY checkOutput;

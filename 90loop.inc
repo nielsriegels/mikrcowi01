@@ -16,6 +16,7 @@ USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 
 * Fix hydrological variables that can never be non-zero
     FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);
+    ITK.lo(s,bd,bo,y,m)                                         = 0;
     ITK.up(s,bd,bo,y,m)                                         = INF$intk(bd,bo);
     DIS.up(s,bd,bo,y,m)                                         = INF$resv(bd,bo);
     IRG.up(b,q,j,y,m)                                           = INF$irg0(b,q,j,y,m);
@@ -42,7 +43,7 @@ USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 $include "%path%92cstr.inc";
 
 * Solve model for the give scenario
-    beam.solprint = yes;
+*    beam.solprint = yes;
 *    beam.limrow = 50000;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
