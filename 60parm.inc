@@ -1,4 +1,3 @@
-
 PARAMETERS
     sup(s,b,m)                      "Base year supply of river water (mm3/month)"
     iACosts(b,k,j)                  "Base year production agri/industrt input shares quantities (mn usd/year)"
@@ -119,24 +118,9 @@ wPhase(b,j,p)$bPlz(b) = ( SUM(m$etcM2P(b,j,p,m), 1$etcM(b,j,m))
 cCrop(b,j)$SUM(q, lnd0(b,q,j))   = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/SUM(q, lnd0(b,q,j));
 
 
-* TEMPORARY: For valuation of electricity in reporting
-pEly("base",y0,m)               = pEly0(y0,m);
-pEly("peak",y0,m)               = pEly0(y0,m)*elyPeakFac;
-
 * Set maximum discharge capacity
 resDisMax0(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,
                               (reservoirs(b,"effect")*24*30/reservoirs(b,"ely"))$reservoirs(b,"ely")
                              )$bResEly(b) + INF$(not bResEly(b));
-* Enable spillways in reservoirs (any overflow is found in variable FLW)
-flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
 
 
-
-* Temporary data for hours in each electricity market segment
-PARAMETER segmentHours(g) / base 16, peak 8 /;
-
-* Temporary data for objective weights
-objDISweight(b,m)   = 0;
-objHPPweight(b,m)   = 0;
-objELYweight        = 1;
-objAGRweight(b)     = 1;

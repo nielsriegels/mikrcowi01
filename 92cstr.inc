@@ -67,34 +67,27 @@
         objNODEweight(b)$bCty(b,"TAD")          = 1;
         objNODEweight("FER_UZB")                = 1;
         SOLVE beam MAXIMIZING twv USING NLP;
-        DISPLAY "Solve FER+TAD", TWV.l;
         LOOP(b$objNODEweight(b),
             resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+eps; 
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
-
-DISPLAY DIS.l;
         
 * Assuming TUR (and not UZB) have control over intake to Res_ZD and Kairakum canal
 * given fixed intakes upstream
         objCTYweight("TUR")                     = 1;
         objNODEweight(b)$bCty(b,"TUR")          = 1;
-beam.solprint = yes;
         SOLVE beam MAXIMIZING twv USING NLP;
-        DISPLAY "Solve TUR", TWV.l;
         LOOP(b$objNODEweight(b),
             resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+eps; 
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
-beam.solprint = no;
 
 * Optimise for UZB given fixed intakes upstream
         objCTYweight("UZB")                     = 1;
         objNODEweight(b)$bCty(b,"UZB")          = 1;
         SOLVE beam MAXIMIZING twv USING NLP;
-        DISPLAY "Solve UZB", TWV.l;
         LOOP(b$objNODEweight(b),
             resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+eps; 
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
@@ -104,7 +97,5 @@ beam.solprint = no;
 * Optimise for all region given fixed flows
         objCTYweight(c)                         = 1;
         objNODEweight(b)                        = 1;
-*        SOLVE beam MAXIMIZING twv USING NLP;
-        DISPLAY "Solve KAZ", TWV.l;
 
     );

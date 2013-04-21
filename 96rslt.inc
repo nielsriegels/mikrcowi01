@@ -93,7 +93,7 @@
     rEcon(sSce,b,"IrrInvCost",y,m)          = SUM(j, rAgri(sSce,b,"IrrInvCost",j,y)) / 12;
     rEcon(sSce,b,"AgriCost",y,m)            = SUM(j, rAgri(sSce,b,"AgriCosts",j,y) ) / 12;
     rEcon(sSce,b,"HydroCost",y,m)           = -1000*reservoirs(b,"cost")$(not bResNOP(b));
-    rEcon(sSce,b,"HydroInc",y,m)            = 1000 * SUM(g, HPP.l(b,g,y,m) * pEly(g,y,m) ) / 1000000 + rEcon(sSce,b,"HydroCost",y,m);
+*    rEcon(sSce,b,"HydroInc",y,m)            = 1000 * SUM(g, HPP.l(b,g,y,m) * pEly(g,y,m) ) / 1000000 + rEcon(sSce,b,"HydroCost",y,m);
     rEcon(sSce,b,"HydroProd",y,m)           = SUM(g, HPP.l(b,g,y,m));
     rEcon(sSce,b,"HydroHead",y,m)           = ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*rFlow(sSce,b,"ResVolAvg",y,m) + reservoirs(b,"coef_c")*POWER(rFlow(sSce,b,"ResVolAvg",y,m),2));
     rEcon(sSce,b,"HydroGain",y,m)           = -( rEcon(sSce,b,"HydroProd",y,m) / rFlow(sSce,b,"OutDis",y,m) )$rFlow(sSce,b,"OutDis",y,m);

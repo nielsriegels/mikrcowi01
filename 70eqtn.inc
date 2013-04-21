@@ -63,7 +63,6 @@ EQUATIONS
     MINOUTFLOW(b,y0,m0)         "Minimum outflow from body"
     MININFLOWa(b,y0,m0)         "Minimum inflow to body, annual"
     MINLANDUSE(b,j,y0)          "Annual minimum land use requirements"
-    INDEXCALCULATOR(b,j,k,y0)   "Index for the relation between new crop output and the old crop output"
     RETURNWATER(s,b,y0,m0)      "Calculate the returnwater"
 * Economical constraints and identities
     IRGACT(b,q0,j,y0,m0)        "Actual irrigation need by zone"
@@ -305,44 +304,10 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
                 OBJ
                 /;
 
-
-
-beam.optfile        = 1;
-*beam.holdfixed     = yes;
+* Set model options
 beam.solprint       = no;
 beam.tolinfrep      = 0.001;
 beam.limrow         = 0;
 beam.limcol         = 0;
 beam.iterlim        = 50000;
 
-IF(debugging,
-    beam.limrow         = 5000;
-    beam.limcol         = 0;
-)
-;
-
-$ontext
-* =============================================================================
-* Fix unused variables and set levels
-* =============================================================================
-
-
-* Fix hydrological variables that can never be non-zero
-FLW.fx(s,bd,bo,y,m)$(not flow(bd,bo))                       = 0;
-ITK.fx(s,bd,bo,y,m)$(not intk(bd,bo))                       = 0;
-IRG.fx(b,j,y,m)$(qAWater(b,j)*agriSeason(b,j,m) eq 0)       = 0;
-DIS.fx(s,bd,bo,y,m)$(not resv(bd,bo))                       = 0;
-GRW.fx(b,y,m)$(SUM(ms$mSeason(m,ms), grwtrMax(b,ms)) eq 0)  = 0;
-HPP.fx(b,g,y,m)$(not bResEly(b))                            = 0;
-STO.fx(s,bo,y,m)                                            = 0;
-STO.up(s,b,y,m)$bRes(b)                                     = 99999;
-STO.up(s,b,y,m)$sea(b)                                      = INF;
-
-CRP.fx(b,j,y)$(qInputs(b,"land",j) eq 0)                    = 0;
-
-* Lower and upper bounds
-CRP.lo(b,j,y)$jAF(j)                                        = 0.01$lShare(b,j) * crp0(b,j);
-
-
-TPP.up(u,g,y,m) = elyThermal("elyCap",u)*30*segmentHours(g);
-$offtext
