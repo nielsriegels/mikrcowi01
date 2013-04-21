@@ -20,15 +20,16 @@ SET scOptions /
     wDISsum     "Heavily increase objective value of summer discharges"
     wSingle     "Perform sequential individual country optimisation"
     avgSoil     "Use one partition with average soil quality"
+    useCMX      "Use crop mix method for land allocation"
     useCET      "Use CET function"
     transx      "Allow electricity transmission between KAZ-KYR-UZB-TAD"
 /;
 
 TABLE scenarios(scOptions,sSce) "Scenario definition table"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
-*run     0   0   0   0   0   1   1   0   0   0   0   0
-*run     1   1   1   1   1   1   0   0   0   0   0   0
-run     0   0   0   0   0   1   0   1   1   1   1   1
+*run     1   1   0   0   0   1   1   0   0   0   0   0
+run     1   1   1   1   1   1   1   1   1   1   0   0
+*run     0   0   0   0   0   1   0   1   1   1   1   1
 iField  0   0   0   0   0   0   0   0   0   0   0   0
 iChnl   0   0   0   0   0   0   0   0   0   0   0   0
 iDrain  0   0   0   0   0   0   0   0   0   0   0   0
@@ -37,26 +38,27 @@ iELY    0   0   0   0   0   0   0   0   0   0   0   0
 iWSS    0   0   0   0   0   0   0   0   0   0   0   0
 rLnd    0   0   0   0   0   0   0   0   0   0   0   0
 rMkt    0   0   0   0   0   0   0   0   0   0   0   0
-fixLND  1   0   0   0   0   0   1   0   0   0   0   0
-fixRES  1   0   0   0   0   0   1   0   0   0   0   0
+fixLND  1   1   0   0   0   0   0   0   0   0   0   0
+fixRES  1   1   0   0   0   0   0   0   0   0   0   0
 fallow  0   0   0   0   0   0   0   0   0   0   0   0
 rBuild  0   0   0   0   0   0   0   0   0   0   0   0
-noYWR   1   1   0   0   0   0   0   0   0   0   0   0
-wSingle 0   0   0   0   0   0   0   1   0   0   0   0   
-wHPPall 0   0   0   0   0   0   0   0   0   1   0   0   
+transx  0   0   0   0   0   0   0   0   0   0   0   0   
+wSingle 0   0   0   0   0   0   0   0   0   0   0   0   
+wHPPall 0   0   0   0   0   0   0   0   0   0   0   0   
 wHPPwin 0   0   0   0   0   0   0   0   0   0   1   0   
-wDISwin 0   0   0   0   0   0   0   0   1   0   0   0   
+wDISwin 0   0   0   0   0   0   0   0   0   0   0   0   
 wDISsum 0   0   0   0   0   0   0   0   0   0   0   1   
-avgSoil 1   1   1   1   0   0   0   0   0   0   0   0   
-transx  1   0   0   0   0   0   0   0   0   0   0   0   
-useCET  0   1   1   0   1   0   0   0   0   0   0   0   
+noYWR   1   1   1   1   0   0   0   0   0   0   0   0
+avgSoil 1   1   1   1   1   1   0   0   0   0   0   0   
+useCMX  0   1   0   1   0   1   0   1   0   1   0   0   
+useCET  1   1   1   1   1   1   1   1   0   0   0   0   
 sT      0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 
 ;
 
 TABLE resNewOp(b,sSce) "New reservoir in operation"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
 Res_DAS 0   0   0   0   0   0   0   0   0   0   0   0
-Res_ROG 0   0   0   0   0   1   1   1   1   1   1   1
+Res_ROG 0   0   0   0   0   0   0   0   0   0   0   0
 Res_KAM 0   0   0   0   0   0   0   0   0   0   0   0
 Res_ZAR 0   0   0   0   0   0   0   0   0   0   0   0
 Res_VAH 0   0   0   0   0   0   0   0   0   0   0   0

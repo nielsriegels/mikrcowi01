@@ -3,6 +3,7 @@ POSITIVE VARIABLES
     IRG(b,q0,j,y0,m0)       "Actual irrigation (mm3)"
     YWR(b,q0,j,y0)          "Yield-water response function (index: 1=optimal)"
     iET(b,q0,j,p,y0)        "Index for actual ET relative to optimal ET (index: 1=optimal)"
+    CMX(b,q0,x,y0)          "Crop mix land use (ha)"
     CRP(b,q0,j,y0)          "Crop production (ton/year)"
     LND(b,q0,j,y0)          "Land use by crop and suitability class (ha)"
     HHI(s,sSec,b,y0,m0)     "Water use by households and industries (mm3)"
@@ -34,6 +35,7 @@ OPTIONS TPP:0:4:1;
 OPTIONS USD:0:4:1;
 OPTIONS LND:0:2:2;
 OPTIONS CRP:0:2:2;
+OPTIONS CMX:0:2:2;
 OPTIONS YWR:4:2:2;
 OPTIONS iET:4:3:2;
 
@@ -73,6 +75,7 @@ EQUATIONS
     CETLAND(b,y0)               "Index for physical amount of land"
     FIXEDLAND(b,q0,j,y0)        "Fixed land shares"
     LANDLIMIT(b,y0)             "Maximum land use"
+    AGRCMX(b,q0,j,y0)           "Convert crop mix land use to crop land use"
     OBJ                         "Objective function"
 ;
 
@@ -268,9 +271,17 @@ CETLAND(b,y)$(SUM((q,j)$jAF(j), lnd0(b,q,j)) AND useCET)..
 FIXEDLAND(b,q,j,y)$(lnd0(b,q,j) AND jAX(j))..
     ( LND(b,q,j,y) / lnd0(b,q,j) )$jAX(j)   =e= 1;
 
-* Total land use need to stay at or below available land use
+* Land allocation from crop mix to land use
+* (crop mix covers a whole year, while crop mix may have 2nd crops 
+*  so land use can exceed available land, while crop mix use cannot)
+AGRCMX(b,q,j,y)$(lnd0(b,q,j))..
+    LND(b,q,j,y) =e= SUM(x$cmx2lnd(b,j,x), cmx2lnd(b,j,x)*CMX(b,q,x,y));
+
+* Total land use for crop mixes need to stay at or below available land use
 LANDLIMIT(b,y)$SUM((q,j), lnd0(b,q,j))..
-    SUM((q,j), LND(b,q,j,y)) =l= SUM((q,j), lnd0(b,q,j));
+    SUM((q,x), CMX(b,q,x,y))$useCMX
+   +SUM((q,j), LND(b,q,j,y))$(not useCMX)
+    =l= SUM((q,j), lnd0(b,q,j));
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
@@ -300,7 +311,7 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX
-                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, RETURNWATER
+                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, RETURNWATER
                 OBJ
                 /;
 

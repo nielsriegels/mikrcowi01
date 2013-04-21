@@ -10,12 +10,19 @@
 * Disable CET function by scenario choice
     useCET                  = 1$scenarios("useCET",sSce);
 
+* Enable crop mix method
+    useCMX                  = 1$scenarios("useCMX",sSce);
+
 * Allow transmission according to transmission limits in trx0
     transx                  = 1$scenarios("transx",sSce);
 
-* Reset country and node weights to their normal 1's
+* Reset country and node objective function weights to their normal 1's and 0's
+    objAGRweight(b)         = 1;
+    objELYweight            = 1;
     objCTYweight(c)         = 1;
     objNODEweight(b)        = 1;
+    objHPPweight(b,m)       = 0;
+    objDISweight(b,m)       = 0;
 
 
 * Allow flexibility in land allocation and account for any fallow land

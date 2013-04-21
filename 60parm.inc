@@ -16,6 +16,7 @@ PARAMETERS
     pCrop(j)                        "Crop prices (USD/ton)"
     pInput(k)                       "Index for input prices"
     cCrop(b,j)                      "Crop costs by land use (USD/ha)"
+    cmx2lnd(b,j,x)                  "Map between crop mix land use and crop land use"
 * Irrigation system costs
     iInv(sInv)                      "Irrigation investment data"
     conveyanceCost(c)               "Cost of conveyance system"
@@ -40,7 +41,8 @@ PARAMETERS
     objNODEweight(b)                "Constrained optimisation objective weights for specific nodes (agri+resv. only)"
     objCTYweight(c)                 "Constrained optimisation objective weights for specific countries (tpp only)"
     noYWR                           "Disable yield-water response function (0/1)"
-    useCET                          "Use CET function for land yield response"
+    useCET                          "Enable CET function for land yield response"
+    useCMX                          "Enable Crop mix method"
 * Parameters for reporting of results to Excel
     rFlow(sSce,b,e_resFlow,y0,m0)   "Flow of water through bodies"
     rcFlow(sSce,c,y0,e_resFlow,m0)  "Flow of water by country"
@@ -124,3 +126,11 @@ resDisMax0(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,
                              )$bResEly(b) + INF$(not bResEly(b));
 
 
+* TEMPORARY ASSIGNMENT - replace with Excel when we switch to FAO crops
+cmx2lnd(b,"cot","cotn")    = 1;
+cmx2lnd(b,"wht","whet")    = 1;
+cmx2lnd(b,"ric","rice")    = 1;
+cmx2lnd(b,"alf","alfa")    = 1;
+cmx2lnd(b,"fru","frut")    = 1;
+cmx2lnd(b,"veg","vege")    = 1;
+cmx2lnd(b,"oth","othr")    = 1;
