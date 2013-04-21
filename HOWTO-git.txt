@@ -11,6 +11,7 @@ git pull
 # Alternate
 git pull https://github.com/mikkelakromann/mikrcowi01.git  develop-FAO
 
+
 # Checkout to another branch  git checkout some_branch
     
 # Commit changes and synchronise to GitHub repository git add -A
