@@ -16,6 +16,11 @@
 * Reset country and node weights to their normal 1's
     objCTYweight(c)         = 1;
     objNODEweight(b)        = 1;
+    objELYweight            = 1;
+    objDISweight(b,m)       = 1;
+    objDISweight(b,m)       = 1;
+    
+
 
 
 * Allow flexibility in land allocation and account for any fallow land
