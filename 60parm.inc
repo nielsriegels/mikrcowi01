@@ -1,10 +1,10 @@
 PARAMETERS
     sup(s,b,m)                      "Base year supply of river water (mm3/month)"
-    iACosts(b,k,j)                  "Base year production agri/industrt input shares quantities (mn usd/year)"
-    qValue(b,j)                     "Base year production agri/industrt prod. values (mn usd/year)"
-    qALand(b,j)                     "Base year land use in agriculture (ha)"
-    qAWater(b,j)                    "Base year water in agriculture (mm3/y)"
-    qmWater(b,m)                    "Base year water (mm3/month)"
+*    iACosts(b,k,j)                  "Base year production agri/industrt input shares quantities (mn usd/year)"
+*    qValue(b,j)                     "Base year production agri/industrt prod. values (mn usd/year)"
+*    qALand(b,j)                     "Base year land use in agriculture (ha)"
+*    qAWater(b,j)                    "Base year water in agriculture (mm3/y)"
+*    qmWater(b,m)                    "Base year water (mm3/month)"
     irg0(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
     hhiUse(sSec,b,m0)               "Base year water use for households and industries (mm3)"
     qInputs(b,k,j)                  "Base year physical input use (unit/year)"
@@ -90,6 +90,7 @@ etcM(b,j,m)         = 0.000001 * SUM(p, 10*etc0(b,p,m,j))/1000000;
 etcM2P(b,j,p,m)     = (etc0(b,p,m,j)/SUM(pp, etc0(b,pp,m,j)) )$SUM(pp, etc0(b,pp,m,j));
 irg0(b,q0,j,y0,m)   = ( etcM(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$SUM(q00$qAvg(q00), lnd0(b,q00,j));
 
+$ontext
 * TEMPORARY: etcP is not compatible with agriSeason, so we re-map our phases to something simple that will always work
 etcM2P(b,j,p,m) = 0;
 etcM2P(b,j,"init","m01") = 1;
@@ -118,19 +119,10 @@ wPhase(b,j,p)$bPlz(b) = ( SUM(m$etcM2P(b,j,p,m), 1$etcM(b,j,m))
                         )$SUM(m,                 1$etcM(b,j,m)) ;
 
 cCrop(b,j)$SUM(q, lnd0(b,q,j))   = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/SUM(q, lnd0(b,q,j));
-
+$offtext
 
 * Set maximum discharge capacity
 resDisMax0(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,
                               (reservoirs(b,"effect")*24*30/reservoirs(b,"ely"))$reservoirs(b,"ely")
                              )$bResEly(b) + INF$(not bResEly(b));
 
-
-* TEMPORARY ASSIGNMENT - replace with Excel when we switch to FAO crops
-cmx2lnd(b,"cot","cotn")    = 1;
-cmx2lnd(b,"wht","whet")    = 1;
-cmx2lnd(b,"ric","rice")    = 1;
-cmx2lnd(b,"alf","alfa")    = 1;
-cmx2lnd(b,"fru","frut")    = 1;
-cmx2lnd(b,"veg","vege")    = 1;
-cmx2lnd(b,"oth","othr")    = 1;

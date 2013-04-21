@@ -109,13 +109,21 @@ AFG
 
 SET j "Crops" /
                 
-cot             
-wht             
-ric             
-fru             
-veg             
 alf             
-oth             
+cot             
+tmt             
+wht             
+tgr             
+shv             
+ric             
+ri2             
+pot             
+sbt             
+stf             
+mln             
+mng             
+mzf             
+mzg             
 fal             
 /;
 

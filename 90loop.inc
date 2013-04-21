@@ -43,8 +43,8 @@ USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 $include "%path%92cstr.inc";
 
 * Solve model for the give scenario
-*    beam.solprint = yes;
-    beam.limrow = 1;
+    beam.solprint = yes;
+*    beam.limrow = 1;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
 *    if(ord(ssce) eq 3,    beam.solprint = yes; );
@@ -53,7 +53,7 @@ $include "%path%92cstr.inc";
 
 * Save solution to re-use later
 IF(beam.modelstat le 2, 
-    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, YWR, iET, CRP, LND, TWV;
+    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, YWR, iET, CRP, LND, CMX, TWV;
     putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
     execute '%path%solutions\renameS.cmd';
 ); 

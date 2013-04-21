@@ -278,10 +278,11 @@ AGRCMX(b,q,j,y)$(lnd0(b,q,j))..
     LND(b,q,j,y) =e= SUM(x$cmx2lnd(b,j,x), cmx2lnd(b,j,x)*CMX(b,q,x,y));
 
 * Total land use for crop mixes need to stay at or below available land use
+* Eased land limit by multiplying with almost 1, as cmx2lnd does not sum to exactly 1 for all pairs
 LANDLIMIT(b,y)$SUM((q,j), lnd0(b,q,j))..
     SUM((q,x), CMX(b,q,x,y))$useCMX
    +SUM((q,j), LND(b,q,j,y))$(not useCMX)
-    =l= SUM((q,j), lnd0(b,q,j));
+    =l= SUM((q,j), lnd0(b,q,j))*1.001;
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=

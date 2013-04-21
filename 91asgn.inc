@@ -100,6 +100,13 @@ flow(bd,bo)$resv(bd,bo)                 = NO;
     cCrop(b,j)$bPlz(b)      = SUM(k, cCrop0("noReform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) eq 0)
                             + SUM(k, cCrop0("reform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) ne 0);
 
+* Set map between crop mix land and actual land use
+    cmx2lnd(b,j,x)          = cmx2lnd0(b,j,x);
+*    cmx2lnd(b,j,x)$bPlz(b)  = cmx2lnd0(b,j,x) + (1-SUM(jj, cmx2lnd(b,jj,x)))$(jxFirst(x,j) AND SUM(jj, cmx2lnd(b,jj,x)));
+*testcmx2lnd(b,x) = sum(j, cmx2lnd(b,j,x));
+*testcmx2lnd(b,x)$(testcmx2lnd(b,x) eq 0) = 1$bPlz(b);
+*LOOP((b,x)$bPlz(b), IF((testcmx2lnd(b,x) eq 1), Display testcmx2lnd; ABORT "cmx2lnd does not sum to 1."; ););
+
 * Set irrigation investment costs
     iInv(sInv)              = 0;
 

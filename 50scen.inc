@@ -27,9 +27,9 @@ SET scOptions /
 
 TABLE scenarios(scOptions,sSce) "Scenario definition table"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
-*run     1   1   0   0   0   1   1   0   0   0   0   0
-run     1   1   1   1   1   1   1   1   1   1   0   0
-*run     0   0   0   0   0   1   0   1   1   1   1   1
+*run     1   1   1   1   1   1   1   1   0   0   0   0
+*run     1   1   1   1   1   1   1   1   1   1   0   0
+run     0   0   0   0   1   0   0   0   0   0   0   0
 iField  0   0   0   0   0   0   0   0   0   0   0   0
 iChnl   0   0   0   0   0   0   0   0   0   0   0   0
 iDrain  0   0   0   0   0   0   0   0   0   0   0   0
@@ -50,8 +50,8 @@ wDISwin 0   0   0   0   0   0   0   0   0   0   0   0
 wDISsum 0   0   0   0   0   0   0   0   0   0   0   1   
 noYWR   1   1   1   1   0   0   0   0   0   0   0   0
 avgSoil 1   1   1   1   1   1   0   0   0   0   0   0   
-useCMX  0   1   0   1   0   1   0   1   0   1   0   0   
 useCET  1   1   1   1   1   1   1   1   0   0   0   0   
+useCMX  0   1   0   1   0   1   0   1   0   1   0   0   
 sT      0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 
 ;
 
@@ -77,10 +77,18 @@ TABLE ipCrop(j,sSce) "Indices for crop prices"
 cot     1   1   1   1   1   1   1   1   1   1   1   1
 wht     1   1   1   1   1   1   1   1   1   1   1   1
 ric     1   1   1   1   1   1   1   1   1   1   1   1
+ri2     1   1   1   1   1   1   1   1   1   1   1   1
 alf     1   1   1   1   1   1   1   1   1   1   1   1
-veg     1   1   1   1   1   1   1   1   1   1   1   1
-fru     1   1   1   1   1   1   1   1   1   1   1   1
-oth     1   1   1   1   1   1   1   1   1   1   1   1
+pot     1   1   1   1   1   1   1   1   1   1   1   1
+tmt     1   1   1   1   1   1   1   1   1   1   1   1
+shv     1   1   1   1   1   1   1   1   1   1   1   1
+sbt     1   1   1   1   1   1   1   1   1   1   1   1
+tgr     1   1   1   1   1   1   1   1   1   1   1   1
+mng     1   1   1   1   1   1   1   1   1   1   1   1
+stf     1   1   1   1   1   1   1   1   1   1   1   1
+mln     1   1   1   1   1   1   1   1   1   1   1   1
+mzg     1   1   1   1   1   1   1   1   1   1   1   1
+mzf     1   1   1   1   1   1   1   1   1   1   1   1
 ;
 
 TABLE natExtra0(b,sSce) "Extra nature needs (mm3/year)"

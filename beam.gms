@@ -85,12 +85,14 @@ $onlisting
 * TEMPORARY - replace with Excel entries
 SET cot(j)  / cot /;
 SET wht(j)  / wht /;
-SET veg(j)  / veg /;
-SET fru(j)  / fru /;
-SET ric(j)  / ric /;
+SET veg(j)  / tmt shv, sbt, pot, tgr, mng /;
+SET fru(j)  / stf, mln /;
+SET ric(j)  / ric, ri2 /;
 SET alf(j)  / alf /;
-SET oth(j)  / oth /;
+SET oth(j)  / mzg, mzf /;
 SET bNat(b) / Lak_ARS, Lak_ARN, Lak_Ayd /;
+
+SET jxFirst(x,j) / vege.tmt, frut.stf, rice.ric, othr.mzg /;
 
 * =============================================================================
 * Include defition of scenario
@@ -100,7 +102,7 @@ $include "%path%50scen.inc";
 * Assign additional sets for reservoirs based on data and maps
 bRiv(b)                 = YES$SUM(bd$intk(bd,b), 1);
 bRes(b)                 = YES$SUM(bd$resv(bd,b), 1);
-bPlz(b)                 = YES$SUM(j, qAWater(b,j));
+bPlz(b)                 = YES$SUM((q,j), lnd0(b,q,j));
 bSrc(b)                 = YES$SUM((s,m,y0), sup0(s,b,y0,m));
 
 * Reservoirs not in operation
@@ -109,6 +111,9 @@ bResNOP(b)              = YES$resNew(b) ;
 bResSto(b)              = YES$(reservoirs(b,"max") gt reservoirs(b,"min"));
 bResSto(b)$bResNOP(b)   = NO;
 bResEly(b)              = YES$(reservoirs(b,"Ely") > 0 AND not bResNOP(b));
+
+PARAMETER testcmx2lnd(b,x);
+OPTIONS testcmx2lnd:8:1:1;
 
 * Calculate CET coefficient
 SCALAR sT "Elasticity of transformation" / 0.5 /;
