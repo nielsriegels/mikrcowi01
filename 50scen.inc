@@ -28,7 +28,7 @@ SET scOptions /
 TABLE scenarios(scOptions,sSce) "Scenario definition table"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
 *run     1   1   0   0   0   1   1   0   0   0   0   0
-run     1   1   1   1   1   1   1   1   1   1   0   0
+run     1   1   1   1   1   1   1   1   1   1   1   1
 *run     0   0   0   0   0   1   0   1   1   1   1   1
 iField  0   0   0   0   0   0   0   0   0   0   0   0
 iChnl   0   0   0   0   0   0   0   0   0   0   0   0
@@ -38,8 +38,6 @@ iELY    0   0   0   0   0   0   0   0   0   0   0   0
 iWSS    0   0   0   0   0   0   0   0   0   0   0   0
 rLnd    0   0   0   0   0   0   0   0   0   0   0   0
 rMkt    0   0   0   0   0   0   0   0   0   0   0   0
-fixLND  1   1   0   0   0   0   0   0   0   0   0   0
-fixRES  1   1   0   0   0   0   0   0   0   0   0   0
 fallow  0   0   0   0   0   0   0   0   0   0   0   0
 rBuild  0   0   0   0   0   0   0   0   0   0   0   0
 transx  0   0   0   0   0   0   0   0   0   0   0   0   
@@ -48,10 +46,12 @@ wHPPall 0   0   0   0   0   0   0   0   0   0   0   0
 wHPPwin 0   0   0   0   0   0   0   0   0   0   1   0   
 wDISwin 0   0   0   0   0   0   0   0   0   0   0   0   
 wDISsum 0   0   0   0   0   0   0   0   0   0   0   1   
+fixLND  1   1   0   0   0   0   0   0   0   0   0   0
+fixRES  1   1   0   0   0   0   0   0   0   0   0   0
 noYWR   1   1   1   1   0   0   0   0   0   0   0   0
 avgSoil 1   1   1   1   1   1   0   0   0   0   0   0   
-useCMX  0   1   0   1   0   1   0   1   0   1   0   0   
 useCET  1   1   1   1   1   1   1   1   0   0   0   0   
+useCMX  0   1   0   1   0   1   0   1   0   1   1   1   
 sT      0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 
 ;
 
@@ -74,7 +74,7 @@ cptl    1   1   1   1   1   1   1   1   1   1   1   1
 
 TABLE ipCrop(j,sSce) "Indices for crop prices"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
-cot     1   1   1   1   1   1   1   1   1   1   1   1
+cot     1   1   1   1   1   1   1   1   1   1   0.5 1
 wht     1   1   1   1   1   1   1   1   1   1   1   1
 ric     1   1   1   1   1   1   1   1   1   1   1   1
 alf     1   1   1   1   1   1   1   1   1   1   1   1
@@ -85,8 +85,8 @@ oth     1   1   1   1   1   1   1   1   1   1   1   1
 
 TABLE natExtra0(b,sSce) "Extra nature needs (mm3/year)"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12
-Lak_ARN 0   0   0   0   0   0   0   0   0   0   0   0
-Lak_ARS 0   0   0   0   0   0   0   0   0   0   0   0
+Lak_ARN 0   0   0   0   0   0   0   0   0   0   0   5000
+Lak_ARS 0   0   0   0   0   0   0   0   0   0   0   8000
 Lak_GOL 0   0   0   0   0   0   0   0   0   0   0   0
 ;
 
