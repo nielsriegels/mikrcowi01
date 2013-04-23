@@ -44,7 +44,7 @@ $include "%path%92cstr.inc";
 
 * Solve model for the give scenario
 *    beam.solprint = yes;
-    beam.limrow = 50000;
+*    beam.limrow = 50000;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
 *    if(ord(ssce) eq 3,    beam.solprint = yes; );
