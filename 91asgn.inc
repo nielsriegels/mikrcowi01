@@ -17,6 +17,10 @@
     transx(c,cc)$(scenarios("transx",sSce) eq 3) = 1$(caps3(c) AND caps3(cc));
     transx(c,cc)$(scenarios("transx",sSce) eq 5) = 1$(caps5(c) AND caps3(cc));
     transx(c,cc)$(scenarios("transx",sSce) eq 6) = 1$(caps6(c) AND caps3(cc));
+
+* Enable electricity exports to South Asia
+    elySApExp(c,m)          = elySAexp0("pExp",c,m)$scenarios("SAexp",sSce);
+    elySAqExp(c,m)          = elySAexp0("qExp",c,m)$scenarios("SAexp",sSce);
  
 * Reset country and node objective function weights to their normal 1's and 0's
     objAGRweight(b)         = 1;
@@ -65,6 +69,8 @@
     bResSto(b)$bResNOP(b)   = NO;
     bResEly(b)              = YES$(reservoirs(b,"Ely") > 0 AND not bResNOP(b));
     HPP.up(b,g,y,m)         = INF$bResEly(b);
+    HHD.up(b,y,m)           = INF$bResEly(b);
+DISPLAY bResEly, bResNOP;
 
 * Enable spillways via FLW in all reservoirs
     flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);

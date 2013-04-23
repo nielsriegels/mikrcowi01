@@ -67,7 +67,6 @@ $include "%path%96rslt.inc";
     checkoutput("obj",sSce)                     = TWV.l;
     checkoutput("mstat",sSce)                   = beam.modelstat;
 
-DISPLAY transx, trx0, caps3,elyHours;
-DISPLAY "trx disp", TRX.l;
+    DISPLAY HHD.l, HPP.l;
 
 );

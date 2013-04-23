@@ -223,6 +223,7 @@ SETS
         tppPS           "Thermal producer surplus"
         tppVal          "Thermal power value at marg. cost"
         elyVal          "Value of electricity at marg. cost"
+        expVal          "Value of electricity exported at export price"
         usdVal          "Value of unserved demand"
         demVal          "Value of served demand at marg. cost"
         qTherm          "Thermal production total"

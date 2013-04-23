@@ -43,6 +43,9 @@ PARAMETERS
     noYWR                           "Disable yield-water response function (0/1)"
     useCET                          "Enable CET function for land yield response"
     useCMX                          "Enable Crop mix method"
+    elySApExp(c,m0)                 "Electricity export price to South Asia (USD/MWh)"
+    elySAqExp(c,m0)                 "Electricity export quantity to South Asia (MWh/month)"
+
 * Parameters for reporting of results to Excel
     rFlow(sSce,b,e_resFlow,y0,m0)   "Flow of water through bodies"
     rcFlow(sSce,c,y0,e_resFlow,m0)  "Flow of water by country"

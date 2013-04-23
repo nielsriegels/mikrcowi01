@@ -9,6 +9,7 @@ SET scOptions /
     iWSS        "Invest in Water Supply and Sanitation"
     rLnd        "Reform of land management (increased yields)"
     rMkt        "Reform of crop markets (economic vs. financial pricing)"
+    SAexp       "Electricity exports to South Asia"
     fixLND      "Fix land use to baseline values"
     fixRES      "Fix release patterns for selected reservoirs"
     fallow      "Increase available land with fallow land (% of total land available)"
@@ -24,13 +25,13 @@ SET scOptions /
     useCET      "Use CET function"
     transx      "Allow electricity transmission between KAZ-KYR-UZB-TAD"
 /;
-*        TEST YWR, SOIL, CET, CMX           TEST AGRICULTURE SHOCK REACT.        SCEN. OF INTEREST        ENERGY
+*        TEST YWR, SOIL, CET, CMX           TEST AGRICULTURE SHOCK REACT.        SCEN. OF INTEREST                     ENERGY
 TABLE scenarios(scOptions,sSce) "Scenario definition table"
         s01 s02 s03 s04 s05 s06 s07 s08     s09 s10 s11 s12 s13 s14 s15 s16      s17 s18 s19 s20 s21 s22 s23 s24       s30 s31 s32 s33 s34 s35
 *run     1   1   1   1   1   1   1   1       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   0
 *run     0   0   0   0   0   0   0   0       1   1   0   0   0   0   1   1        0   0   0   0   0   0   0   0         0   0   0   0   0   0
 *run     0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        1   1   1   1   1   1   1   1         0   0   0   0   0   0
-run     0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         1   1   1   1   0   0
+run     0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         1   1   1   1   1   1
 *run     0   0   0   0   0   0   0   0       1   1   1   1   1   1   1   1        1   1   1   1   1   1   1   1         0   0   0   0   0   0
 iField  0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   0
 iChnl   0   0   0   0   0   0   0   0       0   1   0   0   0   0   1   1        0   0   0   0   0   0   0   0         0   0   0   0   0   0
@@ -40,6 +41,7 @@ iELY    0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0       
 iWSS    0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   0
 rLnd    0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   0
 rMkt    0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   0
+SAexp   0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   1
 fallow  0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   0
 rBuild  0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   0
 transx  0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   3   5   5   5   5   
@@ -60,7 +62,7 @@ sT      0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5     0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5     
 TABLE resNewOp(b,sSce) "New reservoir innnnn operation"
         s01 s02 s03 s04 s05 s06 s07 s08     s09 s10 s11 s12 s13 s14 s15 s16      s17 s18 s19 s20 s21 s22 s23 s24       s30 s31 s32 s33 s34 s35
 Res_DAS 0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   0
-Res_ROG 0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        1   1   1   1   1   1   1   1         0   0   0   0   0   0
+Res_ROG 0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        1   1   1   1   1   1   1   1         0   0   0   0   1   1
 Res_KAM 0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   0
 Res_ZAR 0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   0   0   0
 Res_VAH 0   0   0   0   0   0   0   0       0   0   0   0   0   0   0   0        0   0   0   0   0   0   0   0         0   0   0   1   0   0
@@ -150,6 +152,14 @@ TUR     .cot    0       0       0       0       0       0       0       0       
 TAD     .cot    0       0       0       0       0       0       0       0       0       0      0       0
 KYR     .cot    0       0       0       0       0       0       0       0       0       0      0       0
 AFG     .cot    0       0       0       0       0       0       0       0       0       0      0       0
+;
+
+
+* 100MW x 24h x 30d&month = 72000 MWh/month
+TABLE elySAexp0(*,c,m0) "Electricity export to South Asia (GWh/month)"
+            m01     m02     m03     m04     m05     m06     m07     m08     m09     m10     m11     m12
+qExp.TAD    0       0       0       0       72      72      72      72      0       0       0       0   
+pExp.TAD    0       0       0       0       120     120     120     120     0       0       0       0   
 ;
 
 

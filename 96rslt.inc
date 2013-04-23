@@ -257,7 +257,7 @@ result(sSce,"Thermal power prod. (GWh)",g0,c,y0,m0) = SUM(u, TPP.l(c,u,g0,y0,m0)
     rcView(sSce,y,"cConvey",c)              = 0;
     rcView(sSce,y,"iConvey",c)              = 0;
     rcView(sSce,y,"cHydro",c)               = 0;
-    rcView(sSce,y,"iHydro",c)               = 0;
+    rcView(sSce,y,"iHydro",c)               = SUM(b$bCty(b,c),              resNewOp(b,sSce)*reservoirs(b,"cost") );
     rcView(sSce,y,"qTherm",c)               = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m));
     rcView(sSce,y,"qThermWin",c)            = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mWin(m));
     rcView(sSce,y,"qThermSum",c)            = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mSum(m));
@@ -270,10 +270,11 @@ result(sSce,"Thermal power prod. (GWh)",g0,c,y0,m0) = SUM(u, TPP.l(c,u,g0,y0,m0)
     rcView(sSce,y,"aggWTP",c)               = SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcView(sSce,y,"usdVal",c) ;
     rcView(sSce,y,"demVal",c)               = SUM((g,m)$elyDemand0(c,g,m),  -ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
     rcView(sSce,y,"tppVal",c)               = SUM((g,m),                    -ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
+    rcView(sSce,y,"expVal",c)               = SUM(m,                        1000*elySAqExp(c,m) * elySAqExp(c,m) )/1000000;
 
-    rcView(sSce,y,"elyCS",c)                = rcView(sSce,y,"aggWTP",c) - rcView(sSce,y,"demVAL",c);
+    rcView(sSce,y,"elyCS",c)                = rcView(sSce,y,"aggWTP",c) + rcView(sSce,y,"usdVal",c) - rcView(sSce,y,"demVAL",c);
     rcView(sSce,y,"tppPS",c)                = rcView(sSce,y,"tppVal",c) + rcView(sSce,y,"cTherm",c);
-    rcView(sSce,y,"elyPS",c)                = rcView(sSce,y,"demVAL",c) + rcView(sSce,y,"cTherm",c) + rcView(sSce,y,"cHydro",c);
+    rcView(sSce,y,"elyPS",c)                = rcView(sSce,y,"demVAL",c) + rcView(sSce,y,"cTherm",c) + rcView(sSce,y,"cHydro",c) + rcView(sSce,y,"expVal",c);
 
     rcView(sSce,y,"Invest",c)               = rcView(sSce,y,"iField",c) + rcView(sSce,y,"iConvey",c) + rcView(sSce,y,"iHydro",c) + rcView(sSce,y,"iTherm",c) ;
     rcView(sSce,y,"OandM",c)                = rcView(sSce,y,"cField",c) + rcView(sSce,y,"cConvey",c) + rcView(sSce,y,"cHydro",c);

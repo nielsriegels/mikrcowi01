@@ -18,6 +18,10 @@ git pull https://github.com/mikkelakromann/mikrcowi01.git  develop-FAO
 git commit -m "Message explaining what changed in this commit"
 git push
 
+
+# Create a new branch and push to repository
+git checkout -b new_branch_name
+git push -u origin new_branch_name
    
 # Reverting to the GitHub repository for branch   
 git reset --hard HEAD

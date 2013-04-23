@@ -188,7 +188,7 @@ ELYHEAD(b,y,m)$bResEly(b)..
     HHD(b,y,m)  =e= SUM(s$sW(s),  
                           reservoirs(b,"coef_a")
                          +reservoirs(b,"coef_b") *      (VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2
-                         +reservoirs(b,"coef_c") *POWER((VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2,2)
+                         +reservoirs(b,"coef_c") *POWER((VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2 , 2)
                         )  ;
 
 * Hydro power production (in GWh) by time segment is capped by hours in each segment according to maximum effect (in MW)
@@ -225,7 +225,9 @@ ELYMKT(c,g,y,m)..
     =e=    
            DEM(g,c,y,m)
          + SUM((s,bd,bo),           0.001*ITK(s,bd,bo,y,m)* elyPump(bd,bo))
-         + SUM(cc$trx0(c,cc),       TRX(c,cc,g,y,m) );
+         + SUM(cc$trx0(c,cc),       TRX(c,cc,g,y,m) )
+         + elySAqExp(c,m)
+         ;
 
 * Transmission constraints between countries (trx0 in MW, TRX in GW)
 ELYTRX(c,cc,g,y,m)$trx0(c,cc)..
@@ -295,6 +297,7 @@ OBJ..   TWV =e=
               )+SUM(c$objCTYweight(c),
                    -SUM((u,g,y,m)$tppMap(c,u),                TPP(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000                 * objELYweight       ) / 1000000
                    -SUM((d,g,y,m)$usd0(c,g,d),                USD(g,c,d,y,m)*usd0(c,g,d)*1000                             * objELYweight       ) / 1000000
+                   +SUM(m$elySAqExp(c,m),                     elySAqExp(c,m)*elySApExp(c,m)*1000                          * objELYweight       ) / 1000000
 * CAPEX and OPEX expense due to conveyance system
                    -conveyanceCost(c)
               )
