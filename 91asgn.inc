@@ -14,8 +14,10 @@
     useCMX                  = 1$scenarios("useCMX",sSce);
 
 * Allow transmission according to transmission limits in trx0
-    transx                  = 1$scenarios("transx",sSce);
-
+    transx(c,cc)$(scenarios("transx",sSce) eq 3) = 1$(caps3(c) AND caps3(cc));
+    transx(c,cc)$(scenarios("transx",sSce) eq 5) = 1$(caps5(c) AND caps3(cc));
+    transx(c,cc)$(scenarios("transx",sSce) eq 6) = 1$(caps6(c) AND caps3(cc));
+ 
 * Reset country and node objective function weights to their normal 1's and 0's
     objAGRweight(b)         = 1;
     objELYweight            = 1;
@@ -66,11 +68,10 @@
 
 * Enable spillways via FLW in all reservoirs
     flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
-flow(bd,bo)$resv(bd,bo)                 = NO;
 
 * Set loss in channels according to investment choices
-    lossChannels(b,l,m) = lossChannels0(b,l,m)$(scenarios("iChnl",sSce))* (1-scenarios("iChnl",sSce))
-                        + lossChannels1(b,l,m)$(scenarios("iChnl",sSce))* scenarios("iChnl",sSce);
+    lossChannels(b,l,m) = lossChannels0(b,l,m)$(scenarios("iChnl",sSce) eq 0)
+                        + lossChannels1(b,l,m)$(scenarios("iChnl",sSce) ne 0);
 
 * Set conveyance cost according to investment choices
     conveyanceCost(c) = conveyCost0(c)$(scenarios("iChnl",sSce)= 0) + conveyCost1(c)$scenarios("iChnl",sSce);

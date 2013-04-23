@@ -91,6 +91,9 @@ SET ric(j)  / ric /;
 SET alf(j)  / alf /;
 SET oth(j)  / oth /;
 SET bNat(b) / Lak_ARS, Lak_ARN, Lak_Ayd /;
+SET caps3(c) / KAZ, UZB, KYR /
+SET caps5(c) / KAZ, UZB, KYR, TAD /
+SET caps6(c) / KAZ, UZB, KYR, TAD /
 
 * =============================================================================
 * Include defition of scenario
@@ -146,4 +149,6 @@ PUT step;
 PUT "4";
 PUTCLOSE;
 
+
+DISPLAY los.l;
 DISPLAY checkOutput;

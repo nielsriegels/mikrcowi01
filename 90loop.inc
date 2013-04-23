@@ -44,7 +44,7 @@ $include "%path%92cstr.inc";
 
 * Solve model for the give scenario
 *    beam.solprint = yes;
-    beam.limrow = 1;
+    beam.limrow = 50000;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
 *    if(ord(ssce) eq 3,    beam.solprint = yes; );
@@ -66,6 +66,8 @@ $include "%path%96rslt.inc";
     checkoutput("totinc",sSce)                  = SUM((b,y,m), rEcon(sSce,b,"TotInc",y,m));
     checkoutput("obj",sSce)                     = TWV.l;
     checkoutput("mstat",sSce)                   = beam.modelstat;
-DISPLAY CMX.l, LND.l;
+
+DISPLAY transx, trx0, caps3,elyHours;
+DISPLAY "trx disp", TRX.l;
 
 );

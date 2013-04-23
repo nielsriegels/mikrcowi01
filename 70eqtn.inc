@@ -109,8 +109,7 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
                         + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
                         + sup(s,b,m)
                         + rtn0(b,m) )
-                        + lossChannels(b,l,m)* (
-                          SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) )
+                     + lossChannels(b,l,m) * SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) 
 ;
 
 * Account for return of water due to drainage
@@ -230,7 +229,7 @@ ELYMKT(c,g,y,m)..
 
 * Transmission constraints between countries (trx0 in MW, TRX in GW)
 ELYTRX(c,cc,g,y,m)$trx0(c,cc)..
-    TRX(c,cc,g,y,m) =l= 0 * 0.001 * 30 *trx0(c,cc) * elyHours(c,g,m)$transx;
+    TRX(c,cc,g,y,m) =l= 0.001 * 30 *trx0(c,cc) * elyHours(c,g,m)$transx(c,cc);
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
@@ -310,7 +309,7 @@ OBJ..   TWV =e=
 MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
-                ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX
+                ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX,
                 LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, RETURNWATER
                 OBJ
                 /;

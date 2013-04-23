@@ -47,8 +47,8 @@ PARAMETERS
     rFlow(sSce,b,e_resFlow,y0,m0)   "Flow of water through bodies"
     rcFlow(sSce,c,y0,e_resFlow,m0)  "Flow of water by country"
     rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
-    rAgri(sSce,b,e_resAgri,j,y0)    "Agricultural results for bodies"
-    rEcon(sSce,b,e_resEcon,y0,m0)   "Economical results for bodies"
+    rAgri(sSce,b,e_resAgri,j,q0,y0) "Agricultural results for zone parttions"
+    rEcon(sSce,b,e_resEcon,y0,m0)   "Economical results for zone"
     rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
@@ -59,7 +59,7 @@ PARAMETERS
 
 * Temporary - to be replaced or deleted
     trx0(c,cc)
-    transx
+    transx(c,cc)
 ;
 
 

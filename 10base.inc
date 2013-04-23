@@ -160,18 +160,17 @@ SETS
         Balance         "Water balance" /
 
     e_resAgri /
+        AgriProd        "Agricultural production (ton/year)",
         WaterUse        "Agricultural water use (mm3/year)",
         LandUse         "Agricultural land use (ha)",
-        LandEff         "Yield change index (1000=baseline)",
-        AgriSales       "Agricultural sales (mUSD/year)",
-        AgriIncome      "Agricultural income (mUSD/year)",
-        AgriCosts       "Agricultural costs (mUSD/year)",
-        AgriProd        "Agricultural production (ton/year)",
-        LandIncome      "Agricultural income by land (USD/ha)",
-        WatrIncome      "Agricultural income by land (USD/1000m3)",
+        LandChg         "Agricultural land use change rel. to baseyear (%)"
         LabrUse         "Agricultural labour use (mUSD/year)",
-        IrrInvCost      "Investments in irrigation efficiency (mUSD/year)",
-        WaterSave       "Water saved by irrigation efficiency (mm3/year)" /
+        YWR             "Yield water response (1=optimal yield)"
+        ActMarg         "Actual margin (USD/ha)"
+        OptMarg         "Optmial margin (USD/ha)"
+        /
+
+
 
     e_resEcon /
         AgriSales       "Agricultural sales (mUSD/month)",
@@ -241,3 +240,6 @@ SETS
 
 PARAMETER usdSh(d0) "Share of demand in step unserved"
 / d95 0.05, d90 0.05, d85 0.05, d80 0.05, d75 0.05, d70 0.05, d65 0.05, d60 0.05, d55 0.05, d50 0.05, d45 0.50 /;
+
+PARAMETER usdLvl(d0) "Share of demand in step unserved"
+/ d95 0.975, d90 0.925, d85 0.875, d80 0.825, d75 0.775, d70 0.725, d65 0.675, d60 0.625, d55 0.575, d50 0.525, d45 0.475 /;

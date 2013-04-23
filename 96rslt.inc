@@ -70,30 +70,21 @@
     rcFlow(sSce,c,y,"ResVol","annual")      = rcFlow(sSce,c,y,"ResVol","annual") + 0.000001;
     rcFlow(sSce,c,y,"Balance","annual")         = rcFlow(sSce,c,y,"Balance","annual") + 0.000001;
 
-
-
-
 * Agricultural line results
-    rAgri(sSce,b,"WaterUse",j,y)            = SUM((q,m), IRG.l(b,q,j,y,m));
-    rAgri(sSce,b,"LandEff",j,y)$bPlz(b)     = 0;
-    rAgri(sSce,b,"LandEff",j,y)$(not jAF(j))= 0;
-    rAgri(sSce,b,"LandUse",j,y)             = SUM(q, LND.l(b,q,j,y));
-    rAgri(sSce,b,"AgriSales",j,y)           =  1000 * SUM(q, CRP.l(b,q,j,y) * pCrop(j)  ) / 1000000;
-    rAgri(sSce,b,"AgriCosts",j,y)           = -1000 * SUM(q, LND.l(b,q,j,y) * cCrop(b,j)) / 1000000;
-    rAgri(sSce,b,"IrrInvCost",j,y)          = -1000 * ( iInv("usdPerHa")*SUM(q, LND.l(b,q,j,y)) + iInv("usdPerMM3")*SUM((q,m), IRG.l(b,q,j,y,m)) )/1000000 ;
-    rAgri(sSce,b,"AgriIncome",j,y)          = rAgri(sSce,b,"AgriSales",j,y) + rAgri(sSce,b,"AgriCosts",j,y) + rAgri(sSce,b,"IrrInvCost",j,y);
-    rAgri(sSce,b,"AgriProd",j,y)            = SUM(q, CRP.l(b,q,j,y));
-    rAgri(sSce,b,"LandIncome",j,y)          = ( 1000000*rAgri(sSce,b,"AgriIncome",j,y) / rAgri(sSce,b,"LandUse",j,y) )$rAgri(sSce,b,"LandUse",j,y);
-    rAgri(sSce,b,"WatrIncome",j,y)          = ( 1000000*rAgri(sSce,b,"AgriIncome",j,y) / rAgri(sSce,b,"WaterUse",j,y))$rAgri(sSce,b,"WaterUse",j,y);
-    rAgri(sSce,b,"LabrUse",j,y)             = (1000*SUM(q, LND.l(b,q,j,y))/SUM(q, lnd0(b,q,j)) )$SUM(q, lnd0(b,q,j)) ;
+    rAgri(sSce,b,"WaterUse",j,q,y)            = SUM(m, IRG.l(b,q,j,y,m));
+    rAgri(sSce,b,"LandUse",j,q,y)             = LND.l(b,q,j,y)/1000;
+    rAgri(sSce,b,"LandChg",j,q,y)$lnd0(b,q,j) = 100*LND.l(b,q,j,y)/lnd0(b,q,j)-100;
+    rAgri(sSce,b,"AgriProd",j,q,y)            = CRP.l(b,q,j,y)/1000;
+    rAgri(sSce,b,"YWR",j,q,y)                 = 100*YWR.l(b,q,j,y);
+    rAgri(sSce,b,"ActMarg",j,q,y)$lnd0(b,q,j) = (pCrop(j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
+    rAgri(sSce,b,"OptMarg",j,q,y)$lnd0(b,q,j) = (pCrop(j)* crp0(b,q,j)   - cCrop(b,j) *lnd0(b,q,j)  )/ lnd0(b,q,j);
 
 * Economic results, line
-    rEcon(sSce,b,"AgriSales",y,m)           = SUM(j, rAgri(sSce,b,"AgriSales",j,y) ) / 12;
-    rEcon(sSce,b,"AgriInc",y,m)             = SUM(j, rAgri(sSce,b,"AgriIncome",j,y)) / 12;
-    rEcon(sSce,b,"IrrInvCost",y,m)          = SUM(j, rAgri(sSce,b,"IrrInvCost",j,y)) / 12;
-    rEcon(sSce,b,"AgriCost",y,m)            = SUM(j, rAgri(sSce,b,"AgriCosts",j,y) ) / 12;
+    rEcon(sSce,b,"AgriSales",y,m)           = SUM((q,j), pCrop(j)*CRP.l(b,q,j,y) ) / 12;
+    rEcon(sSce,b,"AgriCost",y,m)            = SUM((q,j), cCrop(b,j)*LND.l(b,q,j,y) ) / 12;
+    rEcon(sSce,b,"AgriInc",y,m)             = rEcon(sSce,b,"AgriSales",y,m) - rEcon(sSce,b,"AgriCost",y,m);
     rEcon(sSce,b,"HydroCost",y,m)           = -1000*reservoirs(b,"cost")$(not bResNOP(b));
-*    rEcon(sSce,b,"HydroInc",y,m)            = 1000 * SUM(g, HPP.l(b,g,y,m) * pEly(g,y,m) ) / 1000000 + rEcon(sSce,b,"HydroCost",y,m);
+    rEcon(sSce,b,"HydroInc",y,m)            = 1000 * SUM(g, HPP.l(b,g,y,m) * SUM(c$bCty(b,c), ELYMKT.m(c,g,y,m)) ) / 1000000 + rEcon(sSce,b,"HydroCost",y,m);
     rEcon(sSce,b,"HydroProd",y,m)           = SUM(g, HPP.l(b,g,y,m));
     rEcon(sSce,b,"HydroHead",y,m)           = ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*rFlow(sSce,b,"ResVolAvg",y,m) + reservoirs(b,"coef_c")*POWER(rFlow(sSce,b,"ResVolAvg",y,m),2));
     rEcon(sSce,b,"HydroGain",y,m)           = -( rEcon(sSce,b,"HydroProd",y,m) / rFlow(sSce,b,"OutDis",y,m) )$rFlow(sSce,b,"OutDis",y,m);
@@ -104,9 +95,9 @@
                                               )$rFlow(sSce,b,"InTot",y,"annual") + 0.000001;
 
 * Aggregate results into basin sections and countries
-    rsAgri(sSce,bs,y0,e_resAgri,j)          = SUM(b$bSec(b,bs), rAgri(sSce,b,e_resAgri,j,y0));
-    rcAgri(sSce,c,y0,e_resAgri,j)           = SUM(b$bCty(b,c), rAgri(sSce,b,e_resAgri,j,y0));
-    rcEcon(sSce,y0,e_resEcon,c)             = SUM((m,b)$bCty(b,c), rEcon(sSce,b,e_resEcon,y0,m));
+    rsAgri(sSce,bs,y0,e_resAgri,j)          = SUM((b,q)$bSec(b,bs),     rAgri(sSce,b,e_resAgri,j,q,y0));
+    rcAgri(sSce,c,y0,e_resAgri,j)           = SUM((b,q)$bCty(b,c),      rAgri(sSce,b,e_resAgri,j,q,y0));
+    rcEcon(sSce,y0,e_resEcon,c)             = SUM((m,b)$bCty(b,c),  rEcon(sSce,b,e_resEcon,y0,m));
     rcEcon(sSce,y,"WaterVal",c)             = 0;
     rcEcon(sSce,y,"HydroHead",c)            = 0;
     rcEcon(sSce,y,"HydroGain",c)            = 0;
