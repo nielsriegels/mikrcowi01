@@ -135,19 +135,26 @@ $ontext
 $offtext
 
 
+*  what is dem0 ?  result(sSce,"Notional elec. demand (GWh)",g0,c,y0,m0)           = -dem0(c,m0);
+result(sSce,"Notional elec. demand (GWh)",g0,c,y0,m0)= -0.001*elyDemand0(c,g0,m0)*30*elyHours(c,g0,m0) ;
 
-*  what is dem0 ?  result(sSce,"Notional elec. demand (GWh)",c,m0)           = -dem0(c,m0);
-*  what is dem0 ?  result(sSce,"Supplied elec. demand (GWh)",c,m0)           = -dem0(c,m0) + SUM(d, USD.l(c,d,m0));
-    result(sSce,"Unserved elec. demand (GWh)",g0,c,y0,m0)      = SUM(d, USD.l(g0,c,d,y0,m0));
-    result(sSce,"Net electricity trade (GWh)",g0,c,y0,m0)      = -SUM(cc, TRX.l(c,cc,g0,y0,m0)-TRX.l(cc,c,g0,y0,m0)) ;
+*  what is dem0 ?  result(sSce,"Supplied elec. demand (GWh)",g0,c,y0,m0)           = -dem0(c,m0) + SUM(d, USD.l(c,d,m0));
+result(sSce,"Supplied elec. demand (GWh)",g0,c,y0,m0)           = -0.001*elyDemand0(c,g0,m0)*30*elyHours(c,g0,m0) + SUM(d, USD.l(g0,c,d,y0,m0));
+
+result(sSce,"Unserved elec. demand (GWh)",g0,c,y0,m0)           = SUM(d, USD.l(g0,c,d,y0,m0));
+
+result(sSce,"Net electricity trade (GWh)",g0,c,y0,m0)           = -SUM(cc, TRX.l(c,cc,g0,y0,m0)-TRX.l(cc,c,g0,y0,m0)) ;
+
 *    result(sSce,"Outside elec. export (GWh)",c,m)             = -qExp0(c,m);
 *    result(sSce,"Outside elec. export (GWh)",c,"annual")      = SUM(m, qExp0(c,m));
-* TPP is not defined over C    result(sSce,"Electricity production(GWh)",g0,c,y0,m0)     = HPP.l(m0)$cUps(c) + SUM(u, TPP.l(c,u,m0));;
-    result(sSce,"HEPS electricity (GWh)",g0,c,y0,m0)                 = SUM(b$bCty(b,c),HPP.l(b,g0,y0,m0));
-* TPP is not defined over C      result(sSce,"Thermal power prod. (GWh)",g0,c,y0,m0)              = SUM(u, TPP.l(c,u,g0,y0,m0));
-* TPP is not defined over C      result(sSce,"- old coal prod. (GWh)",g0,c,y0,m0)                = TPP.l(c,"oldCoal",m0);
-* TPP is not defined over C      result(sSce,"- old gas prod. (GWh)",g0,c,y0,m0)                = TPP.l(c,"oldsSceGT",m0);
-* TPP is not defined over C      result(sSce,"- new gas prod (GWh)",g0,c,y0,m0)                  = TPP.l(c,"newCCGT",m0);
+
+result(sSce,"Electricity production(GWh)",g0,c,y0,m0)     = SUM(b$bCty(b,c),HPP.l(b,g0,y0,m0)) + SUM(u$tppMap(c,u), TPP.l(c,u,g0,y0,m0));;
+result(sSce,"HEPS electricity (GWh)",g0,c,y0,m0)          = SUM(b$bCty(b,c),HPP.l(b,g0,y0,m0));
+
+
+
+* result(sSce,"Thermal power prod. (GWh)",g0,c,y0,m0)              = SUM(u, TPP.l(c,u,g0,y0,m0));
+result(sSce,"Thermal power prod. (GWh)",g0,c,y0,m0)              = SUM(u, TPP.l(c,u,g0,y0,m0));
 
     result(sSce,"- unmet demand 95 (GWh)",g0,c,y0,m0)                = USD.l(g0,c,"d95",y0,m0);
     result(sSce,"- unmet demand 90 (GWh)",g0,c,y0,m0)                = USD.l(g0,c,"d90",y0,m0);
@@ -164,13 +171,15 @@ $offtext
     result(sSce,"- unmet demand 35 (GWh)",g0,c,y0,m0)                = USD.l(g0,c,"d35",y0,m0);
     result(sSce,"- unmet demand 30 (GWh)",g0,c,y0,m0)                = USD.l(g0,c,"d30",y0,m0);
 
-* TPP is not defined over C     result(sSce,"Thermal power old (GWh)",g0,c,y0,m0)               = SUM(u, TPP.l(c,u,m0)$(TNI.l(c,u) eq 0) );
-* TPP is not defined over C     result(sSce,"Thermal power new (GWh)",g0,c,y0,m0)               = SUM(u, TPP.l(c,u,m0)$(TNI.l(c,u) gt 0));
-* TPP is not defined over C     result(sSce,"Thermal economic costs (mUSD)",g0,c,y0,m0)        = -SUM(u,         TPP.l(c,u,m0)*tpp0(c,u,"SRMC")/1000 + TNI.l(c,u)*tpp0(c,u,"CAPX")*TNIweight(m0)) ;
+* TNI not defined yet            result(sSce,"Thermal power old (GWh)",g0,c,y0,m0)               = SUM(u, TPP.l(c,u,m0)$(TNI.l(c,u) eq 0) );
+* TNI not defined yet            result(sSce,"Thermal power new (GWh)",g0,c,y0,m0)               = SUM(u, TPP.l(c,u,m0)$(TNI.l(c,u) gt 0));
+* TNI not defined, tpp = elyThermal("uFUELEX",u)           result(sSce,"Thermal economic costs (mUSD)",g0,c,y0,m0)        = -SUM(u,         TPP.l(c,u,m0)*tpp0(c,u,"SRMC")/1000 + TNI.l(c,u)*tpp0(c,u,"CAPX")*TNIweight(m0)) ;
 
-result(sSce,"Unmet demand costs (mUSD)",g,c,y0,m0)            = -SUM(d0,         USD.l(g,c,d0,y0,m0)*USD0(c,g,d0))/1000 ;
+                             result(sSce,"Unmet demand costs (mUSD)",g,c,y0,m0)            = -SUM(d0,         USD.l(g,c,d0,y0,m0)*USD0(c,g,d0))/1000 ;
 
-* TPP is not defined over C  result(sSce,"Thermal O&M costs (mUSD)",g0,c,y0,m0)            = -SUM(u$uPrd(u), TPP.l(c,u,m0)*tpp0(c,u,"SRMC"))/1000 ;
+*                            result(sSce,"Thermal O&M costs (mUSD)",g0,c,y0,m0)            = -SUM(u$uPrd(u), TPP.l(c,u,m0)*tpp0(c,u,"SRMC"))/1000 ;
+                             result(sSce,"Thermal O&M costs (mUSD)",g0,c,y0,m0)            = -SUM(u, TPP.l(c,u,g0,y0,m0)*elyThermal("uFUELEX",u) )/1000 ;
+
 
 *    result(sSce,"Thermal capital costs (mUSD)",c,m0)          = -SUM(u$uPrd(u), TNI.l(c,u)*tpp0(c,u,"CAPX"))*TNIweight(m0) ;
 *    result(sSce,"- old coal costs (mUSD)",c,m0)               = -TPP.l(c,"oldCoal",m0)*tpp0(c,"oldCoal","SRMC")/1000;
@@ -181,23 +190,47 @@ result(sSce,"Unmet demand costs (mUSD)",g,c,y0,m0)            = -SUM(d0,        
 *    result(sSce,"- unmet WTP 3 (mSUD)",c,m0)                  = -USD.l(c,"unmet03",m0)*USD0(c,"unmet03","wtp")/1000;
 *    result(sSce,"- unmet WTP 4 (mSUD)",c,m0)                  = -USD.l(c,"unmet04",m0)*USD0(c,"unmet04","wtp")/1000;
 
-    result(sSce,"Marg. prod. cost (USD/MWh)",g,c,y0,m)            = - ELYMKT.m(c,g,y0,m)*1000;
+     result(sSce,"Marg. prod. cost (USD/MWh)",g,c,y0,m)            = - ELYMKT.m(c,g,y0,m)*1000;
 *    result(sSce,"Marg. prod. cost (USD/MWh)",g0,c,y0,m)            = -ELYMARKET.m(c,m)*1000;
-*    result(sSce,"CAPS trade value (mUSD)",g,c,y0,m)                = ELYMKT.m(c,g,y0,m) * result(sSce,"Net electricity trade (GWh)",g,c,y0,m) ;
-*    result(sSce,"CAPS trade value (mUSD)",g0,c,y0,m)                = ELYMARKET.m(c,m) * result(sSce,"Net electricity trade (GWh)",;
-*    result(sSce,"Transmission value (mUSD)",c,m)              = SUM(cc, TRANSMISSION.m(c,cc,m)*(TRX.l(c,cc,m)-TRX.l(cc,c,m))) ;
+
+*    result(sSce,"CAPS trade value (mUSD)",g0,c,y0,m)               = ELYMARKET.m(c,m) * result(sSce,"Net electricity trade (GWh)",;
+     result(sSce,"CAPS trade value (mUSD)",g,c,y0,m)                = ELYMKT.m(c,g,y0,m) * result(sSce,"Net electricity trade (GWh)",g,c,y0,m) ;
+
+*    result(sSce,"Transmission value (mUSD)",c,m)                  = SUM(cc, TRANSMISSION.m(c,cc,m)*(TRX.l(c,cc,m)-TRX.l(cc,c,m))) ;
+     result(sSce,"Transmission value (mUSD)",g0,c,y0,m0)             = SUM(cc$trx0(c,cc), ELYTRX.m(c,cc,g0,y0,m0)*(TRX.l(c,cc,g0,y0,m0)-TRX.l(cc,c,g0,y0,m0))) ;
+
+
 *    result(sSce,"HEPS surplus (mUSD)",c,m)                    = -ELYMARKET.m(c,m)*HPP.l(m)$cUps(c);
-*    result(sSce,"HEPS surplus (mUSD)",c,"annual")             = SUM(m, -ELYMARKET.m(c,m)*HPP.l(m))$cUps(c);
+     result(sSce,"HEPS surplus (mUSD)",g,c,y0,m)             = -ELYMKT.m(c,g,y0,m)*SUM(b$bCty(b,c), HPP.l(b,g,y0,m));
+
+
+*    result(sSce,"HEPS surplus (mUSD)",c,"annual")                   = SUM(m, -ELYMARKET.m(c,m)*HPP.l(m))$cUps(c);
+     result(sSce,"HEPS surplus (mUSD)",g,c,y0,"annual")             = SUM(m, -ELYMKT.m(c,g,y0,m)*SUM(b$bCty(b,c), HPP.l(b,g,y0,m))) ;
 
 
 *    result(sSce,"Electricity tariff (mUSD)",c,m0)             = tariff(c) * SUM(u$uPrd(u), TPP.l(c,u,m0))/1000;
 *    result(sSce,"Thermal financial costs (mUSD)",c,m0)        = SUM(u$uPrd(u), TPP.l(c,u,m0)*tpp0(c,u,"SRMC") + TNI.l(c,u)*tpp0(c,u,"CAPX")*TNIweight(m0))/1000 ;
 *    result(sSce,"Thermal subsidy req. (mUSD)",c,m0)           = result(sSce,"Thermal financial costs (mUSD)",c,m0) - result(sSce,"Electricity tariff (mUSD)",c,m0);
+
 *    result(sSce,"External elec. export (mUSD)",c,m)           = 1000 * pExp0(c,m)*qExp0(c,m) / 1000000;
 *    result(sSce,"External elec. export (mUSD)",c,"annual")    = 1000 * SUM(m, pExp0(c,m)*qExp0(c,m)) / 1000000;
 
-* elyvalue needs definition    result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0)      = 1000*(         elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,g,d0)) ) / 1000000 ;
+
+
+
+*elyValue(c,m) = SUM(d, dem0(c,m)*udm0(c,d,"cap")*udm0(c,d,"wtp"));
+*what is udm? do we have a new value for elyValue?
+*elyValue(c,m) = SUM(d, DEM.l(g,c,y,m)*udm0(c,d,"cap")*udm0(c,d,"wtp"));
+
+
+
+*  result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0)      = 1000*(elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,g,d0)) ) / 1000000 ;
+*   result(sSce,"Electricity cons. surpl. (mUSD)",g,c,y,m)      =    1000*(DEM.l(g,c,y,m)  - SUM(d, USD.l(c,d,m) * USD0(c,g,d0)) ) / 1000000 ;
+
 *    result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0)      = 1000*(         elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,d,"wtp")) ) / 1000000 ;
+*     result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0)      = 1000*(         elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,d,"wtp")) ) / 1000000 ;
+
+
 *    result(sSce,"Electricity cons. surpl. (mUSD)",c,"annual") = SUM(m, result(sSce,"Electricity cons. surpl. (mUSD)",c,m));
 *    result(sSce,"Electricity value added (mUSD)",g0,c,y0,m0)      = result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0)  + result(sSce,"Thermal economic costs (mUSD)",g0,c,y0,m0)
 *                                                             +result(sSce,"External elec. export (mUSD)",g0,c,y0,m0) ;
@@ -252,7 +285,7 @@ result(sSce,"Unmet demand costs (mUSD)",g,c,y0,m0)            = -SUM(d0,        
     rcView(sSce,y,"Invest",c)               = rcView(sSce,y,"iField",c) + rcView(sSce,y,"iConvey",c) + rcView(sSce,y,"iHydro",c) + rcView(sSce,y,"iTherm",c) ;
     rcView(sSce,y,"OandM",c)                = rcView(sSce,y,"cField",c) + rcView(sSce,y,"cConvey",c) + rcView(sSce,y,"cHydro",c);
     rcView(sSce,y,"Surplus",c)              = rcView(sSce,y,"AgriVA",c) + rcView(sSce,y,"elyCS",c) + rcView(sSce,y,"elyPS",c) - rcView(sSce,y,"Invest",c) - rcView(sSce,y,"OandM",c);
-    
+
     checkElybal(sSce,g,c,y,"TPP",m)               = SUM(u$tppMap(c,u),  TPP.l(c,u,g,y,m));
     checkElybal(sSce,g,c,y,"HPP",m)               = SUM(b$bCty(b,c),    HPP.l(b,g,y,m));
     checkElybal(sSce,g,c,y,"DEM",m)               = -DEM.l(g,c,y,m);
