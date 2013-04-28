@@ -44,7 +44,7 @@ SETS
     g0                      "Energy demand segment" / base, peak /
     g(g0)                   "Energy demand segment" / base, peak /
     u0                      "Energy prod. units"    / u01*u90 /
-    u(u0)                   "Energy prod. units"    / u01*u44 /
+    u(u0)                   "Energy prod. units"    / u01*u19 /
     d0                      "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45, d40, d35, d30 /
     d(d0)                   "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45 /
     sBal                    "Balance table cols"    / Demand, FromSrc, DisTo, FromUp, FromIn, Return, ToIn, DisFrom, ToDwn, ToLoss /

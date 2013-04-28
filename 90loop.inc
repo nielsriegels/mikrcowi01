@@ -69,5 +69,6 @@ $include "%path%96rslt.inc";
     checkoutput("mstat",sSce)                   = beam.modelstat;
 
 
+DISPLAY DIS.l, resDisMax0, bRes, bResEly;
 
 );
