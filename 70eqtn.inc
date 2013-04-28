@@ -61,6 +61,7 @@ EQUATIONS
     ELYUSD(g0,c,d0,y0,m0)       "Unserved demand steps"
     ELYTRX(c,cc,g0,y0,m0)       "Export of electricity from c to cc"
     ELYMKT(c,g,y0,m0)           "Power market balance"
+    SRVUSD1ST(c,g,y0,m0)        "Serve unserved demand before exports"
     MININFLOW(b,y0,m0)          "Minimum inflow to body"
     MINOUTFLOW(b,y0,m0)         "Minimum outflow from body"
     MININFLOWa(b,y0,m0)         "Minimum inflow to body, annual"
@@ -237,6 +238,11 @@ ELYMKT(c,g,y,m)..
 ELYTRX(c,cc,g,y,m)$trx0(c,cc)..
     TRX(c,cc,g,y,m) =l= 0.001 * 30 *trx0(c,cc) * elyHours(c,g,m)$transx(c,cc);
 
+* Serve unserved demand before starting any export
+SRVUSD1ST(c,g,y,m)..
+    SUM(cc, TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m)) =e= 0;
+
+
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
     SUM(m$mSeason(m,ms), GRW(b,y,m)) * scalem3 =e= grwtrMax(b,ms) * scalem3;
@@ -316,7 +322,7 @@ OBJ..   TWV =e=
 MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
-                ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX,
+                ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
                 LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, RETURNWATER
                 OBJ
                 /;
