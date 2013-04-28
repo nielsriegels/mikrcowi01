@@ -70,11 +70,14 @@
     bResEly(b)              = YES$(reservoirs(b,"Ely") > 0 AND not bResNOP(b));
     HPP.up(b,g,y,m)         = INF$bResEly(b);
     HHD.up(b,y,m)           = INF$bResEly(b);
-DISPLAY bResEly, bResNOP;
+    DIS.up(s,bd,bo,y,m)     = INF$bResEly(bo);
+    FLW.up(s,bd,bo,y,m)$bRes(bo) = INF$resv(bd,bo);
+    FLW.up(s,bd,bo,y,m)$resv(bd,bo)                             = INF$resv(bd,bo);
 
-* Enable spillways via FLW in all reservoirs
-    flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
-    flow(bd,bo)$resv(bd,bo) = YES;
+* Set maximum discharge capacity
+    resDisMax0(b,m)$bRes(b) = min(  reservoirs(b,"capacity")*3600*24*30/1000000,
+                                   (reservoirs(b,"effect")*24*30/reservoirs(b,"ely"))$reservoirs(b,"ely")
+                                 )$bResEly(b);
 
 * Set loss in channels according to investment choices
     lossChannels(b,l,m) = lossChannels0(b,l,m)$(scenarios("iChnl",sSce) eq 0)

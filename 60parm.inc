@@ -123,11 +123,6 @@ wPhase(b,j,p)$bPlz(b) = ( SUM(m$etcM2P(b,j,p,m), 1$etcM(b,j,m))
 cCrop(b,j)$SUM(q, lnd0(b,q,j))   = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/SUM(q, lnd0(b,q,j));
 
 
-* Set maximum discharge capacity
-resDisMax0(b,m)$bRes(b) = min( reservoirs(b,"capacity")*3600*24*30/1000000,
-                              (reservoirs(b,"effect")*24*30/reservoirs(b,"ely"))$reservoirs(b,"ely")
-                             )$bResEly(b) + INF$(not bResEly(b));
-
 
 * TEMPORARY ASSIGNMENT - replace with Excel when we switch to FAO crops
 cmx2lnd(b,"cot","cotn")    = 1;

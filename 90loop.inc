@@ -1,5 +1,7 @@
 * Loop over scenarios to be analysed
 
+PARAMETER checkResv(*,b,m);
+
 LOOP(sSce$scenarios("run",sSce),
 
 
@@ -16,6 +18,7 @@ USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 
 * Fix hydrological variables that can never be non-zero
     FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);
+    FLW.up(s,bd,bo,y,m)$resv(bd,bo)                             = INF$resv(bd,bo);
     ITK.lo(s,bd,bo,y,m)                                         = 0;
     ITK.up(s,bd,bo,y,m)                                         = INF$intk(bd,bo);
     DIS.up(s,bd,bo,y,m)                                         = INF$resv(bd,bo);
@@ -43,7 +46,7 @@ USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 $include "%path%92cstr.inc";
 
 * Solve model for the give scenario
-*    beam.solprint = yes;
+    beam.solprint = yes;
 *    beam.limrow = 50000;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
@@ -67,6 +70,10 @@ $include "%path%96rslt.inc";
     checkoutput("obj",sSce)                     = TWV.l;
     checkoutput("mstat",sSce)                   = beam.modelstat;
 
-    DISPLAY HHD.l, HPP.l, flow;
+checkResv("FLW.up",b,m) = SUM((s,y,bd), FLW.up(s,bd,b,y,m));
+checkResv("DIS.up",b,m) = SUM((s,y,bd), DIS.up(s,bd,b,y,m));
+
+DISPLAY bResEly, bResNOP, resv, bRes, resDisMax0, resVolFix, DIS.l, FLW.l,checkResv;
+
 
 );

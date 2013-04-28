@@ -95,6 +95,7 @@ WBALANCE(s,b,y,m)..
    ) =e= (
        SUM(bo$intk(b,bo), ITK(s,b,bo,y,m))
       +SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
+      +SUM(bo$resv(b,bo), FLW(s,b,bo,y,m))
       +SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
       +sup(s,b,m)
       +rtn0(b,m)
@@ -106,6 +107,7 @@ WBALANCE(s,b,y,m)..
 LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
     LOS(s,b,l,y,m) =e= lossRivers(b,l,m) * (
                           SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
+                        + SUM(bo$resv(b,bo), FLW(s,b,bo,y,m))
                         + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
                         + sup(s,b,m)
                         + rtn0(b,m) )
@@ -152,7 +154,9 @@ SEAVOL(s,b,y,m)$sea(b)..
 RESVOL(s,b,y,m)$(bRes(b) and (not resVolFix(b,y,m))  )..
     ( VOL(s,b,y,m) - SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)) ) * scalem3$bResSto(b)
         =e=   (
-                                           +STO(s,b,y,m) - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m)+FLW(s,bd,b,y,m))
+                                           + STO(s,b,y,m) 
+                                           - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
+                                           - SUM(bd$resv(bd,b), FLW(s,bd,b,y,m))
                                            -ctrfBuild*reservoirs(b,"max")$(mBgn(m) AND bResBuild(b))
                                           ) * scalem3;
 
@@ -164,13 +168,13 @@ RESVOLMAX(b,y,m)$bRes(b)..
 RESVOLMIN(b,y,m)$bRes(b)..
     SUM(s$sW(s), VOL(s,b,y,m)) * scalem3 =g= (reservoirs(b,"min") * scalem3)$bResSto(b);
 
-* Maximal water flow
-RESDISMAX(s,b,y,m)$(resDisMax0(b,m) gt 0 and not resVolFix(b,y,m))..
+* Maximal discharge through turbines 
+RESDISMAX(s,b,y,m)$(bRes(b) and (resVolFix(b,y,m) eq 0) )..
     SUM(bd$resv(bd,b), DIS(s,bd,b,y,m)) * scalem3 =l= scalem3 * resDisMax0(b,m);
 
-* Discharges must be higher than a given minimun level
+* Discharges (incl. spillway) must be higher than a given minimun level
 RESDISMIN(b,y,m)$resDisMin0(b,m)..
-    SUM(s$sW(s), SUM(bd, DIS(s,bd,b,y,m))) * scalem3 =g= resDisMin0(b,m) * scalem3;
+    SUM(s$sW(s), SUM(bd, FLW(s,bd,b,y,m)+DIS(s,bd,b,y,m))) * scalem3 =g= resDisMin0(b,m) * scalem3;
 
 * Fix volumes in selected reservoirs in selected months (for baseline)
 RESFIXVOL(s,b,y,m)$resVolFix(b,y,m)..
@@ -239,7 +243,7 @@ GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
 
 * Monthly minimum inflow requirements
 MININFLOW(b,y,m)$minInFlow0(b,y,m)..
-    (SUM((bo,s)$sW(s), DIS(s,b,bo,y,m)$resv(b,bo)+FLW(s,b,bo,y,m)$flow(b,bo)+ITK(s,b,bo,y,m)$intk(b,bo))
+    (SUM((bo,s)$sW(s), DIS(s,b,bo,y,m)$resv(b,bo)+FLW(s,b,bo,y,m)$resv(b,bo)+FLW(s,b,bo,y,m)$flow(b,bo)+ITK(s,b,bo,y,m)$intk(b,bo))
    +SUM(s$sW(s), sup(s,b,m)) + rtn0(b,m)  ) * scalem3 =g= minInFlow0(b,y,m) * scalem3;
 
 * Monthly minimum outflow requirements (only river nodes)
@@ -248,7 +252,7 @@ MINOUTFLOW(b,y,m)$(minInFlow0(b,y,m) AND bRiv(b))..
 
 * Annual minimum flow requirements
 MININFLOWa(b,y,mA)$(minInFlow0(b,y,mA) + natExtra(b))..
-    (SUM((m,s)$sW(s), SUM(bo, DIS(s,b,bo,y,m)$resv(b,bo)+FLW(s,b,bo,y,m)$flow(b,bo)+ITK(s,b,bo,y,m)$intk(b,bo)) + sup(s,b,m))
+    (SUM((m,s)$sW(s), SUM(bo, DIS(s,b,bo,y,m)$resv(b,bo)+FLW(s,b,bo,y,m)$resv(b,bo)+ITK(s,b,bo,y,m)$intk(b,bo)) + sup(s,b,m))
    +SUM(m, rtn0(b,m))) * scalem3 =g= (minInFlow0(b,y,mA) + natExtra(b)) * scalem3;
 
 * Annual minimum land use requirements
