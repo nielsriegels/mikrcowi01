@@ -111,14 +111,11 @@ $ontext
     rIrg(sSce,"dIRG.l",b,q0,j)$SUM((y,m), irg0(b,q0,j,y,m))              = SUM((y,m), IRG.l(b,q0,j,y,m))/SUM((y,m), irg0(b,q0,j,y,m));
     rIrg(sSce,"dLnd",b,q0,j)$lnd0(b,q0,j)    = SUM(y,     LND.l(b,q0,j,y))/lnd0(b,q0,j);
     rIrg(sSce,"dCrp",b,q0,j)$crp0(b,q0,j)    = SUM(y,     CRP.l(b,q0,j,y))/crp0(b,q0,j);
-
-
     rIrg1(sSce,"etcM",q0)                = SUM((b,j,m), etcM(b,j,m)*lnd0(b,q0,j));
     rIrg1(sSce,"etcP",q0)                = SUM((b,j,p), etcP(b,j,p)*lnd0(b,q0,j));
     rIrg1(sSce,"irg0",q0)                = SUM((b,j,y,m), irg0(b,q0,j,y,m));
     rIrg1(sSce,"IRG.l",q0)               = SUM((b,j,y,m), IRG.l(b,q0,j,y,m));
     rIrg1(sSce,"IRG.l (p)",q0)           = SUM((b,j,p,y,m), etcM2P(b,j,p,m)*IRG.l(b,q0,j,y,m));
-
     rIrg2(sSce,b,q,j,p,"eta0")                = SUM((m,y), etcM2P(b,j,p,m)*irg0(b,q,j,y,m));
     rIrg2(sSce,b,q,j,p,"etc0")                = SUM(y, etcP(b,j,p)*lnd0(b,q,j));
     rIrg2(sSce,b,q,j,p,"iet0")                = ( rIrg2(sSce,b,q,j,p,"eta0") / rIrg2(sSce,b,q,j,p,"etc0") )$rIrg2(sSce,b,q,j,p,"etc0");
@@ -127,106 +124,41 @@ $offtext
 
 
 
-* what is dem0 ? result(sSce,"Notional elec. demand (GWh)",g0,c,y0,m0) = -dem0(c,m0);
-result(sSce,"Notional elec. demand (GWh)",g0,c,y0,m0)= -0.001*elyDemand0(c,g0,m0)*30*elyHours(c,g0,m0) ;
+    rcElec(sSce,"qDemNot",y,c,m)        =  SUM(g,                   -DEM.l(g,c,y,m));
+    rcElec(sSce,"qDemSrv",y,c,m)        =  SUM(g,                   -DEM.l(g,c,y,m) + SUM(d, USD.l(g,c,d,y,m)));
+    rcElec(sSce,"qDemUsd",y,c,m)        =  SUM((g,d),               USD.l(g,c,d,y,m));
+    rcElec(sSce,"qTrxNet",y,c,m)        = -SUM((g,cc),              TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ;
+    rcElec(sSce,"qTrxSA",y,c,m)         =  elySAqExp(c,m);
+    rcElec(sSce,"qSupTot",y,c,m)        =  SUM((b,g)$bCty(b,c),     HPP.l(b,g,y,m)) + SUM((u,g)$tppMap(c,u), TPP.l(c,u,g,y,m));;
+    rcElec(sSce,"qSupHPP",y,c,m)        =  SUM((b,g)$bCty(b,c),     HPP.l(b,g,y,m));
+    rcElec(sSce,"qSupTPP",y,c,m)        =  SUM((u,g)$tppMap(c,u),   TPP.l(c,u,g,y,m));
+    rcElec(sSce,"vCstTPP",y,c,m)        = -SUM((u,g)$tppMap(c,u),   TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u) )/1000 ;
+    rcElec(sSce,"vCstUSD",y,c,m)        = -SUM((g,d0),              USD.l(g,c,d0,y,m)*usd0(c,g,d0))/1000 ;
+*   rcElec(sSce,"vCstCPX",c,m)          = -SUM(u$uPrd(u),           TNI.l(c,u)*tpp0(c,u,"CAPX"))*TNIweight(m) ;
+    rcElec(sSce,"pMCbase",y,c,m)        = -ELYMKT.m(c,"base",y,m)*1000;
+    rcElec(sSce,"pMCpeak",y,c,m)        = -ELYMKT.m(c,"peak",y,m)*1000;
+    rcElec(sSce,"vExpCst",y,c,m)        =  SUM((g,cc),             -ELYMKT.m(c,g,y,m)    * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ) ;
+    rcElec(sSce,"vExpTrx",y,c,m)        =  SUM((g,cc)$trx0(c,cc),   ELYTRX.m(c,cc,g,y,m) * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ) ;
+    rcElec(sSce,"vSrpHPP",y,c,m)        =  SUM((b,g)$bCty(b,c),    -ELYMKT.m(c,g,y,m)*HPP.l(b,g,y,m));
+    rcElec(sSce,"vTrxSA",y,c,m)         =  1000 * elySAqExp(c,m)*elySApExp(c,m) / 1000000;
+*   rcElec(sSce,"Electricity tariff (mUSD)",c,m)            = tariff(c) * SUM(u$uPrd(u), TPP.l(c,u,m))/1000;
+*   rcElec(sSce,"Thermal financial costs (mUSD)",c,m)       = SUM(u$uPrd(u), TPP.l(c,u,m)*tpp0(c,u,"SRMC") + TNI.l(c,u)*tpp0(c,u,"CAPX")*TNIweight(m))/1000 ;
+*   rcElec(sSce,"Thermal subsidy req. (mUSD)",c,m)          = rcElec(sSce,"Thermal financial costs (mUSD)",c,m) - rcElec(sSce,"Electricity tariff (mUSD)",c,m);
+*   elyValue(c,m)                                           = SUM(d, dem(c,m)*udm(c,d,"cap")*udm(c,d,"wtp"));
+*   elyValue(c,m)                                           = SUM(d, DEM.l(g,c,y,m)*udm(c,d,"cap")*udm(c,d,"wtp"));
+*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*(elyValue(c,m)  - SUM(d, USD.l(c,d,m) * USD0(c,g,d0)) ) / 1000000 ;
+*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*(DEM.l(g,c,y,m) - SUM(d, USD.l(c,d,m) * USD0(c,g,d0)) ) / 1000000 ;
+*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*( elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,d,"wtp")) ) / 1000000 ;
+*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*( elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,d,"wtp")) ) / 1000000 ;
+*   rcElec(sSce,"Electricity value added (mUSD)",c,y,m)   = rcElec(sSce,"Electricity cons. surpl. (mUSD)",g,c,y,m) + rcElec(sSce,"Thermal economic costs (mUSD)",g,c,y,m)
+*                                                             +rcElec(sSce,"External elec. export (mUSD)",g,c,y,m) ;
+*   rcElec(sSce,"Total value added (mUSD)",c,y,m)         = rcElec(sSce,"Electricity value added (mUSD)",g,c,y,m) + rcElec(sSce,"Agricultural value added (mUSD)",g,c,y,m) ;
+    rcElec(sSce,e_resElec,y,c,"nvg")    = SUM(m$mWin(m),            rcElec(sSce,e_resElec,y,c,m));
+    rcElec(sSce,e_resElec,y,c,"veg")    = SUM(m$mSum(m),            rcElec(sSce,e_resElec,y,c,m));
+    rcElec(sSce,e_resElec,y,c,"annual") = SUM(m,                    rcElec(sSce,e_resElec,y,c,m));
+    rcElec(sSce,"pMCpeak",y,c,m0)$(not m(m0)) = 0;
+    rcElec(sSce,"pMCbase",y,c,m0)$(not m(m0)) = 0;
 
-* what is dem0 ? result(sSce,"Supplied elec. demand (GWh)",g0,c,y0,m0) = -dem0(c,m0) + SUM(d, USD.l(c,d,m0));
-result(sSce,"Supplied elec. demand (GWh)",g0,c,y0,m0) = -0.001*elyDemand0(c,g0,m0)*30*elyHours(c,g0,m0) + SUM(d, USD.l(g0,c,d,y0,m0));
-
-result(sSce,"Unserved elec. demand (GWh)",g0,c,y0,m0) = SUM(d, USD.l(g0,c,d,y0,m0));
-
-result(sSce,"Net electricity trade (GWh)",g0,c,y0,m0) = -SUM(cc, TRX.l(c,cc,g0,y0,m0)-TRX.l(cc,c,g0,y0,m0)) ;
-
-* result(sSce,"Outside elec. export (GWh)",c,m) = -qExp0(c,m);
-* result(sSce,"Outside elec. export (GWh)",c,"annual") = SUM(m, qExp0(c,m));
-
-result(sSce,"Electricity production(GWh)",g0,c,y0,m0) = SUM(b$bCty(b,c),HPP.l(b,g0,y0,m0)) + SUM(u$tppMap(c,u), TPP.l(c,u,g0,y0,m0));;
-result(sSce,"HEPS electricity (GWh)",g0,c,y0,m0) = SUM(b$bCty(b,c),HPP.l(b,g0,y0,m0));
-
-
-
-* result(sSce,"Thermal power prod. (GWh)",g0,c,y0,m0) = SUM(u, TPP.l(c,u,g0,y0,m0));
-result(sSce,"Thermal power prod. (GWh)",g0,c,y0,m0) = SUM(u, TPP.l(c,u,g0,y0,m0));
-
-    result(sSce,"- unmet demand 95 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d95",y0,m0);
-    result(sSce,"- unmet demand 90 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d90",y0,m0);
-    result(sSce,"- unmet demand 85 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d85",y0,m0);
-    result(sSce,"- unmet demand 80 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d80",y0,m0);
-    result(sSce,"- unmet demand 75 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d75",y0,m0);
-    result(sSce,"- unmet demand 70 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d70",y0,m0);
-    result(sSce,"- unmet demand 65 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d65",y0,m0);
-    result(sSce,"- unmet demand 60 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d60",y0,m0);
-    result(sSce,"- unmet demand 55 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d55",y0,m0);
-    result(sSce,"- unmet demand 50 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d50",y0,m0);
-    result(sSce,"- unmet demand 45 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d45",y0,m0);
-    result(sSce,"- unmet demand 40 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d40",y0,m0);
-    result(sSce,"- unmet demand 35 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d35",y0,m0);
-    result(sSce,"- unmet demand 30 (GWh)",g0,c,y0,m0) = USD.l(g0,c,"d30",y0,m0);
-
-* TNI not defined yet result(sSce,"Thermal power old (GWh)",g0,c,y0,m0) = SUM(u, TPP.l(c,u,m0)$(TNI.l(c,u) eq 0) );
-* TNI not defined yet result(sSce,"Thermal power new (GWh)",g0,c,y0,m0) = SUM(u, TPP.l(c,u,m0)$(TNI.l(c,u) gt 0));
-* TNI not defined, tpp = elyThermal("uFUELEX",u) result(sSce,"Thermal economic costs (mUSD)",g0,c,y0,m0) = -SUM(u, TPP.l(c,u,m0)*tpp0(c,u,"SRMC")/1000 + TNI.l(c,u)*tpp0(c,u,"CAPX")*TNIweight(m0)) ;
-
-                             result(sSce,"Unmet demand costs (mUSD)",g,c,y0,m0) = -SUM(d0, USD.l(g,c,d0,y0,m0)*USD0(c,g,d0))/1000 ;
-
-* result(sSce,"Thermal O&M costs (mUSD)",g0,c,y0,m0) = -SUM(u$uPrd(u), TPP.l(c,u,m0)*tpp0(c,u,"SRMC"))/1000 ;
-                             result(sSce,"Thermal O&M costs (mUSD)",g0,c,y0,m0) = -SUM(u, TPP.l(c,u,g0,y0,m0)*elyThermal("uFUELEX",u) )/1000 ;
-
-
-* result(sSce,"Thermal capital costs (mUSD)",c,m0) = -SUM(u$uPrd(u), TNI.l(c,u)*tpp0(c,u,"CAPX"))*TNIweight(m0) ;
-* result(sSce,"- old coal costs (mUSD)",c,m0) = -TPP.l(c,"oldCoal",m0)*tpp0(c,"oldCoal","SRMC")/1000;
-* result(sSce,"- old gas costs (mUSD)",c,m0) = -TPP.l(c,"oldsSceGT",m0)*tpp0(c,"oldsSceGT","SRMC")/1000;
-* result(sSce,"- new gas costs (mUSD)",c,m0) = -TPP.l(c,"newCCGT",m0)*(tpp0(c,"newCCGT","SRMC"))/1000 + TNI.l(c,"newCCGT")*tpp0(c,"newCCGT","CAPX")*TNIweight(m0)/1000;
-* result(sSce,"- unmet WTP 1 (mUSD)",c,m0) = -USD.l(c,"unmet01",m0)*USD0(c,"unmet01","wtp")/1000;
-* result(sSce,"- unmet WTP 2 (mUSD)",c,m0) = -USD.l(c,"unmet02",m0)*USD0(c,"unmet02","wtp")/1000;
-* result(sSce,"- unmet WTP 3 (mSUD)",c,m0) = -USD.l(c,"unmet03",m0)*USD0(c,"unmet03","wtp")/1000;
-* result(sSce,"- unmet WTP 4 (mSUD)",c,m0) = -USD.l(c,"unmet04",m0)*USD0(c,"unmet04","wtp")/1000;
-
-     result(sSce,"Marg. prod. cost (USD/MWh)",g,c,y0,m) = - ELYMKT.m(c,g,y0,m)*1000;
-* result(sSce,"Marg. prod. cost (USD/MWh)",g0,c,y0,m) = -ELYMARKET.m(c,m)*1000;
-
-* result(sSce,"CAPS trade value (mUSD)",g0,c,y0,m) = ELYMARKET.m(c,m) * result(sSce,"Net electricity trade (GWh)",;
-     result(sSce,"CAPS trade value (mUSD)",g,c,y0,m) = ELYMKT.m(c,g,y0,m) * result(sSce,"Net electricity trade (GWh)",g,c,y0,m) ;
-
-* result(sSce,"Transmission value (mUSD)",c,m) = SUM(cc, TRANSMISSION.m(c,cc,m)*(TRX.l(c,cc,m)-TRX.l(cc,c,m))) ;
-     result(sSce,"Transmission value (mUSD)",g0,c,y0,m0) = SUM(cc$trx0(c,cc), ELYTRX.m(c,cc,g0,y0,m0)*(TRX.l(c,cc,g0,y0,m0)-TRX.l(cc,c,g0,y0,m0))) ;
-
-
-* result(sSce,"HEPS surplus (mUSD)",c,m) = -ELYMARKET.m(c,m)*HPP.l(m)$cUps(c);
-     result(sSce,"HEPS surplus (mUSD)",g,c,y0,m) = -ELYMKT.m(c,g,y0,m)*SUM(b$bCty(b,c), HPP.l(b,g,y0,m));
-
-
-* result(sSce,"HEPS surplus (mUSD)",c,"annual") = SUM(m, -ELYMARKET.m(c,m)*HPP.l(m))$cUps(c);
-     result(sSce,"HEPS surplus (mUSD)",g,c,y0,"annual") = SUM(m, -ELYMKT.m(c,g,y0,m)*SUM(b$bCty(b,c), HPP.l(b,g,y0,m))) ;
-
-
-* result(sSce,"Electricity tariff (mUSD)",c,m0) = tariff(c) * SUM(u$uPrd(u), TPP.l(c,u,m0))/1000;
-* result(sSce,"Thermal financial costs (mUSD)",c,m0) = SUM(u$uPrd(u), TPP.l(c,u,m0)*tpp0(c,u,"SRMC") + TNI.l(c,u)*tpp0(c,u,"CAPX")*TNIweight(m0))/1000 ;
-* result(sSce,"Thermal subsidy req. (mUSD)",c,m0) = result(sSce,"Thermal financial costs (mUSD)",c,m0) - result(sSce,"Electricity tariff (mUSD)",c,m0);
-
-* result(sSce,"External elec. export (mUSD)",c,m) = 1000 * pExp0(c,m)*qExp0(c,m) / 1000000;
-* result(sSce,"External elec. export (mUSD)",c,"annual") = 1000 * SUM(m, pExp0(c,m)*qExp0(c,m)) / 1000000;
-
-
-
-
-*elyValue(c,m) = SUM(d, dem0(c,m)*udm0(c,d,"cap")*udm0(c,d,"wtp"));
-*what is udm? do we have a new value for elyValue?
-*elyValue(c,m) = SUM(d, DEM.l(g,c,y,m)*udm0(c,d,"cap")*udm0(c,d,"wtp"));
-
-
-
-* result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0) = 1000*(elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,g,d0)) ) / 1000000 ;
-* result(sSce,"Electricity cons. surpl. (mUSD)",g,c,y,m) = 1000*(DEM.l(g,c,y,m) - SUM(d, USD.l(c,d,m) * USD0(c,g,d0)) ) / 1000000 ;
-
-* result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0) = 1000*( elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,d,"wtp")) ) / 1000000 ;
-* result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0) = 1000*( elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,d,"wtp")) ) / 1000000 ;
-
-
-* result(sSce,"Electricity cons. surpl. (mUSD)",c,"annual") = SUM(m, result(sSce,"Electricity cons. surpl. (mUSD)",c,m));
-* result(sSce,"Electricity value added (mUSD)",g0,c,y0,m0) = result(sSce,"Electricity cons. surpl. (mUSD)",g0,c,y0,m0) + result(sSce,"Thermal economic costs (mUSD)",g0,c,y0,m0)
-* +result(sSce,"External elec. export (mUSD)",g0,c,y0,m0) ;
-* result(sSce,"Total value added (mUSD)",g0,c,y0,m0) = result(sSce,"Electricity value added (mUSD)",g0,c,y0,m0) + result(sSce,"Agricultural value added (mUSD)",g0,c,y0,m0) ;
 
 
     rcView(sSce,y,"AgriSales",c)            =  SUM((b,q,j)$bCty(b,c),       CRP.l(b,q,j,y) * pCrop(j)  ) / 1000000;
@@ -247,7 +179,7 @@ result(sSce,"Thermal power prod. (GWh)",g0,c,y0,m0) = SUM(u, TPP.l(c,u,g0,y0,m0)
     rcView(sSce,y,"Nature",c)               = SUM((s,b,m)$bCty(b,c),        STO.l(s,b,y,m)$(bNat(b) AND sW(s)) );
     rcView(sSce,y,"Amu-TAD-TUR","TUR")      = SUM((s,m)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m));
     rcView(sSce,y,"Amu-TUR-UZB","UZB")      = SUM((s,m)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
-    rcView(sSce,y,"Syr-KYR-UZB","UZB")      = SUM((s,m)$sW(s),              DIS.l(s,"Res_FAR","SYRMID",y,m));
+    rcView(sSce,y,"Syr-KYR-UZB","UZB")      = SUM((s,m)$sW(s),              FLW.l(s,"Res_FAR","SYRMID",y,m) + DIS.l(s,"Res_FAR","SYRMID",y,m));
     rcView(sSce,y,"Syr-UZB-KAZ","KAZ")      = SUM((s,m)$sW(s),              FLW.l(s,"Res_SHA","SYRMID",y,m) - ITK.l(s,"SYR_KAZ","SYRMID",y,m));
     rcView(sSce,y,"cTherm",c)               = -SUM((u,g,m)$tppMap(c,u),     TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000 )/1000000;
     rcView(sSce,y,"iTherm",c)               = 0;
@@ -264,7 +196,11 @@ result(sSce,"Thermal power prod. (GWh)",g0,c,y0,m0) = SUM(u, TPP.l(c,u,g0,y0,m0)
     rcView(sSce,y,"qHydro",c)               = SUM((b,g,m)$bCty(b,c),        HPP.l(b,g,y,m));
     rcView(sSce,y,"qHydroWin",c)            = SUM((b,g,m)$bCty(b,c),        HPP.l(b,g,y,m)$mWin(m));
     rcView(sSce,y,"qHydroSum",c)            = SUM((b,g,m)$bCty(b,c),        HPP.l(b,g,y,m)$mSum(m));
-    rcView(sSce,y,"qElyCons",c)             = SUM((g,m)$elyDemand0(c,g,m),  DEM.l(g,c,y,m));
+    rcView(sSce,y,"qElyDem",c)              = SUM((g,m)$elyDemand0(c,g,m),  DEM.l(g,c,y,m));
+    rcView(sSce,y,"qElySrvd",c)             = SUM((g,m)$elyDemand0(c,g,m),  DEM.l(g,c,y,m)-SUM(d, USD.l(g,c,d,y,m)));
+    rcView(sSce,y,"qElyUsrv",c)             = SUM((g,m)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m)));
+    rcView(sSce,y,"qElyUSDw",c)             = SUM((g,m)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mWin(m));
+    rcView(sSce,y,"qElyUSDs",c)             = SUM((g,m)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mSum(m));
 
     rcView(sSce,y,"usdVal",c)               =-SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
     rcView(sSce,y,"aggWTP",c)               = SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcView(sSce,y,"usdVal",c) ;

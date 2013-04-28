@@ -67,6 +67,6 @@ $include "%path%96rslt.inc";
     checkoutput("obj",sSce)                     = TWV.l;
     checkoutput("mstat",sSce)                   = beam.modelstat;
 
-    DISPLAY HHD.l, HPP.l;
+    DISPLAY HHD.l, HPP.l, flow;
 
 );

@@ -36,7 +36,7 @@
         objDISweight(b,m)           = 0; 
     );
 
-IF(ord(sSce) gt 9,  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b,j)*agriSeason(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$lnd0(b,q0,j);  );
+IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b,j)*agriSeason(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$lnd0(b,q0,j);  );
 
     IF(ord(sSce) eq 16, 
         natExtra(b)             = 0;
@@ -73,6 +73,19 @@ IF(ord(sSce) gt 9,  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b,j)*agriSeason(b,j,m) 
         flow(bd,bo)$resv(bd,bo)                 = NO;
         objCTYweight(c)                         = 0;
         objNODEweight(b)                        = 0;
+
+
+* Optimise for UZB first (sensitivity analysis)
+        IF(ord(sSce) eq 24,
+            objCTYweight("UZB")                     = 1;
+            objNODEweight(b)$bCty(b,"UZB")          = 1;
+            SOLVE beam MAXIMIZING twv USING NLP;
+            LOOP(b$objNODEweight(b),
+                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+eps; 
+                resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
+                ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
+            );
+        );
         
 * Optimise for KYR+TAD (they interfere with each other only little)
         objCTYweight("KYR")                     = 1;

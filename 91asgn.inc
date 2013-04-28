@@ -74,6 +74,7 @@ DISPLAY bResEly, bResNOP;
 
 * Enable spillways via FLW in all reservoirs
     flow(bd,bo)$(SUM(m, resDisMax0(bo,m)) gt 0 and SUM(m, resDisMax0(bo,m)) lt INF)  = YES$resv(bd,bo);
+    flow(bd,bo)$resv(bd,bo) = YES;
 
 * Set loss in channels according to investment choices
     lossChannels(b,l,m) = lossChannels0(b,l,m)$(scenarios("iChnl",sSce) eq 0)

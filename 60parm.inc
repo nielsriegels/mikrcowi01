@@ -56,7 +56,7 @@ PARAMETERS
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
     rcView(sSce,y0,e_resView,c)     "Overview results summarised by scenario and country"
-    result(sSce,*,g0,c,y0,m0)       "Results for countries in each month for each scenario"
+    rcElec(sSce,e_resElec,y0,c,m0)  "Electricity market results"
     checkoutput(*,sSce)             "Check of output values for no-change control"
 
 

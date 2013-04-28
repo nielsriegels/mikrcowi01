@@ -186,6 +186,32 @@ SETS
         DischVal        "Unit wlectricity earnings (USD/mm3)"
         WaterVal        "Marginal value of water USD/mm3" /
 
+
+
+    e_resElec /
+        qDemNot         "Notional demand (GWh)"
+        qDemSrv         "Served demand (GWh)"
+        qDemUsd         "Unserved demand (GWh)"
+        qTrxNet         "Net CAPS electricity export (GWh)"
+        qTrxSA          "Export to SA (GWh)"         
+        qSupTot         "Electricity production (GWh)"
+        qSupHPP         "Hydro electricity production (GWh)"
+        qSupTPP         "Thermal electricity production (GWh)"
+        vCstTPP         "Thermal costs (mUSD)"
+        vCstUSD         "Unserved demand costs (mUSD)"
+        vCstCPX         "Capital costs (mUSD)"
+        pMCbase         "Base marginal cost (USD/MWh)"
+        pMCpeak         "Peak marginal cost (USD/MWh)"
+        vExpCst         "CAPS export cost coverage (mUSD)" 
+        vExpTrx         "CAPS transmission profits (mUSD)" 
+        vSrpHPP         "Hydro power surplus (mUSD)"
+        vTrxSA          "SA export income (mUSD)" 
+    /
+
+
+
+
+
 * by scenario and country
     e_resView /
         AgriSales       "Sales value of crops"
@@ -232,7 +258,13 @@ SETS
         qHydro          "Hydro production total"
         qHydroWin       "Hydro production winter"  
         qHydroSum       "Hydro production summer" 
-        qElyCons        "Electricity consumption"
+
+        qElyDem         "Notional electricity demand (GWh)"
+        qElySrvd        "Served electricity demand (GWh)"
+        qElyUsrv        "Unserved demand (GWh)"
+        qElyUSDw        "Unserved demand, winter (GWh)"
+        qElyUSDs        "Unserved demand (GWh)"
+
         Invest          "Total investments"
         OandM           "Total O and M except thermal fuel"
         Surplus         "Total surplus" /

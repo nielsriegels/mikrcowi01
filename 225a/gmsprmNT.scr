@@ -1,0 +1,17 @@
+EOLONLY    1
+INPUT      c:\mikr\mikrcowi01\beam.gms
+OUTPUT     c:\mikr\mikrcowi01\beam.lst
+PAGEWIDTH  255
+ACTION     R
+SUBSYS     C:\Program Files\GAMS21.2-old\gmscmpnt.txt
+SCRDIR     c:\mikr\mikrcowi01\225a\
+SYSDIR     C:\Program Files\GAMS21.2-old\
+CURDIR     c:\mikr\mikrcowi01\
+WORKDIR    c:\mikr\mikrcowi01\
+PUTDIR     c:\mikr\mikrcowi01\
+SCRIPTNEXT 225a\gamsnext.cmd
+SCRIPTEXIT gmsxitNT.cmd
+SCRIPTFRST @echo off
+APPENDOUT  1
+LIBINCDIR  C:\Program Files\GAMS21.2-old\inclib\
+SYSINCDIR  C:\Program Files\GAMS21.2-old\

@@ -226,7 +226,7 @@ ELYMKT(c,g,y,m)..
            DEM(g,c,y,m)
          + SUM((s,bd,bo),           0.001*ITK(s,bd,bo,y,m)* elyPump(bd,bo))
          + SUM(cc$trx0(c,cc),       TRX(c,cc,g,y,m) )
-         + elySAqExp(c,m)
+         + elySAqExp(c,m) * elyHours(c,g,m)/24
          ;
 
 * Transmission constraints between countries (trx0 in MW, TRX in GW)

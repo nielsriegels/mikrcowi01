@@ -1,0 +1,88 @@
+=0 C O N O P T 3 Sep  3, 2003 WIN.CO.NA 21.2 015.049.041.VIS Library 312A
+=0 C O N O P T 3 Sep  3, 2003 WIN.CO.CO 21.2 015.049.041.VIS Library 312A
+C O N O P T 3 Sep  3, 2003 WIN.CO.CO 21.2 015.049.041.VIS Library 312A     
+=1
+ 
+ 
+    C O N O P T 3   MS Windows version 3.12A-015-049
+    Copyright (C)   ARKI Consulting and Development A/S
+                    Bagsvaerdvej 246 A
+                    DK-2880 Bagsvaerd, Denmark
+ 
+=2
+=1
+ Using default options.
+ 
+=2
+    1  INPUT                                                                  (DEFAULT)
+    2  BRANCH * MAJERR MINERR JACERR                                          (DEFAULT)
+    3  OPTIMIZE                                                               (DEFAULT)
+    4  BRANCH * * * * * * * MAJERR                                            (DEFAULT)
+    5  OUTPUT                                                                 (DEFAULT)
+    6  EXIT                                                                   (DEFAULT)
+    7  MAJERR MESSAGE MAJOR ERROR - TERMINATE                                 (DEFAULT)
+    8  EXIT                                                                   (DEFAULT)
+    9  MINERR MESSAGE MINOR ERROR - TERMINATE                                 (DEFAULT)
+   10  EXIT                                                                   (DEFAULT)
+   11  JACERR MESSAGE FUNCTION OR DERIVATIVE ERROR                            (DEFAULT)
+   12  OUTPUT                                                                 (DEFAULT)
+   13  EXIT                                                                   (DEFAULT)
+ 
+  ***  Line    1  INPUT
+=1
+ 
+    The model has 22805 variables and 16382 constraints
+    with 40307 Jacobian elements, 3760 of which are nonlinear.
+    The Hessian of the Lagrangian has 362 elements on the diagonal,
+    2582 elements below the diagonal, and 2968 nonlinear variables.
+=2
+ 
+  ***  Line    2  BRANCH with Lbranch =  1
+ 
+  ***  Line    3  OPTIMIZE
+ Internal value of Lfnsup defined as 1064
+ 
+Search for a first feasible solution
+ 
+ 
+   Iter Phase Ninf   Infeasibility   RGmax    NSB   Step InItr MX OK
+      0   0        2.2876088422E+03 (Input point)
+                                Pre-triangular equations:     7698
+                                Post-triangular equations:     559
+      1   0        1.5294324054E-10 (After pre-processing)
+      2   0        9.5909296672E-14 (After scaling)
+ 
+ ** Feasible solution. Value of objective =   -717.812977678
+ 
+Search for an optimal solution.
+ 
+ 
+   Iter Phase Ninf     Objective     RGmax    NSB   Step InItr MX OK
+      3   3       -7.1557646021E+02 4.0E+01    48 1.0E+00    3 T  T
+      4   3       -7.0326386293E+02 9.2E+01    53 1.0E+00    7 T  T
+      5   3       -6.9509418193E+02 4.3E+03    51 1.0E+00    8 T  T
+      6   3       -6.8500960489E+02 3.6E+01    45 1.0E+00   13 T  T
+      7   3       -6.8378705706E+02 9.2E+00    58 1.0E+00   22 T  T
+      8   3       -6.8098204124E+02 3.4E+00    57 1.0E+00   25 T  T
+      9   3       -6.4918068698E+02 2.5E+02    46 1.0E+00   28 T  T
+     10   3       -6.3393214266E+02 2.7E+02    59 9.2E-01   33 F  F
+     11   3       -6.2666622262E+02 3.7E+02    55 1.0E+00   19 T  T
+     12   3       -6.1061418833E+02 1.3E+01    54 1.0E+00   11 T  T
+     13   3       -5.9187969076E+02 1.3E+01    48 1.0E+00   16 T  T
+     14   3       -5.5393245743E+02 9.5E+00    39 7.5E-01   21 F  F
+     15   3       -5.4938034986E+02 7.6E+00    40 1.0E+00   15 T  T
+     16   3       -5.4929568408E+02 2.0E+00    39 1.0E+00   25 T  T
+     17   3       -5.4666021508E+02 4.3E+00    75 4.3E-01   20 F  F
+     18   3       -5.4664694958E+02 4.6E+00    71 1.0E+00   20 T  T
+     19   3       -5.4663445521E+02 4.6E+00    44 1.0E+00   12 T  T
+     20   3       -5.3551307892E+02 4.8E+00    31 1.0E+00   13 T  T
+     21   3       -5.2629976905E+02 7.7E+00    41 7.0E-01   14 F  F
+     22   3       -5.2307703291E+02 7.2E-01    37 1.0E+00    9 T  T
+ 
+   Iter Phase Ninf     Objective     RGmax    NSB   Step InItr MX OK
+     23   3       -5.0747072301E+02 1.1E+01    32 1.0E+00   12 T  T
+     24   3       -5.0131088080E+02 3.6E+01    65 1.0E+00    9 T  T
+     25   3       -4.8794303045E+02 2.7E+02    55 1.0E+00   13 T  T
+     26   3       -4.7880408619E+02 1.5E+01    42 1.0E+00   19 T  T
+     27   3       -2.9278954452E+02 5.5E+01    64 1.0E+00   23 T  T
+     28   3       -2.9090659575E+02 3.3E+00    45 1.0E+00   25 T  T
