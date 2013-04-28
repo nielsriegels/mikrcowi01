@@ -42,6 +42,7 @@ OPTIONS iET:4:3:2;
 EQUATIONS
 * Hydrological constraints and identities
     WBALANCE(s,b,y0,m0)         "Water balance at all nodes"
+    WNUKUS(s,rb,c,y0,m0)        "Constrain within Nukus agreement"
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
     LOSSES(s,b,l,y0,m0)         "Losses to seepage and evaporation"
     HHIUSES(s,sSec,b,y0,m0)     "Water use by households and industries"
@@ -53,6 +54,7 @@ EQUATIONS
     RESDISMIN(b,y0,m0)          "Reservoir minimum discharge during season"
     RESFIXDIS(s,bd,bo,y0,m0)    "Fix Reservoir Discharge level"
     RESFIXVOL(s,b,y0,m0)        "Fix Reservoir Volume level"
+    RESHHDMAX(b,y0,m0)          "Upper limit on reservoir head"
     ELYHEAD(b,y0,m)             "Unit Electricity generation, reservoir state dependent"
     ELYHPP(b,y0,m0)             "Hydro power production"
     ELYSEG(b,g0,y0,m0)          "Hydro power production by segment"
@@ -114,6 +116,16 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
                         + rtn0(b,m) )
                      + lossChannels(b,l,m) * SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) 
 ;
+
+
+* ADD ENDOGENOUS TNI
+* ADD ENDOGENOUS EXP
+
+* Nukus agreement
+* Allocate given shares of river basin runoff on semi annual basis
+WNUKUS(s,rb,c,y,mS)$(sW(s) AND useNukus)..
+    SUM((bo,bd)$bCty(bd,c), ITK(s,bd,bo,y,mS)$bBas(bd,rb)) =g= SUM(b$bBas(b,rb), SUM(m$mSm(m,mS), sup(s,b,m))) * sNukus(c,rb);
+
 
 * Account for return of water due to drainage
 RETURNWATER(s,b,y,m)..
@@ -186,6 +198,10 @@ RESFIXVOL(s,b,y,m)$resVolFix(b,y,m)..
 RESFIXDIS(s,bd,bo,y,m)$resDisFix(bd,bo,y,m)..
     FLW(s,bd,bo,y,m) + DIS(s,bd,bo,y,m) * scalem3 =e= resDisFix(bd,bo,y,m) * scalem3;
 
+* Impose a maximum head on selected reservoirs
+RESHHDMAX(b,y,m)$maxHead(b)..
+    HHD(b,y,m) =l= maxHead(b);
+
 * Reservoir unit electricity generation - transform from MWh to GWh
 * Filled reservoirs produce more per m3 than half empty
 * OBS: Check how average volume is calcuated in the start and end months!
@@ -240,8 +256,7 @@ ELYTRX(c,cc,g,y,m)$trx0(c,cc)..
 
 * Serve unserved demand before starting any export
 SRVUSD1ST(c,g,y,m)..
-    SUM(cc, TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m)) =e= 0;
-
+    SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m)) =e= 0;
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
@@ -316,11 +331,13 @@ OBJ..   TWV =e=
                    +SUM((s,bd,bo,j,y,m)$objDISweight(bo,m),     (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000
 * Subtract a tiny amount from spill flows in reservoirs, so that DIS is preferred above FLW
                    -SUM((s,bd,bo,y,m)$resv(bd,bo),              FLW(s,bd,bo,y,m) * 0.001                                                         ) / 1000000
+* Add SRVSUD1st to objective function to help solver 
+                   -SUM((c,g,y,m),                            SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m))                    ) * 1000000
 ;
 
 
-MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER,
-                RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN,
+MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS
+                RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN, RESHHDMAX, 
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
                 LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, RETURNWATER

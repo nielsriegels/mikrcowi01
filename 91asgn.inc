@@ -13,6 +13,12 @@
 * Enable crop mix method
     useCMX                  = 1$scenarios("useCMX",sSce);
 
+* Enable Nukus agreement
+    useNukus                = 1$scenarios("nukus",sSce);
+
+* Impose head limits on selected reservoirs
+    maxHead(b)              = maxHead0(b,sSce);
+
 * Allow transmission according to transmission limits in trx0
     transx(c,cc)$(scenarios("transx",sSce) eq 3) = 1$(caps3(c) AND caps3(cc));
     transx(c,cc)$(scenarios("transx",sSce) eq 5) = 1$(caps5(c) AND caps3(cc));

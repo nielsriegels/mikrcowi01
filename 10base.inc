@@ -16,6 +16,7 @@ SCALARS
 * Sets not depending on data
 SETS
     c                       "Countries"
+    rb                      "River basins"          / AMU, SYR /
     s                       "Substances"            / W /
     sW(s)                   "Water substance"       / W /
     k                       "Prod. inputs"          / watr, labr, cptl, inpt, land /
@@ -38,6 +39,7 @@ SETS
     mEnd(m0)                "Last season month"     / m09 /
     mA(m0)                  "Annual sum"            / annual /
     mS(m0)                  "Seasons"               / veg, nvg  /
+    mSm(m0,m0)              "Seasons map"           / m10.nvg, m11.nvg, m12.nvg, m01.nvg, m02.nvg, m03.nvg, m04.veg, m05.veg, m06.veg, m07.veg, m08.veg, m09.veg / 
     y0                      "Years"                 / 2001, 2009, 2020, 2050 /
     y(y0)                   "Modelled years"
     yB(y0)                  "Base year"

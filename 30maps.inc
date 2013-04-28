@@ -323,6 +323,94 @@ Lak_ARS         .ARALSO
 Lak_ARN         .ARALNO          
 /;
 
+SET bBas(b,rb) "Basin node map" / 
+                                 
+FER_UZB         .SYR             
+SYR_UZB         .SYR             
+CHI_UZB         .SYR             
+SUR_UZB         .AMU             
+KAS_UZB         .AMU             
+ZAR_UZB         .AMU             
+SOU_UZB         .AMU             
+SYR_KAZ         .SYR             
+CHI_KAZ         .SYR             
+NOR_KAZ         .SYR             
+AMU_TUR         .AMU             
+SOU_TUR         .AMU             
+FER_KYR         .SYR             
+FER_TAD         .SYR             
+UPA_TAD         .AMU             
+ZAR_TAD         .AMU             
+UPA_AFG         .AMU             
+Res_KAM         .SYR             
+Res_TOK         .SYR             
+Res_AND         .SYR             
+Res_KAR         .SYR             
+Res_CHA         .SYR             
+Res_SHA         .SYR             
+Res_ROG         .AMU             
+Res_NUR         .AMU             
+Res_TMP         .AMU             
+Res_DAS         .AMU             
+Res_ZAR         .AMU             
+Res_FER         .SYR             
+Res_TMR         .AMU             
+Res_AHA         .SYR             
+Res_ARN         .SYR             
+Res_KOK         .SYR             
+Res_ARY         .SYR             
+Res_KAF         .AMU             
+Res_ZD          .AMU             
+Res_TUR         .AMU             
+Res_SUR         .AMU             
+Res_KAS         .AMU             
+Res_TAL         .AMU             
+Res_BUK         .AMU             
+Res_NAR         .SYR             
+Res_FAR         .SYR             
+Res_VAH         .SYR             
+Res_CHI         .SYR             
+Src_TOK         .SYR             
+Src_NAR         .SYR             
+Src_AND         .SYR             
+Src_KAR         .SYR             
+Src_FER         .SYR             
+Src_SYR         .SYR             
+Src_AHA         .SYR             
+Src_CHI         .SYR             
+Src_KEL         .SYR             
+Src_ARY         .SYR             
+Src_ROG         .AMU             
+Src_VAH         .AMU             
+Src_PYD         .AMU             
+Src_KAF         .AMU             
+Src_ZAR         .AMU             
+Src_SUR         .AMU             
+Src_KAS         .AMU             
+Src_AFG         .AMU             
+Src_TUR         .AMU             
+NARYN           .SYR             
+KRDRYA          .SYR             
+SYRFER          .SYR             
+SYRMID          .SYR             
+KELES           .SYR             
+SYRDW1          .SYR             
+SYRDW2          .SYR             
+VAKHSH          .AMU             
+PYANDJ          .AMU             
+KUNDUZ          .AMU             
+KARFIR          .AMU             
+AMUUPS          .AMU             
+AMUMID          .AMU             
+AMUDWN          .AMU             
+Lak_AYD         .SYR             
+Lak_SYR         .SYR             
+Lak_GOL         .AMU             
+Lak_AMU         .AMU             
+Lak_ARS         .AMU             
+Lak_ARN         .SYR             
+/;
+
 SET sXsecIn(bs,bd,bo) /  
                                                   
 SYRMID          .SYRMID          .Res_FAR         

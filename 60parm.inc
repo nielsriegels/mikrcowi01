@@ -34,6 +34,7 @@ PARAMETERS
 * Parameters for control of model scenarios
     jAF(j)                          "Crops with flexible land allocation 0/1"
     jAX(j)                          "Crops with fixed land allocation 0/1"
+    maxHead(b)                      "Impose max head limits on selected reservoirs (meter)"
     objDISweight(b,m)               "Constrained optimisation objective weights for discharges"
     objHPPweight(b,m)               "Constrained optimisation objective weights for hydro power"
     objELYweight                    "Constrained optimisation objective weights for electricity"
@@ -43,6 +44,7 @@ PARAMETERS
     noYWR                           "Disable yield-water response function (0/1)"
     useCET                          "Enable CET function for land yield response"
     useCMX                          "Enable Crop mix method"
+    useNukus                        "Allocate water in accoradance with Nukus agreement"
     elySApExp(c,m0)                 "Electricity export price to South Asia (USD/MWh)"
     elySAqExp(c,m0)                 "Electricity export quantity to South Asia (MWh/month)"
 

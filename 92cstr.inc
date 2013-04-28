@@ -1,4 +1,4 @@
-
+    
 
 * Constrained optimisation - maximise winter discharges
     IF(scenarios("wDISwin",sSce),
@@ -43,7 +43,7 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
         SOLVE beam MAXIMIZING twv USING NLP;
         LND.fx(b,q,j,y)         = LND.l(b,q,j,y);
         natExtra(b)             = natExtra0(b,sSce);
-    
+
     );
 
 
@@ -81,12 +81,12 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
             objNODEweight(b)$bCty(b,"UZB")          = 1;
             SOLVE beam MAXIMIZING twv USING NLP;
             LOOP(b$objNODEweight(b),
-                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+eps; 
+                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps; 
                 resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
                 ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
             );
         );
-        
+
 * Optimise for KYR+TAD (they interfere with each other only little)
         objCTYweight("KYR")                     = 1;
         objNODEweight(b)$bCty(b,"KYR")          = 1;
@@ -95,18 +95,18 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
         objNODEweight("FER_UZB")                = 1$(ord(sSce) eq 22);
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+eps; 
+            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps; 
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
-        
+
 * Assuming TUR (and not UZB) have control over intake to Res_ZD and Kairakum canal
 * given fixed intakes upstream
         objCTYweight("TUR")                     = 1;
         objNODEweight(b)$bCty(b,"TUR")          = 1;
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+eps; 
+            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps; 
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
@@ -116,7 +116,7 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
         objNODEweight(b)$bCty(b,"UZB")          = 1;
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+eps; 
+            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps; 
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
