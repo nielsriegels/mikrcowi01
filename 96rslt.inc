@@ -215,7 +215,7 @@ $offtext
     rcView(sSce,y,"Invest",c)               = rcView(sSce,y,"iField",c) + rcView(sSce,y,"iConvey",c) + rcView(sSce,y,"iHydro",c) + rcView(sSce,y,"iTherm",c) ;
     rcView(sSce,y,"OandM",c)                = rcView(sSce,y,"cField",c) + rcView(sSce,y,"cConvey",c) + rcView(sSce,y,"cHydro",c);
     rcView(sSce,y,"Surplus",c)              = rcView(sSce,y,"AgriVA",c) + rcView(sSce,y,"elyCS",c) + rcView(sSce,y,"elyPS",c) - rcView(sSce,y,"Invest",c) - rcView(sSce,y,"OandM",c);
-    
+
     checkElybal(sSce,g,c,y,"TPP",m)               = SUM(u$tppMap(c,u),  TPP.l(c,u,g,y,m));
     checkElybal(sSce,g,c,y,"HPP",m)               = SUM(b$bCty(b,c),    HPP.l(b,g,y,m));
     checkElybal(sSce,g,c,y,"DEM",m)               = -DEM.l(g,c,y,m);
@@ -223,3 +223,63 @@ $offtext
     checkElybal(sSce,g,c,y,"USD",m)               = SUM(d, USD.l(g,c,d,y,m));
     checkElybal(sSce,g,c,y,"bal",m)               =   checkElybal(sSce,g,c,y,"TPP",m) + checkElybal(sSce,g,c,y,"HPP",m) + checkElybal(sSce,g,c,y,"USD",m)
                                                     + checkElybal(sSce,g,c,y,"DEM",m) + checkElybal(sSce,g,c,y,"TRX",m);
+
+*   "Agricultural results"     rAgri(sSce,b,e_resAgri,j,q0,y0
+
+
+*        AgriSales       "Agricultural sales (mUSD/month)",
+*        AgriInc         "Agricultural income (mUSD/month)",
+*        IrrInvCost      "Investments in irrigation efficiency (mUSD/month)",
+*        AgriCost        "Agricultural costs (mUSD/month)",
+*        HydroCost       "Hydro power operational and capital costs (USD/month)",
+*        HydroProd       "Hydro power generation MWh/month"
+*        HydroInc        "Hydro power energy income (1000 USD/month)",
+*        TotInc          "Total income from HEPS and agriculture",
+
+
+*  1) "Agricultural results"
+    rRbAgri(sSce,y,e_resAgri,rb,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb)), rAgri(sSce,b,e_resAgri,j,q,y));
+
+
+* 2)"Economic results"
+
+    rRbEcon(sSce,y,"AgriSales",rb,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"AgriSales",y,m)  );
+    rRbEcon(sSce,y,"AgriSales",rb,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"AgriSales",y,m)  );
+    rRbEcon(sSce,y,"AgriInc",rb,c)          =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"AgriInc",y,m)    );
+    rRbEcon(sSce,y,"IrrInvCost",rb,c)       =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"IrrInvCost",y,m) );
+    rRbEcon(sSce,y,"AgriCost",rb,c)         =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"AgriCost",y,m)   );
+    rRbEcon(sSce,y,"HydroCost",rb,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"HydroCost",y,m)  );
+    rRbEcon(sSce,y,"HydroProd",rb,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"HydroProd",y,m)  );
+    rRbEcon(sSce,y,"HydroInc",rb,c)         =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"HydroInc",y,m)   );
+    rRbEcon(sSce,y,"TotInc",rb,c)           =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"TotInc",y,m)     );
+
+
+
+* 3)  "Reservoir information")
+
+
+    rResv(sSce,y,"HydroProd",b,m)                =       SUM(g, HPP.l(b,g,y,m));
+    rResv(sSce,y,"HydroHead",b,m)                =       HHD.l(b,y,m);
+    rResv(sSce,y,"ResLevel",b,m)                 =       SUM(s, VOL.l(s,b,y,m));
+    rResv(sSce,y,"Discharge",b,m)$bResEly(b)     =       rFlow(sSce,b,"OutDis",y,m);
+    rResv(sSce,y,"Overflow",b,m)$bResEly(b)      =       rFlow(sSce,b,"OutFlw",y,m);
+    rResv(sSce,y,"HydroGain",b,m)$bResEly(b)     =       rEcon(sSce,b,"HydroGain",y,m);
+    rResv(sSce,y,"DischVal",b,m)$bResEly(b)      =       rEcon(sSce,b,"DischVal",y,m);
+    rResv(sSce,y,"WaterVal",b,m)                 =       rEcon(sSce,b,"WaterVal",y,m);
+
+
+*  4) "Description of reservoirs on basin level"
+
+
+    rRbResv(sSce,y,"HydroCost",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rEcon(sSce,b,"HydroCost",y,m)    );
+    rRbResv(sSce,y,"HydroInc",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rEcon(sSce,b,"HydroInc",y,m)     );
+
+    rRbResv(sSce,y,"HydroProd",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"HydroProd",b,m)    );
+    rRbResv(sSce,y,"HydroHead",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"HydroHead",b,m)    );
+    rRbResv(sSce,y,"ResLevel",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"ResLevel",b,m)     );
+    rRbResv(sSce,y,"Discharge",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"Discharge",b,m)    );
+    rRbResv(sSce,y,"Overflow",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"Overflow",b,m)     );
+    rRbResv(sSce,y,"HydroGain",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"HydroGain",b,m)    );
+    rRbResv(sSce,y,"DischVal",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"DischVal",b,m)     );
+    rRbResv(sSce,y,"WaterVal",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"WaterVal",b,m)     );
+

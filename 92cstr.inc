@@ -1,13 +1,13 @@
-    
+
 
 * Constrained optimisation - maximise winter discharges
     IF(scenarios("wDISwin",sSce),
         objAGRweight(b)             = 0.001;
         objELYweight                = 0.001;
         objHPPweight(b,m)           = 0.001;
-        objDISweight("Res_ROG",m)   = -1000$mSum(m) + 1000$mWin(m); 
-        objDISweight("Res_TOK",m)   = -1000$mSum(m) + 1000$mWin(m); 
-        objDISweight("Res_NUR",m)   = -1000$mSum(m) + 1000$mWin(m); 
+        objDISweight("Res_ROG",m)   = -1000$mSum(m) + 1000$mWin(m);
+        objDISweight("Res_TOK",m)   = -1000$mSum(m) + 1000$mWin(m);
+        objDISweight("Res_NUR",m)   = -1000$mSum(m) + 1000$mWin(m);
     );
 
 * Constrained optimisation - maximise summer discharges
@@ -15,9 +15,9 @@
         objAGRweight(b)             = 0.001;
         objELYweight                = 0.001;
         objHPPweight(b,m)           = 0.001;
-        objDISweight("Res_ROG",m)   = -1000$mWin(m) + 1000$mSum(m); 
-        objDISweight("Res_TOK",m)   = -1000$mWin(m) + 1000$mSum(m); 
-        objDISweight("Res_NUR",m)   = -1000$mWin(m) + 1000$mSum(m); 
+        objDISweight("Res_ROG",m)   = -1000$mWin(m) + 1000$mSum(m);
+        objDISweight("Res_TOK",m)   = -1000$mWin(m) + 1000$mSum(m);
+        objDISweight("Res_NUR",m)   = -1000$mWin(m) + 1000$mSum(m);
     );
 
 * Constrained optimisation - maximise total HPP electricity
@@ -25,7 +25,7 @@
         objAGRweight(b)             = 0.001;
         objHPPweight(b,m)           = 1000$( bCty(b,"KYR") or bCty(b,"TAD"));
         objELYweight                = 0.001;
-        objDISweight(b,m)           = 0; 
+        objDISweight(b,m)           = 0;
     );
 
 * Constrained optimisation - maximise winter HPP electricity
@@ -33,12 +33,12 @@
         objAGRweight(b)             = 0.001;
         objHPPweight(b,m)           = 1000$( (bCty(b,"KYR") or bCty(b,"TAD")) AND mWin(m) );
         objELYweight                = 0.001;
-        objDISweight(b,m)           = 0; 
+        objDISweight(b,m)           = 0;
     );
 
 IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b,j)*agriSeason(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$lnd0(b,q0,j);  );
 
-    IF(ord(sSce) eq 16, 
+    IF(ord(sSce) eq 16,
         natExtra(b)             = 0;
         SOLVE beam MAXIMIZING twv USING NLP;
         LND.fx(b,q,j,y)         = LND.l(b,q,j,y);
@@ -47,7 +47,7 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
     );
 
 
-    IF(scenarios("wHPPwin",sSce)+scenarios("wHPPall",sSce)+scenarios("wDISwin",sSce)+scenarios("wDISsum",sSce) gt 0, 
+    IF(scenarios("wHPPwin",sSce)+scenarios("wHPPall",sSce)+scenarios("wDISwin",sSce)+scenarios("wDISsum",sSce) gt 0,
 * Run model with altered weighting of objective parts
         SOLVE beam MAXIMIZING twv USING NLP;
 
@@ -55,15 +55,15 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
         objAGRweight(b)             = 1;
         objELYweight                = 1;
         objHPPweight(b,m)           = 0;
-        objDISweight(b,m)           = 0; 
- 
+        objDISweight(b,m)           = 0;
+
 * Set fixes for 2nd optimisation run, but only for reservoirs in operation
         resDisFix(bd,"Res_ROG",y,m)$bResEly("Res_ROG")  = DIS.l("w",bd,"Res_ROG",y,m)+FLW.l("w",bd,"Res_ROG",y,m)+eps;
-        resDisFix(bd,"Res_TOK",y,m)$bResEly("Res_TOK")  = DIS.l("w",bd,"Res_TOK",y,m)+FLW.l("w",bd,"Res_TOK",y,m)+eps; 
-        resDisFix(bd,"Res_NUR",y,m)$bResEly("Res_NUR")  = DIS.l("w",bd,"Res_NUR",y,m)+FLW.l("w",bd,"Res_NUR",y,m)+eps; 
+        resDisFix(bd,"Res_TOK",y,m)$bResEly("Res_TOK")  = DIS.l("w",bd,"Res_TOK",y,m)+FLW.l("w",bd,"Res_TOK",y,m)+eps;
+        resDisFix(bd,"Res_NUR",y,m)$bResEly("Res_NUR")  = DIS.l("w",bd,"Res_NUR",y,m)+FLW.l("w",bd,"Res_NUR",y,m)+eps;
         resVolFix("Res_ROG",y,m)$bResEly("Res_ROG")     = VOL.l("w","Res_ROG",y,m);
-        resVolFix("Res_TOK",y,m)$bResEly("Res_TOK")     = VOL.l("w","Res_TOK",y,m); 
-        resVolFix("Res_NUR",y,m)$bResEly("Res_NUR")     = VOL.l("w","Res_NUR",y,m); 
+        resVolFix("Res_TOK",y,m)$bResEly("Res_TOK")     = VOL.l("w","Res_TOK",y,m);
+        resVolFix("Res_NUR",y,m)$bResEly("Res_NUR")     = VOL.l("w","Res_NUR",y,m);
     );
 
 * Constrained optimisation - single country sequential optimisation
@@ -81,7 +81,7 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
             objNODEweight(b)$bCty(b,"UZB")          = 1;
             SOLVE beam MAXIMIZING twv USING NLP;
             LOOP(b$objNODEweight(b),
-                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps; 
+                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
                 resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
                 ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
             );
@@ -95,7 +95,7 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
         objNODEweight("FER_UZB")                = 1$(ord(sSce) eq 22);
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps; 
+            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
@@ -106,7 +106,7 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
         objNODEweight(b)$bCty(b,"TUR")          = 1;
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps; 
+            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
@@ -116,7 +116,7 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
         objNODEweight(b)$bCty(b,"UZB")          = 1;
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps; 
+            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );

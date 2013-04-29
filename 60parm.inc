@@ -61,6 +61,10 @@ PARAMETERS
     rcElec(sSce,e_resElec,y0,c,m0)  "Electricity market results"
     checkoutput(*,sSce)             "Check of output values for no-change control"
 
+    rRbAgri(sSce,y0,e_resAgri,rb,c) "Agricultural results"
+    rRbEcon(sSce,y0,*,rb,c)         "Economic results"
+    rResv(sSce,y0,*,b,m)            "Reservoir information"
+    rRbResv(sSce,y0,*,rb,c)       "Description of reservoirs on basin level"
 
 * Temporary - to be replaced or deleted
     trx0(c,cc)
