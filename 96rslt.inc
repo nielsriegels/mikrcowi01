@@ -71,32 +71,32 @@
     rcFlow(sSce,c,y,"Balance","annual")         = rcFlow(sSce,c,y,"Balance","annual") + 0.000001;
 
 * Agricultural line results
-    rAgri(sSce,b,"WaterUse",j,q,y)            = SUM(m, IRG.l(b,q,j,y,m));
-    rAgri(sSce,b,"LandUse",j,q,y)             = LND.l(b,q,j,y)/1000;
-    rAgri(sSce,b,"LandChg",j,q,y)$lnd0(b,q,j) = 100*LND.l(b,q,j,y)/lnd0(b,q,j)-100;
-    rAgri(sSce,b,"AgriProd",j,q,y)            = CRP.l(b,q,j,y)/1000;
-    rAgri(sSce,b,"YWR",j,q,y)                 = 100*YWR.l(b,q,j,y);
-    rAgri(sSce,b,"ActMarg",j,q,y)$lnd0(b,q,j) = (pCrop(j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
-    rAgri(sSce,b,"OptMarg",j,q,y)$lnd0(b,q,j) = (pCrop(j)* crp0(b,q,j)   - cCrop(b,j) *lnd0(b,q,j)  )/ lnd0(b,q,j);
-
+    rAgri(sSce,b,"WaterUse",y,j,q)            = SUM(m, IRG.l(b,q,j,y,m));
+    rAgri(sSce,b,"LandUse",y,j,q)             = LND.l(b,q,j,y)/1000;
+    rAgri(sSce,b,"LandChg",y,j,q)$lnd0(b,q,j) = 100*LND.l(b,q,j,y)/lnd0(b,q,j)-100;
+    rAgri(sSce,b,"AgriProd",y,j,q)            = CRP.l(b,q,j,y)/1000;
+    rAgri(sSce,b,"YWR",y,j,q)                 = 100*YWR.l(b,q,j,y);
+    rAgri(sSce,b,"ActMarg",y,j,q)$lnd0(b,q,j) = (pCrop(j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
+    rAgri(sSce,b,"OptMarg",y,j,q)$lnd0(b,q,j) = (pCrop(j)* crp0(b,q,j)   - cCrop(b,j) *lnd0(b,q,j)  )/ lnd0(b,q,j);
+ 
 * Economic results, line
-    rEcon(sSce,b,"AgriSales",y,m)           = SUM((q,j), pCrop(j)*CRP.l(b,q,j,y) ) / 12;
-    rEcon(sSce,b,"AgriCost",y,m)            = SUM((q,j), cCrop(b,j)*LND.l(b,q,j,y) ) / 12;
+    rEcon(sSce,b,"AgriSales",y,m)           = 0.000001*SUM((q,j), pCrop(j)*CRP.l(b,q,j,y) ) / 12;
+    rEcon(sSce,b,"AgriCost",y,m)            = 0.000001*SUM((q,j), cCrop(b,j)*LND.l(b,q,j,y) ) / 12;
     rEcon(sSce,b,"AgriInc",y,m)             = rEcon(sSce,b,"AgriSales",y,m) - rEcon(sSce,b,"AgriCost",y,m);
-    rEcon(sSce,b,"HydroCost",y,m)           = -1000*reservoirs(b,"cost")$(not bResNOP(b));
-    rEcon(sSce,b,"HydroInc",y,m)            = 1000 * SUM(g, HPP.l(b,g,y,m) * SUM(c$bCty(b,c), ELYMKT.m(c,g,y,m)) ) / 1000000 + rEcon(sSce,b,"HydroCost",y,m);
+    rEcon(sSce,b,"HydroCost",y,m)           = -reservoirs(b,"cost")$(not bResNOP(b));
+    rEcon(sSce,b,"HydroInc",y,m)            = -SUM(g, HPP.l(b,g,y,m) * SUM(c$bCty(b,c), ELYMKT.m(c,g,y,m)) ) + rEcon(sSce,b,"HydroCost",y,m);
     rEcon(sSce,b,"HydroProd",y,m)           = SUM(g, HPP.l(b,g,y,m));
-    rEcon(sSce,b,"HydroHead",y,m)           = ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*rFlow(sSce,b,"ResVolAvg",y,m) + reservoirs(b,"coef_c")*POWER(rFlow(sSce,b,"ResVolAvg",y,m),2));
-    rEcon(sSce,b,"HydroGain",y,m)           = -( rEcon(sSce,b,"HydroProd",y,m) / rFlow(sSce,b,"OutDis",y,m) )$rFlow(sSce,b,"OutDis",y,m);
+    rEcon(sSce,b,"HydroHead",y,m)           = HHD.l(b,y,m)$bResEly(b);
+    rEcon(sSce,b,"HydroGain",y,m)           = -( 1000*rEcon(sSce,b,"HydroProd",y,m) / rFlow(sSce,b,"OutDis",y,m) )$rFlow(sSce,b,"OutDis",y,m);
     rEcon(sSce,b,"TotInc",y,m)              = rEcon(sSce,b,"AgriInc",y,m) + rEcon(sSce,b,"HydroInc",y,m);
-    rEcon(sSce,b,"DischVal",y,m)$bResEly(b) = -1000000*( rEcon(sSce,b,"HydroInc",y,m) / rFlow(sSce,b,"OutDis",y,m) )$rFlow(sSce,b,"OutDis",y,m);
-    rEcon(sSce,b,"WaterVal",y,m)            = WBALANCE.M("w",b,y,m)*1000000;
-    rEcon(sSce,b,"WaterVal",y,"annual")     = ( SUM(m, rEcon(sSce,b,"WaterVal",y,m) * rFlow(sSce,b,"InTot",y,m) ) / rFlow(sSce,b,"InTot",y,"annual")
-                                              )$rFlow(sSce,b,"InTot",y,"annual") + 0.000001;
+*    rEcon(sSce,b,"DischVal",y,m)$bResEly(b) = -1000000*( rEcon(sSce,b,"HydroInc",y,m) / rFlow(sSce,b,"OutDis",y,m) )$rFlow(sSce,b,"OutDis",y,m);
+*    rEcon(sSce,b,"WaterVal",y,m)            = WBALANCE.M("w",b,y,m)*1000000;
+*    rEcon(sSce,b,"WaterVal",y,"annual")     = ( SUM(m, rEcon(sSce,b,"WaterVal",y,m) * rFlow(sSce,b,"InTot",y,m) ) / rFlow(sSce,b,"InTot",y,"annual")
+*                                              )$rFlow(sSce,b,"InTot",y,"annual") + 0.000001;
 
 * Aggregate results into basin sections and countries
-    rsAgri(sSce,bs,y0,e_resAgri,j)          = SUM((b,q)$bSec(b,bs),     rAgri(sSce,b,e_resAgri,j,q,y0));
-    rcAgri(sSce,c,y0,e_resAgri,j)           = SUM((b,q)$bCty(b,c),      rAgri(sSce,b,e_resAgri,j,q,y0));
+    rsAgri(sSce,bs,y0,e_resAgri,j)          = SUM((b,q)$bSec(b,bs),     rAgri(sSce,b,e_resAgri,y0,j,q));
+    rcAgri(sSce,c,y0,e_resAgri,j)           = SUM((b,q)$bCty(b,c),      rAgri(sSce,b,e_resAgri,y0,j,q));
     rcEcon(sSce,y0,e_resEcon,c)             = SUM((m,b)$bCty(b,c),  rEcon(sSce,b,e_resEcon,y0,m));
     rcEcon(sSce,y,"WaterVal",c)             = 0;
     rcEcon(sSce,y,"HydroHead",c)            = 0;
@@ -135,8 +135,8 @@ $offtext
     rcElec(sSce,"vCstTPP",y,c,m)        = -SUM((u,g)$tppMap(c,u),   TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u) )/1000 ;
     rcElec(sSce,"vCstUSD",y,c,m)        = -SUM((g,d0),              USD.l(g,c,d0,y,m)*usd0(c,g,d0))/1000 ;
 *   rcElec(sSce,"vCstCPX",c,m)          = -SUM(u$uPrd(u),           TNI.l(c,u)*tpp0(c,u,"CAPX"))*TNIweight(m) ;
-    rcElec(sSce,"pMCbase",y,c,m)        = -ELYMKT.m(c,"base",y,m)*1000;
-    rcElec(sSce,"pMCpeak",y,c,m)        = -ELYMKT.m(c,"peak",y,m)*1000;
+    rcElec(sSce,"pMCbase",y,c,m)        = -ELYMKT.m(c,"base",y,m)*1000$(ELYMKT.m(c,"base",y,m) gt eps);
+    rcElec(sSce,"pMCpeak",y,c,m)        = -ELYMKT.m(c,"peak",y,m)*1000$(ELYMKT.m(c,"peak",y,m) gt eps);
     rcElec(sSce,"vExpCst",y,c,m)        =  SUM((g,cc),             -ELYMKT.m(c,g,y,m)    * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ) ;
     rcElec(sSce,"vExpTrx",y,c,m)        =  SUM((g,cc)$trx0(c,cc),   ELYTRX.m(c,cc,g,y,m) * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ) ;
     rcElec(sSce,"vSrpHPP",y,c,m)        =  SUM((b,g)$bCty(b,c),    -ELYMKT.m(c,g,y,m)*HPP.l(b,g,y,m));
@@ -179,8 +179,8 @@ $offtext
     rcView(sSce,y,"Nature",c)               = SUM((s,b,m)$bCty(b,c),        STO.l(s,b,y,m)$(bNat(b) AND sW(s)) );
     rcView(sSce,y,"Amu-TAD-TUR","TUR")      = SUM((s,m)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m));
     rcView(sSce,y,"Amu-TUR-UZB","UZB")      = SUM((s,m)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
-    rcView(sSce,y,"Syr-KYR-UZB","UZB")      = SUM((s,m)$sW(s),              FLW.l(s,"Res_FAR","SYRMID",y,m) + DIS.l(s,"Res_FAR","SYRMID",y,m));
-    rcView(sSce,y,"Syr-UZB-KAZ","KAZ")      = SUM((s,m)$sW(s),              FLW.l(s,"Res_SHA","SYRMID",y,m) - ITK.l(s,"SYR_KAZ","SYRMID",y,m));
+    rcView(sSce,y,"Syr-KYR-UZB","UZB")      = SUM((s,m)$sW(s),              FLW.l(s,"SYRMID","Res_FAR",y,m) + DIS.l(s,"SYRMID","Res_FAR",y,m));
+    rcView(sSce,y,"Syr-UZB-KAZ","KAZ")      = SUM((s,m)$sW(s),              ITK.l(s,"Res_SHA","SYRMID",y,m) + FLW.l(s,"Res_SHA","SYRMID",y,m) - ITK.l(s,"SYR_KAZ","SYRMID",y,m));
     rcView(sSce,y,"cTherm",c)               = -SUM((u,g,m)$tppMap(c,u),     TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000 )/1000000;
     rcView(sSce,y,"iTherm",c)               = 0;
     rcView(sSce,y,"sTherm",c)               = 0;
@@ -238,7 +238,14 @@ $offtext
 
 
 *  1) "Agricultural results"
-    rRbAgri(sSce,y,e_resAgri,rb,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb)), rAgri(sSce,b,e_resAgri,j,q,y));
+    rRbAgri(sSce,y,"AgriProd",rb,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb)), rAgri(sSce,b,"AgriProd",y,j,q));
+    rRbAgri(sSce,y,"WaterUse",rb,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb)), rAgri(sSce,b,"WaterUse",y,j,q));
+    rRbAgri(sSce,y,"LandUse",rb,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb)), rAgri(sSce,b,"LandUse",y,j,q));
+
+    rRbAgri(sSce,y,"LandChg","AMU","KAZ")    =     0.000001;
+    rRbAgri(sSce,y,"LandChg","AMU","KYR")    =     0.000001;
+    rRbAgri(sSce,y,"LandChg","SYR","TUR")    =     0.000001;
+    rRbAgri(sSce,y,"LandChg","SYR","TUR")    =     0.000001;
 
 
 * 2)"Economic results"
@@ -252,7 +259,9 @@ $offtext
     rRbEcon(sSce,y,"HydroProd",rb,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"HydroProd",y,m)  );
     rRbEcon(sSce,y,"HydroInc",rb,c)         =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"HydroInc",y,m)   );
     rRbEcon(sSce,y,"TotInc",rb,c)           =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"TotInc",y,m)     );
-
+    rRbEcon(sSce,y,"TotInc","AMU","KAZ")    =     0.000001;
+    rRbEcon(sSce,y,"TotInc","AMU","KYR")    =     0.000001;
+    rRbEcon(sSce,y,"TotInc","SYR","TUR")    =     0.000001;
 
 
 * 3)  "Reservoir information")
@@ -261,11 +270,11 @@ $offtext
     rResv(sSce,y,"HydroProd",b,m)                =       SUM(g, HPP.l(b,g,y,m));
     rResv(sSce,y,"HydroHead",b,m)                =       HHD.l(b,y,m);
     rResv(sSce,y,"ResLevel",b,m)                 =       SUM(s, VOL.l(s,b,y,m));
-    rResv(sSce,y,"Discharge",b,m)$bResEly(b)     =       rFlow(sSce,b,"OutDis",y,m);
-    rResv(sSce,y,"Overflow",b,m)$bResEly(b)      =       rFlow(sSce,b,"OutFlw",y,m);
+    rResv(sSce,y,"Discharge",b,m)$bResEly(b)     =       -rFlow(sSce,b,"OutDis",y,m);
+    rResv(sSce,y,"Overflow",b,m)$bResEly(b)      =       -rFlow(sSce,b,"OutFlw",y,m);
     rResv(sSce,y,"HydroGain",b,m)$bResEly(b)     =       rEcon(sSce,b,"HydroGain",y,m);
-    rResv(sSce,y,"DischVal",b,m)$bResEly(b)      =       rEcon(sSce,b,"DischVal",y,m);
-    rResv(sSce,y,"WaterVal",b,m)                 =       rEcon(sSce,b,"WaterVal",y,m);
+*    rResv(sSce,y,"DischVal",b,m)$bResEly(b)      =       rEcon(sSce,b,"DischVal",y,m) ;
+*    rResv(sSce,y,"WaterVal",b,m)                 =       rEcon(sSce,b,"WaterVal",y,m)$(rEcon(sSce,b,"WaterVal",y,m) gt eps);
 
 
 *  4) "Description of reservoirs on basin level"
@@ -273,13 +282,19 @@ $offtext
 
     rRbResv(sSce,y,"HydroCost",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rEcon(sSce,b,"HydroCost",y,m)    );
     rRbResv(sSce,y,"HydroInc",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rEcon(sSce,b,"HydroInc",y,m)     );
-
     rRbResv(sSce,y,"HydroProd",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"HydroProd",b,m)    );
-    rRbResv(sSce,y,"HydroHead",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"HydroHead",b,m)    );
-    rRbResv(sSce,y,"ResLevel",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"ResLevel",b,m)     );
     rRbResv(sSce,y,"Discharge",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"Discharge",b,m)    );
     rRbResv(sSce,y,"Overflow",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"Overflow",b,m)     );
-    rRbResv(sSce,y,"HydroGain",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"HydroGain",b,m)    );
-    rRbResv(sSce,y,"DischVal",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"DischVal",b,m)     );
-    rRbResv(sSce,y,"WaterVal",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"WaterVal",b,m)     );
+    rRbResv(sSce,y,"ResLevel",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"Reslevel",b,m)     );
+
+
+    rBorder(sSce,y,"Amu-TAD-TUR",m)      = SUM((s)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m));
+    rBorder(sSce,y,"Amu-TUR-UZB",m)      = SUM((s)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
+    rBorder(sSce,y,"Syr-KYR-UZB",m)      = SUM((s)$sW(s),              FLW.l(s,"SYRMID","Res_FAR",y,m) + DIS.l(s,"SYRMID","Res_FAR",y,m));
+    rBorder(sSce,y,"Syr-UZB-KAZ",m)      = SUM((s)$sW(s),              ITK.l(s,"Res_SHA","SYRMID",y,m) + FLW.l(s,"Res_SHA","SYRMID",y,m) - ITK.l(s,"SYR_KAZ","SYRMID",y,m));
+    rBorder(sSce,y,"DwnToktogul",m)      = SUM((s)$sW(s),              DIS.l(s,"Res_NAR","Res_TOK",y,m)+FLW.l(s,"Res_NAR","Res_TOK",y,m));
+    rBorder(sSce,y,"DwnNurek",m)         = SUM((s)$sW(s),              DIS.l(s,"Res_VAH","Res_NUR",y,m)+FLW.l(s,"Res_VAH","Res_NUR",y,m));
+    rBorder(sSce,y,e_resBorder,"nvg")    = sum(m$mWin(m),  rBorder(sSce,y,e_resBorder,m));
+    rBorder(sSce,y,e_resBorder,"veg")    = sum(m$mSum(m),  rBorder(sSce,y,e_resBorder,m));
+    rBorder(sSce,y,e_resBorder,"annual") = sum(m,  rBorder(sSce,y,e_resBorder,m));
 

@@ -16,7 +16,7 @@ SCALARS
 * Sets not depending on data
 SETS
     c                       "Countries"
-    rb                      "River basins"          / AMU, SYR /
+    rb                      "River basins"          / AMU, SYR, ALL /
     s                       "Substances"            / W /
     sW(s)                   "Water substance"       / W /
     k                       "Prod. inputs"          / watr, labr, cptl, inpt, land /
@@ -271,6 +271,14 @@ SETS
         OandM           "Total O and M except thermal fuel"
         Surplus         "Total surplus" /
 
+    e_resBorder /
+        Amu-TAD-TUR     
+        Amu-TUR-UZB
+        Syr-KYR-UZB
+        Syr-UZB-KAZ
+        DwnToktogul
+        DwnNurek
+    /
 ;
 
 PARAMETER usdSh(d0) "Share of demand in step unserved"

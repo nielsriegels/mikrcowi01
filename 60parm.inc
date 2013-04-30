@@ -52,13 +52,14 @@ PARAMETERS
     rFlow(sSce,b,e_resFlow,y0,m0)   "Flow of water through bodies"
     rcFlow(sSce,c,y0,e_resFlow,m0)  "Flow of water by country"
     rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
-    rAgri(sSce,b,e_resAgri,j,q0,y0) "Agricultural results for zone parttions"
+    rAgri(sSce,b,e_resAgri,y0,j,q0) "Agricultural results for zone parttions"
     rEcon(sSce,b,e_resEcon,y0,m0)   "Economical results for zone"
     rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
     rcView(sSce,y0,e_resView,c)     "Overview results summarised by scenario and country"
     rcElec(sSce,e_resElec,y0,c,m0)  "Electricity market results"
+    rBorder(sSce,y0,e_resBorder,m0) "Border flows (mm3)"
     checkoutput(*,sSce)             "Check of output values for no-change control"
 
     rRbAgri(sSce,y0,e_resAgri,rb,c) "Agricultural results"
@@ -138,3 +139,6 @@ cmx2lnd(b,"alf","alfa")    = 1;
 cmx2lnd(b,"fru","frut")    = 1;
 cmx2lnd(b,"veg","vege")    = 1;
 cmx2lnd(b,"oth","othr")    = 1;
+
+* Set all nodes to be member of All basins
+bBas(b,"All") = 1;

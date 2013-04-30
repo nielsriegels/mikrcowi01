@@ -104,7 +104,7 @@ KAZ
 TUR             
 TAD             
 KYR             
-AFG             
+AFG
 /;
 
 SET j "Crops" /

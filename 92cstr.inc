@@ -36,16 +36,6 @@
         objDISweight(b,m)           = 0;
     );
 
-IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b,j)*agriSeason(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$lnd0(b,q0,j);  );
-
-    IF(ord(sSce) eq 16,
-        natExtra(b)             = 0;
-        SOLVE beam MAXIMIZING twv USING NLP;
-        LND.fx(b,q,j,y)         = LND.l(b,q,j,y);
-        natExtra(b)             = natExtra0(b,sSce);
-
-    );
-
 
     IF(scenarios("wHPPwin",sSce)+scenarios("wHPPall",sSce)+scenarios("wDISwin",sSce)+scenarios("wDISsum",sSce) gt 0,
 * Run model with altered weighting of objective parts
@@ -76,7 +66,7 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
 
 
 * Optimise for UZB first (sensitivity analysis)
-        IF(ord(sSce) eq 24,
+        IF(ord(sSce) eq 4,
             objCTYweight("UZB")                     = 1;
             objNODEweight(b)$bCty(b,"UZB")          = 1;
             SOLVE beam MAXIMIZING twv USING NLP;
@@ -92,7 +82,7 @@ IF((ord(sSce) gt 9 AND ord(sSce) le 16),  irg0(b,q0,j,y0,m)    = 1.5*( qAWater(b
         objNODEweight(b)$bCty(b,"KYR")          = 1;
         objCTYweight("TAD")                     = 1;
         objNODEweight(b)$bCty(b,"TAD")          = 1;
-        objNODEweight("FER_UZB")                = 1$(ord(sSce) eq 22);
+        objNODEweight("FER_UZB")                = 1$(ord(sSce) eq 3);
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
             resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
