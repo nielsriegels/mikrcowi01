@@ -66,9 +66,15 @@
 
 
 * Optimise for UZB first (sensitivity analysis)
-        IF(ord(sSce) eq 4,
-            objCTYweight("UZB")                     = 1;
-            objNODEweight(b)$bCty(b,"UZB")          = 1;
+        IF((ord(sSce) eq 33) or (ord(sSce) eq 32) ,
+            IF(ord(sSce) eq 33,
+                objCTYweight("UZB")                     = 1;
+                objNODEweight(b)$bCty(b,"UZB")          = 1;
+            );
+            IF(ord(sSce) eq 32,
+                objCTYweight("KYR")                     = 1;
+                objNODEweight(b)$bCty(b,"KYR")          = 1;
+            );
             SOLVE beam MAXIMIZING twv USING NLP;
             LOOP(b$objNODEweight(b),
                 resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
@@ -82,35 +88,51 @@
         objNODEweight(b)$bCty(b,"KYR")          = 1;
         objCTYweight("TAD")                     = 1;
         objNODEweight(b)$bCty(b,"TAD")          = 1;
-        objNODEweight("FER_UZB")                = 1$(ord(sSce) eq 3);
+        objNODEweight("FER_UZB")                = 1$((ord(sSce) eq 30) or (ord(sSce) eq 32) );
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
             resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
+
+
+        IF(ord(sSce) eq 32,
+            objCTYweight("TAD")                     = 1;
+            objNODEweight(b)$bCty(b,"TAD")          = 1;
+            SOLVE beam MAXIMIZING twv USING NLP;
+            LOOP(b$objNODEweight(b),
+                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
+                resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
+                ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
+            );
+        );
+
+* Optimise for downstream countries individually, unless we want them to optimise together
+        IF(ord(sSce) ne 32,
 
 * Assuming TUR (and not UZB) have control over intake to Res_ZD and Kairakum canal
 * given fixed intakes upstream
-        objCTYweight("TUR")                     = 1;
-        objNODEweight(b)$bCty(b,"TUR")          = 1;
-        SOLVE beam MAXIMIZING twv USING NLP;
-        LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
-            resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
-            ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
-        );
+            objCTYweight("TUR")                     = 1;
+            objNODEweight(b)$bCty(b,"TUR")          = 1;
+            SOLVE beam MAXIMIZING twv USING NLP;
+            LOOP(b$objNODEweight(b),
+                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
+                resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
+                ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
+            );
 
 * Optimise for UZB given fixed intakes upstream
-        objCTYweight("UZB")                     = 1;
-        objNODEweight(b)$bCty(b,"UZB")          = 1;
-        SOLVE beam MAXIMIZING twv USING NLP;
-        LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
-            resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
-            ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
+            objCTYweight("UZB")                     = 1;
+            objNODEweight(b)$bCty(b,"UZB")          = 1;
+            SOLVE beam MAXIMIZING twv USING NLP;
+            LOOP(b$objNODEweight(b),
+                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
+                resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
+                ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
+            );
         );
-
+    
 * Optimise for all region given fixed flows
         objCTYweight(c)                         = 1;
         objNODEweight(b)                        = 1;

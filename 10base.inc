@@ -274,7 +274,7 @@ SETS
     e_resBorder /
         Amu-TAD-TUR     
         Amu-TUR-UZB
-        Syr-KYR-UZB
+        Syr-TAD-UZB
         Syr-UZB-KAZ
         DwnToktogul
         DwnNurek

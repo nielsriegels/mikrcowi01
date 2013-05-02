@@ -290,7 +290,7 @@ $offtext
 
     rBorder(sSce,y,"Amu-TAD-TUR",m)      = SUM((s)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m));
     rBorder(sSce,y,"Amu-TUR-UZB",m)      = SUM((s)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
-    rBorder(sSce,y,"Syr-KYR-UZB",m)      = SUM((s)$sW(s),              FLW.l(s,"SYRMID","Res_FAR",y,m) + DIS.l(s,"SYRMID","Res_FAR",y,m));
+    rBorder(sSce,y,"Syr-TAD-UZB",m)      = SUM((s)$sW(s),              FLW.l(s,"SYRMID","Res_FAR",y,m) + DIS.l(s,"SYRMID","Res_FAR",y,m));
     rBorder(sSce,y,"Syr-UZB-KAZ",m)      = SUM((s)$sW(s),              ITK.l(s,"Res_SHA","SYRMID",y,m) + FLW.l(s,"Res_SHA","SYRMID",y,m) - ITK.l(s,"SYR_KAZ","SYRMID",y,m));
     rBorder(sSce,y,"DwnToktogul",m)      = SUM((s)$sW(s),              DIS.l(s,"Res_NAR","Res_TOK",y,m)+FLW.l(s,"Res_NAR","Res_TOK",y,m));
     rBorder(sSce,y,"DwnNurek",m)         = SUM((s)$sW(s),              DIS.l(s,"Res_VAH","Res_NUR",y,m)+FLW.l(s,"Res_VAH","Res_NUR",y,m));
