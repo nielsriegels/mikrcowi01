@@ -135,8 +135,8 @@ $offtext
     rcElec(sSce,"vCstTPP",y,c,m)        = -SUM((u,g)$tppMap(c,u),   TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u) )/1000 ;
     rcElec(sSce,"vCstUSD",y,c,m)        = -SUM((g,d0),              USD.l(g,c,d0,y,m)*usd0(c,g,d0))/1000 ;
 *   rcElec(sSce,"vCstCPX",c,m)          = -SUM(u$uPrd(u),           TNI.l(c,u)*tpp0(c,u,"CAPX"))*TNIweight(m) ;
-    rcElec(sSce,"pMCbase",y,c,m)        = -ELYMKT.m(c,"base",y,m)*1000$(ELYMKT.m(c,"base",y,m) gt eps);
-    rcElec(sSce,"pMCpeak",y,c,m)        = -ELYMKT.m(c,"peak",y,m)*1000$(ELYMKT.m(c,"peak",y,m) gt eps);
+    rcElec(sSce,"pMCbase",y,c,m)        = -ELYMKT.m(c,"base",y,m)*1000$(-ELYMKT.m(c,"base",y,m) gt eps);
+    rcElec(sSce,"pMCpeak",y,c,m)        = -ELYMKT.m(c,"peak",y,m)*1000$(-ELYMKT.m(c,"peak",y,m) gt eps);
     rcElec(sSce,"vExpCst",y,c,m)        =  SUM((g,cc),             -ELYMKT.m(c,g,y,m)    * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ) ;
     rcElec(sSce,"vExpTrx",y,c,m)        =  SUM((g,cc)$trx0(c,cc),   ELYTRX.m(c,cc,g,y,m) * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ) ;
     rcElec(sSce,"vSrpHPP",y,c,m)        =  SUM((b,g)$bCty(b,c),    -ELYMKT.m(c,g,y,m)*HPP.l(b,g,y,m));
