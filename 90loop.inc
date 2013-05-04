@@ -38,7 +38,7 @@ USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
     LND.fx(b,q0,j,y)$(not q(q0))                                = 0;
     IRG.fx(b,q0,j,y,m)$(not q(q0))                              = 0;
 *    iET.up(b,q0,j,p,y)$(lnd0(b,q0,j) AND etcP(b,j,p) )          = 1;
-    iET.l(b,q0,j,p,y) = 1$(lnd0(b,q0,j) AND etcP(b,j,p) );
+*    iET.l(b,q0,j,p,y) = 1$(lnd0(b,q0,j) AND etcP(b,j,p) );
 
 * Include module for constrained optimisation
 $include "%path%92cstr.inc";
@@ -67,5 +67,7 @@ $include "%path%96rslt.inc";
     checkoutput("totinc",sSce)                  = SUM((b,y,m), rEcon(sSce,b,"TotInc",y,m));
     checkoutput("obj",sSce)                     = TWV.l;
     checkoutput("mstat",sSce)                   = beam.modelstat;
+
+DISPLAY jAX, jAF;
 
 );

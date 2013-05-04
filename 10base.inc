@@ -56,7 +56,8 @@ SETS
     sEly                    "Elec. data types"      / elyCap, aCAPEX, aFOPEX, uVOPEX, uFUELEX, eELEC, eHEAT, rHEAT /
     sSce                    "Scenarios"             / s01*s50 /
     l                       "Loss types"            / seep, evap /
-    x                       "Crop mixes"            / cotn, whet, alfa, rice, vege, frut, othr /
+    x                       "Crop mixes"            / cotn, whet, alfa, rice, ric2, stfr, tgrp, meln, tomt, shav, pota, mung, subt, mazf, mazg /
+
 ;
 
 * Aliases

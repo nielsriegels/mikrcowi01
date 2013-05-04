@@ -1,15 +1,7 @@
 PARAMETERS
     sup(s,b,m)                      "Base year supply of river water (mm3/month)"
-*    iACosts(b,k,j)                  "Base year production agri/industrt input shares quantities (mn usd/year)"
-*    qValue(b,j)                     "Base year production agri/industrt prod. values (mn usd/year)"
-*    qALand(b,j)                     "Base year land use in agriculture (ha)"
-*    qAWater(b,j)                    "Base year water in agriculture (mm3/y)"
-*    qmWater(b,m)                    "Base year water (mm3/month)"
     irg0(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
     hhiUse(sSec,b,m0)               "Base year water use for households and industries (mm3)"
-*    qInputs(b,k,j)                  "Base year physical input use (unit/year)"
-*    oCosts(b,j)                     "Base year production agri/industrt unit cost (usd/ton)"
-*    iShare(b,k,j)                   "Base year share of input costs (pct of total cost)"
     lShare(b,q0,j)                  "Share of land for free crops in zone (%)"
     retShare0(bd,bo,*)              "Share of return water (%)"
     pEly(g,y0,m0)                   "Electricity price (USD/MWh)"
@@ -100,46 +92,12 @@ wPhase(b,j,p)       = ( phaseDays(b,p,j) / SUM(pp, phaseDays(b,pp,j)) )$phaseDay
 etcP(b,j,p)         = SUM(m, 10*etc0(b,p,m,j))/1000;
 etcM(b,j,m)         = SUM(p, 10*etc0(b,p,m,j))/1000;
 etcM2P(b,j,p,m)     = (etc0(b,p,m,j)/SUM(pp, etc0(b,pp,m,j)) )$SUM(pp, etc0(b,pp,m,j));
-*irg0(b,q0,j,y0,m)   = 1000*( etcM(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$SUM(q00$qAvg(q00), lnd0(b,q00,j));
 irg0(b,q0,j,y0,m)   = etcM(b,j,m) * lnd0(b,q0,j) / 1000;
 
-$ontext
-* TEMPORARY: etcP is not compatible with agriSeason, so we re-map our phases to something simple that will always work
-etcM2P(b,j,p,m) = 0;
-etcM2P(b,j,"init","m01") = 1;
-etcM2P(b,j,"init","m02") = 1;
-etcM2P(b,j,"init","m03") = 1;
-etcM2P(b,j,"deve","m04") = 1;
-etcM2P(b,j,"deve","m05") = 1;
-etcM2P(b,j,"deve","m06") = 1;
-etcM2P(b,j,"midi","m07") = 1;
-etcM2P(b,j,"midi","m08") = 1;
-etcM2P(b,j,"midi","m09") = 1;
-etcM2P(b,j,"late","m10") = 1;
-etcM2P(b,j,"late","m11") = 1;
-etcM2P(b,j,"late","m12") = 1;
 
-* TEMPORARY - replace Excel names to crp0, lnd0, irg0, cCrop0 and pCrop0
-irg0(b,q0,j,y0,m)    = ( qAWater(b,j)*agriSeason(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$lnd0(b,q0,j);
-
-* Temporary replacement for etc0
-etcM(b,j,m)         = ( qAWater(b,j)*agriSeason(b,j,m) / qAland(b,j) )$qAland(b,j);
-etcP(b,j,p)         = SUM(m, etcM2P(b,j,p,m) * etcM(b,j,m));
-*etcM2P(b,j,p,m)     = ( etc0(b,p,m,j)/etcP(b,j,p) )$etcP(b,j,p);
-* TEMPORARY calculation of weights - replace with FAO data
-wPhase(b,j,p)$bPlz(b) = ( SUM(m$etcM2P(b,j,p,m), 1$etcM(b,j,m))
-                         /SUM(m,                 1$etcM(b,j,m))
-                        )$SUM(m,                 1$etcM(b,j,m)) ;
-
-cCrop(b,j)$SUM(q, lnd0(b,q,j))   = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/SUM(q, lnd0(b,q,j));
-$offtext
-
-
-* TEMPORARY ASSIGNMENT - replace with Excel when we switch to FAO crops
-
-SET mapCMX(x,j) "Map between crops and crop mixes" / cotn.cot, whet.wht, rice.ric, rice.ri2, alfa.alf, frut.stf, frut.tgr, frut.mln, vege.tmt, vege.shv, vege.pot, vege.mng, vege.sbt, othr.mzf, othr.mzg / ;
-cmx2lnd(b,q0,j,x)$SUM(jj$mapCMX(x,jj), lnd0(b,q0,jj)) = lnd0(b,q0,j) / SUM(jj$mapCMX(x,jj), lnd0(b,q0,jj)) ;
-DISPLAY cmx2lnd;
+* TEMPORARY map between crops and crop mixes, move to Excel when we implement 2nd crops
+SET mapCMX(x,j) "Map between crops and crop mixes" / cotn.cot, whet.wht, rice.ric, ric2.ri2, alfa.alf, stfr.stf, tgrp.tgr, meln.mln, tomt.tmt, shav.shv, pota.pot, mung.mng, subt.sbt, mazf.mzf, mazg.mzg / ;
+cmx2lnd(b,q0,j,x)$mapCMX(x,j) = ( lnd0(b,q0,j) / SUM(jj$mapCMX(x,jj), lnd0(b,q0,jj)) )$SUM(jj$mapCMX(x,jj), lnd0(b,q0,jj)) ;
 
 * Set all nodes to be member of All basins
 bBas(b,"All") = 1;

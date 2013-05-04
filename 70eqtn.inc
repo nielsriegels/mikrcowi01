@@ -71,14 +71,15 @@ EQUATIONS
     RETURNWATER(s,b,y0,m0)      "Calculate the returnwater"
 * Economical constraints and identities
     IRGACT(b,q0,j,y0,m0)        "Actual irrigation need by zone"
-    YIELDWATER1(b,q0,j,y0)      "Yield water response function"
+    YIELDWATER1w(b,q0,j,y0)     "Yield water response function - weighted avg formulation"
+    YIELDWATER1m(b,q0,j,p,y0)   "Yield water response function - minimum formulation"
     YIELDWATER2(b,q0,j,y0,m0)   "Yield water response function upper limit"
     iEVAPOTRANS(b,q0,j,p,y0)    "Calculate index for actual ET ratio to optimal ET"
     MINiET(b,q0,j,p,y0)         "Set minimum for deficit watering"
     LEONTIEF(b,q0,j,y0)         "Ratio between outputs and inputs"
     CETLAND(b,y0)               "Index for physical amount of land"
     FIXEDLAND(b,q0,j,y0)        "Fixed land shares"
-    LANDLIMIT(b,y0)             "Maximum land use"
+    LANDLIMIT(b,q0,y0)          "Maximum land use"
     AGRCMX(b,q0,j,y0)           "Convert crop mix land use to crop land use"
     OBJ                         "Objective function"
 ;
@@ -140,9 +141,13 @@ IRGACT(b,q,j,y,m)$(irg0(b,q,j,y,m) AND noYWR and useCET)..
 
 * Yield water response function
 * Summed over growth phases with appropriate phase weights and phase specific crop yield 
-YIELDWATER1(b,q,j,y)$((not noYWR) AND lnd0(b,q,j))..
-*    YWR(b,q,j,y) =e= 1 - SUM(p$etcP(b,j,p),  wPhase(b,j,p) * (1 - kYield(p,j) * iET(b,q,j,p,y))  );
+YIELDWATER1w(b,q,j,y)$((not noYWR) AND lnd0(b,q,j))..
     YWR(b,q,j,y) =e=     SUM(p$etcP(b,j,p),  wPhase(b,j,p) * (1 - kYield(p,j)*(1-iET(b,q,j,p,y)))  );
+
+* Yield water response function - minimum formulation
+* Summed over growth phases with appropriate phase weights and phase specific crop yield 
+YIELDWATER1m(b,q,j,p,y)$((not noYWR) AND lnd0(b,q,j) AND etcP(b,j,p))..
+    YWR(b,q,j,y) =l= 1 - kYield(p,j)*(1-iET(b,q,j,p,y)) ;
 
 * Equation for eva / evc index
 * etcP is in 1000m3/ha while IRG is in mm3
@@ -304,14 +309,14 @@ FIXEDLAND(b,q,j,y)$(lnd0(b,q,j) AND jAX(j))..
 * Land allocation from crop mix to land use
 * (crop mix covers a whole year, while crop mix may have 2nd crops 
 *  so land use can exceed available land, while crop mix use cannot)
-AGRCMX(b,q,j,y)$(lnd0(b,q,j))..
+AGRCMX(b,q,j,y)$(lnd0(b,q,j) and useCMX)..
     LND(b,q,j,y) =e= SUM(x$cmx2lnd(b,q,j,x), cmx2lnd(b,q,j,x)*CMX(b,q,x,y));
 
 * Total land use for crop mixes need to stay at or below available land use
-LANDLIMIT(b,y)$SUM((q,j), lnd0(b,q,j))..
-    SUM((q,x), CMX(b,q,x,y))$useCMX
-   +SUM((q,j), LND(b,q,j,y))$(not useCMX)
-    =l= SUM((q,j), lnd0(b,q,j));
+LANDLIMIT(b,q,y)$SUM(j, lnd0(b,q,j))..
+    SUM(x, CMX(b,q,x,y))$useCMX
+   +SUM(j, LND(b,q,j,y))$(not useCMX)
+    =l= SUM(j, lnd0(b,q,j));
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
@@ -344,7 +349,7 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN, RESHHDMAX, 
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
-                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, MINiET, RETURNWATER
+                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1w, YIELDWATER2, iEVAPOTRANS, MINiET, RETURNWATER
                 OBJ
                 /;
 
