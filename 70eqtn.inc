@@ -8,6 +8,7 @@ POSITIVE VARIABLES
     LND(b,q0,j,y0)          "Land use by crop and suitability class (ha)"
     HHI(s,sSec,b,y0,m0)     "Water use by households and industries (mm3)"
     LOS(s,b,l,y0,m0)        "Losses to seepage and evaporation (mm3)"
+    LCH(s,b,y0,m0)          "Water use for leaching (mm3)"
     ITK(s,bd,bo,y0,m0)      "Water intakes from river nodes to zones (mm3)"
     FLW(s,bd,bo,y0,m0)      "Flows between river nodes (mm3)"
     VOL(s,b,y0,m0)          "Reservoir volume levels end of season (mm3)"
@@ -45,6 +46,7 @@ EQUATIONS
     WNUKUS(s,rb,c,y0,m0)        "Constrain within Nukus agreement"
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
     LOSSES(s,b,l,y0,m0)         "Losses to seepage and evaporation"
+    LEACHING(s,b,y0)            "Leaching requirements"
     HHIUSES(s,sSec,b,y0,m0)     "Water use by households and industries"
     SEAVOL(s,b,y0,m0)           "Reservoir level end of season"
     RESVOL(s,b,y0,m0)           "Reservoir level end of season"
@@ -94,6 +96,7 @@ WBALANCE(s,b,y,m)..
    + STO(s,b,y,m)$sea(b)
    + STO(s,b,y,m)$bRes(b)
    + SUM((q,j)$irg0(b,q,j,y,m), IRG(b,q,j,y,m))
+   + LCH(s,b,y,m)
    + SUM(sSec$HHIuse(sSec,b,m), HHI(s,sSec,b,y,m))
    + LOS(s,b,"seep",y,m)
 
@@ -133,6 +136,11 @@ WNUKUS(s,rb,c,y,mS)$(sW(s) AND useNukus)..
 RETURNWATER(s,b,y,m)..
     SUM(bo$(intk(b,bo)+resv(b,bo)+flow(b,bo)),RTN(s,bo,b,y,m))
                  =e= 0.0*SUM((q,j),IRG(b,q,j,y,m));
+
+* Leaching requirements
+* qLch is in m3/ha, transform into mm3
+LEACHING(s,b,y)..
+    SUM(m$mLch0(b,m), LCH(s,b,y,m)) =e= qLch(b)*SUM((q,j)$lnd0(b,q,j), LND(b,q,j,y))/1000000;
 
 * Irrigation needs - irg0 is base year irrigation,
 * Not used when we enable Yield-Water response
@@ -345,7 +353,7 @@ OBJ..   TWV =e=
 ;
 
 
-MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS,
+MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS, LEACHING, 
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN, RESHHDMAX, 
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 

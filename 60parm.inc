@@ -1,6 +1,7 @@
 PARAMETERS
     sup(s,b,m)                      "Base year supply of river water (mm3/month)"
     irg0(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
+    qLch(b)                         "Leaching requirement (m3/ha)"
     hhiUse(sSec,b,m0)               "Base year water use for households and industries (mm3)"
     lShare(b,q0,j)                  "Share of land for free crops in zone (%)"
     retShare0(bd,bo,*)              "Share of return water (%)"

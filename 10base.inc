@@ -43,6 +43,7 @@ SETS
     y0                      "Years"                 / 2001, 2009, 2020, 2050 /
     y(y0)                   "Modelled years"
     yB(y0)                  "Base year"
+    ry                      "Rainfall years"        / nor, dry /
     g0                      "Energy demand segment" / base, peak /
     g(g0)                   "Energy demand segment" / base, peak /
     u0                      "Energy prod. units"    / u01*u90 /

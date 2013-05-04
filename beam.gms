@@ -149,6 +149,6 @@ PUT step;
 PUT "4";
 PUTCLOSE;
 
-DISPLAY iET.l, YWR.l, rcView;
+DISPLAY LCH.l;
 
 DISPLAY checkOutput;
