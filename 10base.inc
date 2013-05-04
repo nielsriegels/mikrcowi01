@@ -26,7 +26,7 @@ SETS
     p0                      "Growth stages"         / init, deve, midi, late, annl /
     p(p0)                   "Growth stages used"    / init, deve, midi, late  /
     q0                      "Land suit. class"      / 1vs, 2su, 3ms, avg /
-    q(q0)                   "Land suit. class used" / avg /
+    q(q0)                   "Land suit. class used" / 1vs, 2su, 3ms /
     qAvg(q0)                "Land suit. avg"        / avg /
     qPar(q0)                "Land suit. partition"  / 1vs, 2su, 3ms /
     m0                      "Season"                / m10, m11, m12, m01, m02, m03, m04, m05, m06, m07, m08, m09, annual, veg, nvg /
@@ -164,6 +164,10 @@ SETS
     e_resAgri /
         AgriProd        "Agricultural production (ton/year)",
         WaterUse        "Agricultural water use (mm3/year)",
+        WaterUseB       "Agricultural water use base year (mm3/year)",
+        WaterChg        "Water change compared to base year (%)"
+        WaterInt        "Water intensity (m3/ha)"
+        WaterIntB       "Water intensity (m3/ha)"
         LandUse         "Agricultural land use (ha)",
         LandChg         "Agricultural land use change rel. to baseyear (%)"
         LabrUse         "Agricultural labour use (mUSD/year)",
@@ -172,7 +176,12 @@ SETS
         OptMarg         "Optmial margin (USD/ha)"
         /
 
-
+    e_resIrg /
+        actET           "Actual evapotranspiration (m3/ha)"
+        optET           "Optimal evapotranspiration (m3/ha)"
+        iET             "Index for actual ET (100=optimal)"
+        wPhase          "Phase weight (%)"
+    /
 
     e_resEcon /
         AgriSales       "Agricultural sales (mUSD/month)",
@@ -229,7 +238,11 @@ SETS
         AgriWater       "Water for agriculture"
         AgriWaterSum    "Water for agriculture, summer"
         AgriWaterWin    "Water for agriculture, winter"
+        AgriWaterInt    "Water intensity (m3/ha)"
+        AgriLandChg     "Land use change (%)"
         HHIuse          "Water use by households and industries"
+        NukusDem        "Water allocation to intakes by Nukus (mm3)"
+        NukusSup        "Water allocation to intakes actual (mm3)"
         Losses          "Losses to ground water and evaporation"
         Nature          "Water allocated to nature"
         Amu-TAD-TUR     "Amu Water flows from TAD to TUR"

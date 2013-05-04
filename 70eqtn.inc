@@ -27,7 +27,7 @@ VARIABLES
 OPTIONS DIS:0:3:1;
 OPTIONS FLW:0:3:1;
 OPTIONS ITK:0:3:1;
-OPTIONS IRG:0:3:1;
+OPTIONS IRG:0:4:1;
 OPTIONS LOS:0:4:1;
 OPTIONS STO:0:2:1;
 OPTIONS HPP:0:3:1;
@@ -74,6 +74,7 @@ EQUATIONS
     YIELDWATER1(b,q0,j,y0)      "Yield water response function"
     YIELDWATER2(b,q0,j,y0,m0)   "Yield water response function upper limit"
     iEVAPOTRANS(b,q0,j,p,y0)    "Calculate index for actual ET ratio to optimal ET"
+    MINiET(b,q0,j,p,y0)         "Set minimum for deficit watering"
     LEONTIEF(b,q0,j,y0)         "Ratio between outputs and inputs"
     CETLAND(b,y0)               "Index for physical amount of land"
     FIXEDLAND(b,q0,j,y0)        "Fixed land shares"
@@ -143,16 +144,19 @@ YIELDWATER1(b,q,j,y)$((not noYWR) AND lnd0(b,q,j))..
 *    YWR(b,q,j,y) =e= 1 - SUM(p$etcP(b,j,p),  wPhase(b,j,p) * (1 - kYield(p,j) * iET(b,q,j,p,y))  );
     YWR(b,q,j,y) =e=     SUM(p$etcP(b,j,p),  wPhase(b,j,p) * (1 - kYield(p,j)*(1-iET(b,q,j,p,y)))  );
 
-* TEMPORARY equation for eva / evc index
+* Equation for eva / evc index
+* etcP is in 1000m3/ha while IRG is in mm3
 iEVAPOTRANS(b,q,j,p,y)$(lnd0(b,q,j) AND etcP(b,j,p) AND (not noYWR) )..
-    iET(b,q,j,p,y) =e= SUM(m, etcM2P(b,j,p,m)*IRG(b,q,j,y,m)) / (etcP(b,j,p)*LND(b,q,j,y))  ;
+    iET(b,q,j,p,y) =e= SUM(m, 1000*etcM2P(b,j,p,m)*IRG(b,q,j,y,m)) / (etcP(b,j,p)*LND(b,q,j,y))  ;
 
-
-
+* YWR function parameters are only valid down to 60% deficit watering
+MINiET(b,q,j,p,y)$(lnd0(b,q,j) AND etcP(b,j,p) AND (not noYWR) )..
+    iET(b,q,j,p,y) =g= 0.6;
 
 * Ensure that there is no excess watering (to not boost YWR above 1)
+* etcP is in 1000m3/ha while IRG is in mm3
 YIELDWATER2(b,q,j,y,m)$((not noYWR) AND lnd0(b,q,j))..
-    IRG(b,q,j,y,m) =l= etcM(b,j,m) * LND(b,q,j,y) ;
+    IRG(b,q,j,y,m) =l= etcM(b,j,m) * LND(b,q,j,y)/1000 ;
 
 * Use of water by households and industries
 HHIUSES(s,sSec,b,y,m)$hhiUse(sSec,b,m)..
@@ -301,7 +305,7 @@ FIXEDLAND(b,q,j,y)$(lnd0(b,q,j) AND jAX(j))..
 * (crop mix covers a whole year, while crop mix may have 2nd crops 
 *  so land use can exceed available land, while crop mix use cannot)
 AGRCMX(b,q,j,y)$(lnd0(b,q,j))..
-    LND(b,q,j,y) =e= SUM(x$cmx2lnd(b,j,x), cmx2lnd(b,j,x)*CMX(b,q,x,y));
+    LND(b,q,j,y) =e= SUM(x$cmx2lnd(b,q,j,x), cmx2lnd(b,q,j,x)*CMX(b,q,x,y));
 
 * Total land use for crop mixes need to stay at or below available land use
 LANDLIMIT(b,y)$SUM((q,j), lnd0(b,q,j))..
@@ -312,7 +316,7 @@ LANDLIMIT(b,y)$SUM((q,j), lnd0(b,q,j))..
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
                 SUM(b$objNODEweight(b),
-                    SUM((q,j,y)$crp0(b,q,j),                  CRP(b,q,j,y) * pCrop(j)                                     * objAGRweight(b)    ) / 1000000
+                    SUM((q,j,y)$crp0(b,q,j),                  CRP(b,q,j,y) * pCrop(b,j)                                   * objAGRweight(b)    ) / 1000000
                    -SUM((q,j,y)$lnd0(b,q,j),                  LND(b,q,j,y) * cCrop(b,j)                                   * objAGRweight(b)    ) / 1000000
 * CAUTION: The row below are operating costs depending on water use, e.g. power consumption - correct specification when receiving inv. data from Bekzod
                    -SUM((q,j,y,m)$irg0(b,q,j,y,m),            IRG(b,q,j,y,m)*iInv("usdPerMM3")                            * objAGRweight(b)    ) / 1000000
@@ -336,11 +340,11 @@ OBJ..   TWV =e=
 ;
 
 
-MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS
+MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN, RESHHDMAX, 
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
-                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, RETURNWATER
+                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, MINiET, RETURNWATER
                 OBJ
                 /;
 

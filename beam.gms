@@ -85,11 +85,11 @@ $onlisting
 * TEMPORARY - replace with Excel entries
 SET cot(j)  / cot /;
 SET wht(j)  / wht /;
-SET veg(j)  / veg /;
-SET fru(j)  / fru /;
-SET ric(j)  / ric /;
+SET veg(j)  / tmt, shv, pot, sbt, mng /;
+SET fru(j)  / stf, tgr, mln /;
+SET ric(j)  / ric, ri2 /;
 SET alf(j)  / alf /;
-SET oth(j)  / oth /;
+SET oth(j)  / mzf, mzg /;
 SET bNat(b) / Lak_ARS, Lak_ARN, Lak_Ayd /;
 SET caps3(c) / KAZ, UZB, KYR /
 SET caps5(c) / KAZ, UZB, KYR, TAD /
@@ -101,9 +101,9 @@ SET caps6(c) / KAZ, UZB, KYR, TAD /
 $include "%path%50scen.inc";
 
 * Assign additional sets for reservoirs based on data and maps
-bRiv(b)                 = YES$SUM(bd$intk(bd,b), 1);
-bRes(b)                 = YES$SUM(bd$resv(bd,b), 1);
-bPlz(b)                 = YES$SUM(j, qAWater(b,j));
+bRiv(b)                 = YES$SUM(bd$intk(bd,b),    1);
+bRes(b)                 = YES$SUM(bd$resv(bd,b),    1);
+bPlz(b)                 = YES$SUM((q,j)$lnd0(b,q,j), 1);
 bSrc(b)                 = YES$SUM((s,m,y0), sup0(s,b,y0,m));
 
 * Reservoirs not in operation
@@ -149,4 +149,6 @@ PUT step;
 PUT "4";
 PUTCLOSE;
 
-DISPLAY checkOutput,rRbAgri;
+DISPLAY iET.l, YWR.l, rcView;
+
+DISPLAY checkOutput;

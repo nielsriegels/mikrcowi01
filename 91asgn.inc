@@ -46,9 +46,9 @@
     IF(scenarios("fixLND",sSce) eq 0,
         jAF(j)                  = jAF0(j);
     );
-    jAF("fal")              = YES$scenarios("fallow",sSce);
+*    jAF("fal")              = YES$scenarios("fallow",sSce);
     jAX(j)                  = 1$(not jAF(j));
-    lnd0(b,q,"fal")         = SUM(j$jAF(j), lnd0(b,q,j)) * scenarios("fallow",sSce);
+*    lnd0(b,q,"fal")         = SUM(j$jAF(j), lnd0(b,q,j)) * scenarios("fallow",sSce);
 
 * Disable average yields and enable partitioning by soil suitability class
     q(qAvg)                 = YES$scenarios("avgSoil",sSce);
@@ -110,13 +110,26 @@
     natExtra(b)             = natExtra0(b,sSce);
 
 * Set crop prices according to scenario indices for crop price
-    pCrop(j)                = pCrop0("economic","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) eq 0)
-                            + pCrop0("financial","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) ne 0);
+*    pCrop(j)                = pCrop0("economic","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) eq 0)
+*                            + pCrop0("financial","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) ne 0);
+    pCrop(b,j)              = ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"economic","pCrp")  )$(scenarios("rMkt",sSce) eq 0)
+                             +ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"financial","pCrp") )$(scenarios("rMkt",sSce) ne 0);
 
 * Set crop costs according to scenario indices for crop costs
-    cCrop(b,j)$bPlz(b)      = SUM(k, cCrop0("noReform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) eq 0)
-                            + SUM(k, cCrop0("reform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) ne 0);
-
+*    cCrop(b,j)$bPlz(b)      = SUM(k, cCrop0("noReform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) eq 0)
+*                            + SUM(k, cCrop0("reform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) ne 0);
+    cCrop(b,j)$bPlz(b)      = SUM(c$bCty(b,c), 
+                                    icCrop("labr",sSce) * pAgri0(c,j,"financial","qLbr") * pAgri0(c,j,"financial","pLbr")
+                                   +icCrop("inpt",sSce) * pAgri0(c,j,"financial","pIpt")
+                                   +icCrop("cptl",sSce) * pAgri0(c,j,"financial","pCap")
+                              )$(scenarios("rMkt",sSce) ne 0)
+                             +SUM(c$bCty(b,c), 
+                                    icCrop("labr",sSce) * pAgri0(c,j,"economic","qLbr") * pAgri0(c,j,"economic","pLbr")
+                                   +icCrop("inpt",sSce) * pAgri0(c,j,"economic","pIpt")
+                                   +icCrop("cptl",sSce) * pAgri0(c,j,"economic","pCap")
+                              )$(scenarios("rMkt",sSce) eq 0);
+    
+    
 * Set irrigation investment costs
     iInv(sInv)              = 0;
 

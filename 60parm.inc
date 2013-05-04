@@ -1,22 +1,22 @@
 PARAMETERS
     sup(s,b,m)                      "Base year supply of river water (mm3/month)"
-    iACosts(b,k,j)                  "Base year production agri/industrt input shares quantities (mn usd/year)"
-    qValue(b,j)                     "Base year production agri/industrt prod. values (mn usd/year)"
-    qALand(b,j)                     "Base year land use in agriculture (ha)"
-    qAWater(b,j)                    "Base year water in agriculture (mm3/y)"
-    qmWater(b,m)                    "Base year water (mm3/month)"
+*    iACosts(b,k,j)                  "Base year production agri/industrt input shares quantities (mn usd/year)"
+*    qValue(b,j)                     "Base year production agri/industrt prod. values (mn usd/year)"
+*    qALand(b,j)                     "Base year land use in agriculture (ha)"
+*    qAWater(b,j)                    "Base year water in agriculture (mm3/y)"
+*    qmWater(b,m)                    "Base year water (mm3/month)"
     irg0(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
     hhiUse(sSec,b,m0)               "Base year water use for households and industries (mm3)"
-    qInputs(b,k,j)                  "Base year physical input use (unit/year)"
-    oCosts(b,j)                     "Base year production agri/industrt unit cost (usd/ton)"
-    iShare(b,k,j)                   "Base year share of input costs (pct of total cost)"
+*    qInputs(b,k,j)                  "Base year physical input use (unit/year)"
+*    oCosts(b,j)                     "Base year production agri/industrt unit cost (usd/ton)"
+*    iShare(b,k,j)                   "Base year share of input costs (pct of total cost)"
     lShare(b,q0,j)                  "Share of land for free crops in zone (%)"
     retShare0(bd,bo,*)              "Share of return water (%)"
     pEly(g,y0,m0)                   "Electricity price (USD/MWh)"
-    pCrop(j)                        "Crop prices (USD/ton)"
+    pCrop(b,j)                      "Crop prices (USD/ton)"
     pInput(k)                       "Index for input prices"
     cCrop(b,j)                      "Crop costs by land use (USD/ha)"
-    cmx2lnd(b,j,x)                  "Map between crop mix land use and crop land use"
+    cmx2lnd(b,q0,j,x)               "Map between crop mix land use and crop land use"
 * Irrigation system costs
     iInv(sInv)                      "Irrigation investment data"
     conveyanceCost(c)               "Cost of conveyance system"
@@ -27,8 +27,8 @@ PARAMETERS
     iMinLnd(b,j)                    "Index for minimum land use requirements for crops in procent of base"
     wPhase(b,j,p0)                  "Weight for days in growth phase (% of growth days)"
     etcM2P(b,j,p0,m)                "Map for water use in phases and months (% of monthly water use in phase)"
-    etcP(b,j,p0)                    "Optimal evapotranspiration by phase (mm3/ha)"
-    etcM(b,j,m0)                    "Optimal evapotranspiration by month (mm3/ha)"
+    etcP(b,j,p0)                    "Optimal evapotranspiration by phase (1000 m3/ha)"
+    etcM(b,j,m0)                    "Optimal evapotranspiration by month (1000 m3/ha)"
     resVolFix(b,y0,m)               "Fixed volume for reservoirs (mm3)"
     resDisFix(bd,bo,y0,m)           "Fixed discharges for reservoirs (mm3/month)"
 * Parameters for control of model scenarios
@@ -53,6 +53,7 @@ PARAMETERS
     rcFlow(sSce,c,y0,e_resFlow,m0)  "Flow of water by country"
     rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
     rAgri(sSce,b,e_resAgri,y0,j,q0) "Agricultural results for zone parttions"
+    rIrg(sSce,b,e_resIrg,y0,p,j,q0) "Irrigation results by zone, partition and growth phase"
     rEcon(sSce,b,e_resEcon,y0,m0)   "Economical results for zone"
     rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
@@ -92,14 +93,17 @@ checkoutput("totinc0","s02")   = 10164741.19;
 checkoutput("obj0","s01")      = -20157.33;
 checkoutput("obj0","s02")      = -19883.26;
 
-* Yield response parameters (etc0 is in mm/day, so scale with x 10 / 1000000 to get to mm3/ha)
-* We'd probably want to scale to 1000m3/ha to get figures around 1 (better solver scaling)
+* Yield response parameters (etc0 is in mm/month = 10m3/ha/day, so scale with x 10 / 1000 to get to 1000 m3/ha/month) 
+* etcP and etcM is in 1000 m3/ha/month
+* irg0 is in mm3/month 
 wPhase(b,j,p)       = ( phaseDays(b,p,j) / SUM(pp, phaseDays(b,pp,j)) )$phaseDays(b,p,j);
-etcP(b,j,p)         = 0.000001 * SUM(m, 10*etc0(b,p,m,j));
-etcM(b,j,m)         = 0.000001 * SUM(p, 10*etc0(b,p,m,j))/1000000;
+etcP(b,j,p)         = SUM(m, 10*etc0(b,p,m,j))/1000;
+etcM(b,j,m)         = SUM(p, 10*etc0(b,p,m,j))/1000;
 etcM2P(b,j,p,m)     = (etc0(b,p,m,j)/SUM(pp, etc0(b,pp,m,j)) )$SUM(pp, etc0(b,pp,m,j));
-irg0(b,q0,j,y0,m)   = ( etcM(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$SUM(q00$qAvg(q00), lnd0(b,q00,j));
+*irg0(b,q0,j,y0,m)   = 1000*( etcM(b,j,m) * lnd0(b,q0,j) / SUM(q00$qAvg(q00), lnd0(b,q00,j)) )$SUM(q00$qAvg(q00), lnd0(b,q00,j));
+irg0(b,q0,j,y0,m)   = etcM(b,j,m) * lnd0(b,q0,j) / 1000;
 
+$ontext
 * TEMPORARY: etcP is not compatible with agriSeason, so we re-map our phases to something simple that will always work
 etcM2P(b,j,p,m) = 0;
 etcM2P(b,j,"init","m01") = 1;
@@ -128,17 +132,18 @@ wPhase(b,j,p)$bPlz(b) = ( SUM(m$etcM2P(b,j,p,m), 1$etcM(b,j,m))
                         )$SUM(m,                 1$etcM(b,j,m)) ;
 
 cCrop(b,j)$SUM(q, lnd0(b,q,j))   = 1000000*SUM(k$(not kLimit(k)), iACosts(b,k,j))/SUM(q, lnd0(b,q,j));
-
+$offtext
 
 
 * TEMPORARY ASSIGNMENT - replace with Excel when we switch to FAO crops
-cmx2lnd(b,"cot","cotn")    = 1;
-cmx2lnd(b,"wht","whet")    = 1;
-cmx2lnd(b,"ric","rice")    = 1;
-cmx2lnd(b,"alf","alfa")    = 1;
-cmx2lnd(b,"fru","frut")    = 1;
-cmx2lnd(b,"veg","vege")    = 1;
-cmx2lnd(b,"oth","othr")    = 1;
+
+SET mapCMX(x,j) "Map between crops and crop mixes" / cotn.cot, whet.wht, rice.ric, rice.ri2, alfa.alf, frut.stf, frut.tgr, frut.mln, vege.tmt, vege.shv, vege.pot, vege.mng, vege.sbt, othr.mzf, othr.mzg / ;
+cmx2lnd(b,q0,j,x)$SUM(jj$mapCMX(x,jj), lnd0(b,q0,jj)) = lnd0(b,q0,j) / SUM(jj$mapCMX(x,jj), lnd0(b,q0,jj)) ;
+DISPLAY cmx2lnd;
 
 * Set all nodes to be member of All basins
 bBas(b,"All") = 1;
+
+* set all crops free
+jAF0(j) = 1;
+jAF0("stf") = 0;

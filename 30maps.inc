@@ -1,5 +1,5 @@
 * Automatically created file, please enter changes into beam.xls
-SET bCty(b,c) "Country-node map" / 
+SET bCty(b,c) "Country-node map" /                 
                                  
 FER_UZB         .UZB             
 SYR_UZB         .UZB             
@@ -87,7 +87,7 @@ Lak_ARS         .UZB
 Lak_ARN         .KAZ             
 /;
 
-SET flow(bd,bo) "River flow arcs" / 
+SET flow(bd,bo) "River flow arcs" /                 
                                  
 Res_KAM         .Src_TOK         
 Res_AND         .Src_AND         
@@ -125,7 +125,7 @@ Lak_ARS         .AMUDWN
 Res_KOK         .SYRDW1          
 /;
 
-SET resv(bd,bo) "Arcs from reservoirs" / 
+SET resv(bd,bo) "Arcs from reservoirs" /                 
                                  
 Res_TOK         .Res_KAM         
 Res_NAR         .Res_TOK         
@@ -164,7 +164,7 @@ Lak_AMU         .Res_ZAR
 CHI_UZB         .Res_CHI         
 /;
 
-SET intk(bd,bo) "Intake arcs" / 
+SET intk(bd,bo) "Intake arcs" /                 
                                  
 FER_KYR         .NARYN           
 FER_KYR         .KRDRYA          
@@ -197,7 +197,7 @@ Res_ARN         .SYRMID
 Res_TMP         .AMUMID          
 /;
 
-SET  retf(bd,bo) "Return flow arcs" / 
+SET  retf(bd,bo) "Return flow arcs" /                 
                                  
 SYRFER          .FER_UZB         
 SYRMID          .SYR_UZB         
@@ -235,7 +235,7 @@ LAK_AMU         .ZAR_TAD
 LAK_AMU         .UPA_AFG         
 /;
 
-SET bSec(b,bs) "Basin section-node map" / 
+SET bSec(b,bs) "Basin section-node map" /                 
                                  
 FER_UZB         .SYRUPS          
 SYR_UZB         .SYRMID          
@@ -323,7 +323,7 @@ Lak_ARS         .ARALSO
 Lak_ARN         .ARALNO          
 /;
 
-SET bBas(b,rb) "Basin node map" / 
+SET bBas(b,rb) "Basin node map" /                 
                                  
 FER_UZB         .SYR             
 SYR_UZB         .SYR             
@@ -411,7 +411,7 @@ Lak_ARS         .AMU
 Lak_ARN         .SYR             
 /;
 
-SET sXsecIn(bs,bd,bo) /  
+SET sXsecIn(bs,bd,bo) /                                  
                                                   
 SYRMID          .SYRMID          .Res_FAR         
 SYRDWN          .SYRDW1          .RES_SHA         
@@ -422,7 +422,7 @@ AMUKAI          .AMU_TUR         .Res_ZD
 ARALSO          .Lak_ARS         .AMUDWN          
 /;
 
-SET sXsecOut(bs,bd,bo) /  
+SET sXsecOut(bs,bd,bo) /                                  
                                                   
 SYRUPS          .SYRMID          .Res_FAR         
 SYRMID          .SYRDW1          .Res_SHA         
@@ -433,15 +433,15 @@ AMUMID          .AMU_TUR         .Res_ZD
 AMUDWN          .Lak_ARS         .AMUDWN          
 /;
 
-PARAMETER jAF0(j) "Crops with sluggish land allocation" /
-cot                             1.000000E+00    
+PARAMETER jAF0(j) "Crops with sluggish land allocation" /                
+cot             1.000000E+00    
 wht             1.000000E+00    
 ric             1.000000E+00    
 alf             1.000000E+00    
-veg             1.000000E+00    
-oth             1.000000E+00    
-fru             0.000000E+00    
-fal             0.000000E+00    
-
+                                
+                                
+                                
+                                
+                                
 /;
 

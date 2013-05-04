@@ -3,6 +3,7 @@ git clone https://github.com/mikkelakromann/mikrcowi01.git
 
 
 # Checkout another branch for the first time linking to GitHub    
+git fetch
 git branch some_branch
 git checkout some_branch
 git branch --set-upstream-to=origin/some_branch
