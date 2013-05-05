@@ -170,7 +170,14 @@ $offtext
     rcElec(sSce,"pMCpeak",y,c,m0)$(not m(m0)) = 0;
     rcElec(sSce,"pMCbase",y,c,m0)$(not m(m0)) = 0;
 
-
+    rBorder(sSce,y,"Amu-TAD-TUR",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUMID","AMUUPS",y,m));
+    rBorder(sSce,y,"Amu-TUR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
+    rBorder(sSce,y,"Syr-KYR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"NARYN","Res_NAR",y,m) + DIS.l(s,"NARYN","Res_NAR",y,m));
+    rBorder(sSce,y,"Syr-UZB-TAD",m)      = SUM((s)$sW(s),               FLW.l(s,"Res_KAR","SYRFER",y,m) );
+    rBorder(sSce,y,"Syr-TAD-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"Res_FAR","Res_KAR",y,m) + DIS.l(s,"Res_FAR","Res_KAR",y,m));
+    rBorder(sSce,y,"Syr-UZB-KAZ",m)      = SUM((s)$sW(s),               ITK.l(s,"Res_SHA","SYRMID",y,m) + FLW.l(s,"Res_SHA","SYRMID",y,m) - ITK.l(s,"SYR_KAZ","SYRMID",y,m));
+    rBorder(sSce,y,"DwnToktogul",m)      = SUM((s)$sW(s),               DIS.l(s,"Res_NAR","Res_TOK",y,m)+FLW.l(s,"Res_NAR","Res_TOK",y,m));
+    rBorder(sSce,y,"DwnNurek",m)         = SUM((s)$sW(s),               DIS.l(s,"Res_VAH","Res_NUR",y,m)+FLW.l(s,"Res_VAH","Res_NUR",y,m));
 
     rcView(sSce,y,"AgriSales",c)            =  SUM((b,q,j)$bCty(b,c),       CRP.l(b,q,j,y) * pCrop(b,j)  ) / 1000000;
     rcView(sSce,y,"AgriCosts",c)            = -SUM((b,q,j)$bCty(b,c),       LND.l(b,q,j,y) * cCrop(b,j)  ) / 1000000;
@@ -193,10 +200,18 @@ $offtext
 
     rcView(sSce,y,"Losses",c)               = SUM((s,b,l,m)$bCty(b,c),      LOS.l(s,b,l,y,m)$sW(s));
     rcView(sSce,y,"Nature",c)               = SUM((s,b,m)$bCty(b,c),        STO.l(s,b,y,m)$(bNat(b) AND sW(s)) );
-    rcView(sSce,y,"Amu-TAD-TUR","TUR")      = SUM((s,m)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m));
-    rcView(sSce,y,"Amu-TUR-UZB","UZB")      = SUM((s,m)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
-    rcView(sSce,y,"Syr-KYR-UZB","UZB")      = SUM((s,m)$sW(s),              FLW.l(s,"SYRMID","Res_FAR",y,m) + DIS.l(s,"SYRMID","Res_FAR",y,m));
-    rcView(sSce,y,"Syr-UZB-KAZ","KAZ")      = SUM((s,m)$sW(s),              ITK.l(s,"Res_SHA","SYRMID",y,m) + FLW.l(s,"Res_SHA","SYRMID",y,m) - ITK.l(s,"SYR_KAZ","SYRMID",y,m));
+    rcView(sSce,y,"Amu-TAD-TUR","TAD")      =-SUM(m, rBorder(sSce,y,"AMU-TAD-TUR",m));
+    rcView(sSce,y,"Amu-TAD-TUR","TUR")      = SUM(m, rBorder(sSce,y,"AMU-TAD-TUR",m));
+    rcView(sSce,y,"Amu-TUR-UZB","TUR")      =-SUM(m, rBorder(sSce,y,"AMU-TUR-UZB",m));
+    rcView(sSce,y,"Amu-TUR-UZB","UZB")      = SUM(m, rBorder(sSce,y,"AMU-TUR-UZB",m));
+    rcView(sSce,y,"Syr-KYR-UZB","KYR")      =-SUM(m, rBorder(sSce,y,"Syr-KYR-UZB",m));
+    rcView(sSce,y,"Syr-KYR-UZB","UZB")      = SUM(m, rBorder(sSce,y,"Syr-KYR-UZB",m));
+    rcView(sSce,y,"Syr-UZB-TAD","UZB")      =-SUM(m, rBorder(sSce,y,"Syr-UZB-TAD",m));
+    rcView(sSce,y,"Syr-UZB-TAD","TAD")      = SUM(m, rBorder(sSce,y,"Syr-UZB-TAD",m));
+    rcView(sSce,y,"Syr-TAD-UZB","TAD")      =-SUM(m, rBorder(sSce,y,"Syr-TAD-UZB",m));
+    rcView(sSce,y,"Syr-TAD-UZB","UZB")      = SUM(m, rBorder(sSce,y,"Syr-TAD-UZB",m));
+    rcView(sSce,y,"Syr-UZB-KAZ","UZB")      =-SUM(m, rBorder(sSce,y,"Syr-UZB-KAZ",m));
+    rcView(sSce,y,"Syr-UZB-KAZ","KAZ")      = SUM(m, rBorder(sSce,y,"Syr-UZB-KAZ",m));
     rcView(sSce,y,"cTherm",c)               = -SUM((u,g,m)$tppMap(c,u),     TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000 )/1000000;
     rcView(sSce,y,"iTherm",c)               = 0;
     rcView(sSce,y,"sTherm",c)               = 0;
@@ -304,12 +319,8 @@ $offtext
     rRbResv(sSce,y,"ResLevel",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"Reslevel",b,m)     );
 
 
-    rBorder(sSce,y,"Amu-TAD-TUR",m)      = SUM((s)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m));
-    rBorder(sSce,y,"Amu-TUR-UZB",m)      = SUM((s)$sW(s),              FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
-    rBorder(sSce,y,"Syr-TAD-UZB",m)      = SUM((s)$sW(s),              FLW.l(s,"SYRMID","Res_FAR",y,m) + DIS.l(s,"SYRMID","Res_FAR",y,m));
-    rBorder(sSce,y,"Syr-UZB-KAZ",m)      = SUM((s)$sW(s),              ITK.l(s,"Res_SHA","SYRMID",y,m) + FLW.l(s,"Res_SHA","SYRMID",y,m) - ITK.l(s,"SYR_KAZ","SYRMID",y,m));
-    rBorder(sSce,y,"DwnToktogul",m)      = SUM((s)$sW(s),              DIS.l(s,"Res_NAR","Res_TOK",y,m)+FLW.l(s,"Res_NAR","Res_TOK",y,m));
-    rBorder(sSce,y,"DwnNurek",m)         = SUM((s)$sW(s),              DIS.l(s,"Res_VAH","Res_NUR",y,m)+FLW.l(s,"Res_VAH","Res_NUR",y,m));
+
+
     rBorder(sSce,y,e_resBorder,"nvg")    = sum(m$mWin(m),  rBorder(sSce,y,e_resBorder,m));
     rBorder(sSce,y,e_resBorder,"veg")    = sum(m$mSum(m),  rBorder(sSce,y,e_resBorder,m));
     rBorder(sSce,y,e_resBorder,"annual") = sum(m,  rBorder(sSce,y,e_resBorder,m));

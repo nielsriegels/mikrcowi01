@@ -21,6 +21,12 @@ git commit -m "Message explaining what changed in this commit"
 git push
 
 
+# Dont track this file
+git update-index --assume-unchanged path/to/file
+# Track this file
+git update-index --no-assume-unchanged path/to/file
+
+
 # Create a new branch and push to repository
 git checkout -b new_branch_name
 git push -u origin new_branch_name

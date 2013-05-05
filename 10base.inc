@@ -250,8 +250,10 @@ SETS
         Nature          "Water allocated to nature"
         Amu-TAD-TUR     "Amu Water flows from TAD to TUR"
         Amu-TUR-UZB     "Amu Water flows from TUR to UZB"
-        Syr-KYR-UZB     "Amu Water flows from KYR to UZB"
-        Syr-UZB-KAZ     "Amu Water flows from UZB to KAZ"
+        Syr-KYR-UZB     "Syr Water flows from FER to UZB"
+        Syr-UZB-TAD     "Syr Water flows from UZb to TAD"   
+        Syr-TAD-UZB     "Syr Water flows from TAD to UZB"
+        Syr-UZB-KAZ     "Syr Water flows from UZB to KAZ"
         cTherm          "Thermal fuel and OM costs"
         iTherm          "Thermal capital costs"
         sTherm          "Thermal subsidies"
@@ -290,6 +292,8 @@ SETS
     e_resBorder /
         Amu-TAD-TUR     
         Amu-TUR-UZB
+        Syr-KYR-UZB
+        Syr-UZB-TAD
         Syr-TAD-UZB
         Syr-UZB-KAZ
         DwnToktogul
