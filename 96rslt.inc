@@ -188,8 +188,8 @@ $offtext
     rcView(sSce,y,"AgriWaterInt",c)         = ( SUM((b,q,j,m)$bCty(b,c),    IRG.l(b,q,j,y,m)*1000000$mWin(m))  / SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y)) )$SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y));
     rcView(sSce,y,"AgriLandChg",c)          = ( SUM((b,q,j)$bCty(b,c),      LND.l(b,q,j,y)*100      )  / SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y));
     rcView(sSce,y,"HHIuse",c)               = SUM((s,b,sSec,m)$bCty(b,c),   HHI.l(s, sSec,b,y,m)$sW(s));
-    rcView(sSce,y,"NukusDem",c)             = SUM(b$bCty(b,c),              SUM((rb,m,s)$bBas(b,rb),    sup(s,b,m) * sNukus(c,rb)  ) );
-    rcView(sSce,y,"NukusSup",c)             = SUM(b$bCty(b,c),              SUM((rb,m,s)$bBas(b,rb),    SUM(bo, ITK.l(s,b,bo,y,m)) ) );
+    rcView(sSce,y,"Intake",c)               = SUM((s,rb,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb) and bCty(bd,c))  );
+    rcView(sSce,y,"Nukus",c)                = SUM((s,rb,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb)) * sNukus(c,rb)  );
 
     rcView(sSce,y,"Losses",c)               = SUM((s,b,l,m)$bCty(b,c),      LOS.l(s,b,l,y,m)$sW(s));
     rcView(sSce,y,"Nature",c)               = SUM((s,b,m)$bCty(b,c),        STO.l(s,b,y,m)$(bNat(b) AND sW(s)) );

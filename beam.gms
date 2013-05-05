@@ -148,5 +148,6 @@ $include "%path%99save.inc";
 PUT step;
 PUT "4";
 PUTCLOSE;
+DISPLAY rcView;
 
 DISPLAY checkOutput;

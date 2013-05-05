@@ -24,6 +24,7 @@ PARAMETERS
     etcM(b,j,m0)                    "Optimal evapotranspiration by month (1000 m3/ha)"
     resVolFix(b,y0,m)               "Fixed volume for reservoirs (mm3)"
     resDisFix(bd,bo,y0,m)           "Fixed discharges for reservoirs (mm3/month)"
+    nuk0(rb0,c,y0,m0)               "Nukus Allocation of water (mm3/bi-season)"
 * Parameters for control of model scenarios
     jAF(j)                          "Crops with flexible land allocation 0/1"
     jAX(j)                          "Crops with fixed land allocation 0/1"
@@ -69,6 +70,7 @@ PARAMETERS
 
 OPTIONS crp0:0:2:1;
 OPTIONS lnd0:0:2:1;
+OPTIONS nuk0:0:2:2;
 OPTIONS etcM2P:2:3:1;
 OPTIONS etc0:2:3:1;
 OPTIONS rEcon:2:2:2;
@@ -106,3 +108,6 @@ bBas(b,"All") = 1;
 * set all crops free
 jAF0(j) = 1;
 jAF0("stf") = 0;
+
+
+nuk0(rb,c,y0,mS) = SUM((s,b)$bBas(b,rb), SUM(m$mSm(m,mS), sup0(s,b,y0,m))) * sNukus(c,rb);

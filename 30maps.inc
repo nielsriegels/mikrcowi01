@@ -323,7 +323,7 @@ Lak_ARS         .ARALSO
 Lak_ARN         .ARALNO          
 /;
 
-SET bBas(b,rb) "Basin node map" /                 
+SET bBas(b,rb0) "Basin node map" /                 
                                  
 FER_UZB         .SYR             
 SYR_UZB         .SYR             

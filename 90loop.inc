@@ -11,7 +11,7 @@ $include "%path%91asgn.inc";
 putclose sRename 'copy /Y %path%solutions\solution-' sSce.tl:0 '.gdx %path%solutions\solution.gdx';
 execute '%path%solutions\renameS.cmd';
 
-execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, HHD, TPP, TRX, DEM, USD, YWR, iET, CRP, LND, CMX, TWV ;
+execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, TRX, DEM, USD, YWR, iET, CRP, LND, CMX, TWV ;
 USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 
 * Fix hydrological variables that can never be non-zero
@@ -53,8 +53,8 @@ $include "%path%92cstr.inc";
     SOLVE beam MAXIMIZING twv USING NLP;
 
 * Save solution to re-use later
-IF(beam.modelstat le 2, 
-    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, YWR, iET, CRP, LND, CMX, TWV;
+IF( ((beam.modelstat le 2) or (beam.modelstat eq 7)), 
+    execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, YWR, iET, CRP, LND, CMX, TWV;
     putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
     execute '%path%solutions\renameS.cmd';
 ); 
@@ -71,3 +71,5 @@ $include "%path%96rslt.inc";
 DISPLAY jAX, jAF;
 
 );
+
+DISPLAY  nuk0, NUK.l;

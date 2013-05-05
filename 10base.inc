@@ -16,7 +16,8 @@ SCALARS
 * Sets not depending on data
 SETS
     c                       "Countries"
-    rb                      "River basins"          / AMU, SYR, ALL /
+    rb0                     "River basins"          / AMU, SYR, ALL /
+    rb(rb0)                 "River basins"          / AMU, SYR /
     s                       "Substances"            / W /
     sW(s)                   "Water substance"       / W /
     k                       "Prod. inputs"          / watr, labr, cptl, inpt, land /
@@ -243,8 +244,8 @@ SETS
         AgriWaterInt    "Water intensity (m3/ha)"
         AgriLandChg     "Land use change (%)"
         HHIuse          "Water use by households and industries"
-        NukusDem        "Water allocation to intakes by Nukus (mm3)"
-        NukusSup        "Water allocation to intakes actual (mm3)"
+        Intake          "Total intake (mm3)"
+        Nukus           "Maximum intake allowed by Nukus (mm3)"
         Losses          "Losses to ground water and evaporation"
         Nature          "Water allocated to nature"
         Amu-TAD-TUR     "Amu Water flows from TAD to TUR"

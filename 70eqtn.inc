@@ -21,6 +21,7 @@ POSITIVE VARIABLES
     DEM(g0,c,y0,m0)         "Served demand (GWh)"
     TRX(c,cc,g0,y0,m0)      "Export of electricity from c to cc (GWh)"
     RTN(s,bd,bo,y0,m0)      "Return of water from irrigating the fields (mm3)"
+NUK(s,rb0,c,y0,m0)
 VARIABLES
     TWV                     "Total water value (USD)"
 ;
@@ -40,10 +41,14 @@ OPTIONS CMX:0:2:2;
 OPTIONS YWR:4:2:2;
 OPTIONS iET:4:3:2;
 
+OPTIONS NUK:0:3:2;
+
 EQUATIONS
 * Hydrological constraints and identities
     WBALANCE(s,b,y0,m0)         "Water balance at all nodes"
-    WNUKUS(s,rb,c,y0,m0)        "Constrain within Nukus agreement"
+    WNUKUS(s,rb0,c,y0,m0)       "Constrain within Nukus agreement"
+NUKUS(s,rb0,c,y0,m0)
+
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
     LOSSES(s,b,l,y0,m0)         "Losses to seepage and evaporation"
     LEACHING(s,b,y0)            "Leaching requirements"
@@ -129,9 +134,19 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
 
 * Nukus agreement
 * Allocate given shares of river basin runoff on semi annual basis
-WNUKUS(s,rb,c,y,mS)$(sW(s) AND useNukus)..
-    SUM((bo,bd)$bCty(bd,c), ITK(s,bd,bo,y,mS)$bBas(bd,rb)) =g= SUM(b$bBas(b,rb), SUM(m$mSm(m,mS), sup(s,b,m))) * sNukus(c,rb);
+WNUKUS(s,rb,c,y,mS)$(sW(s) AND sNukus(c,rb) AND useNukus)..
+    NUK(s,rb,c,y,mS) 
+        =l= sNukus(c,rb) * 
+    SUM((bd,bo,m)$(mSm(m,mS) AND bPlz(bd) AND bBas(bd,rb)), 
+        ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  ) ;
 
+NUKUS(s,rb,c,y,mS)$sW(s)..
+*NUK(s,rb,c,y,mS) =e= SUM((bo,bd)$bCty(bd,c), SUM(m$mSm(m,mS), ITK(s,bd,bo,y,m)$bBas(bd,rb)));
+NUK(s,rb,c,y,mS) =e= 
+    SUM((bd,bo,m)$(mSm(m,mS) and bPlz(bd) and bCty(bd,c) and bBas(bd,rb) ), 
+        ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  ) ;
+
+*SUM((b,m),                  (rtn0(b,m)+sup(s,b,m)) * SUM(rb$bBas(b,rb), sNukus(c,rb))  );
 
 * Account for return of water due to drainage
 RETURNWATER(s,b,y,m)..
@@ -354,7 +369,7 @@ OBJ..   TWV =e=
 ;
 
 
-MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS, LEACHING, 
+MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS, LEACHING, NUKUS,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN, RESHHDMAX, 
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
