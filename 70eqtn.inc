@@ -120,6 +120,7 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
                         + sup(s,b,m)
                         + rtn0(b,m) )
                      + lossChannels(b,l,m) * SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) 
+                     + SUM((j,q)$irg0(b,q,j,y,m), lossFields(b,j,l,m) * IRG(b,q,j,y,m))
 ;
 
 

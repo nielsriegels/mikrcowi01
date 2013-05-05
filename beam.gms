@@ -149,6 +149,4 @@ PUT step;
 PUT "4";
 PUTCLOSE;
 
-DISPLAY LCH.l;
-
 DISPLAY checkOutput;

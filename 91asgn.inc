@@ -131,8 +131,7 @@
     
 * Set leaching requirements
     qLch(b)      = SUM(y0$y(y0), qLch0(b,"dry")$y("2001") +  qLch0(b,"nor")$y("2009") ); 
-DISPLAY qLch;
-IF(ord(sSce) ne 42, qLch(b) = 0;);
+
 * Set irrigation investment costs
     iInv(sInv)              = 0;
 
