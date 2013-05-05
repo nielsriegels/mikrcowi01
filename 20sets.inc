@@ -18,7 +18,8 @@ FER_TAD
 UPA_TAD                         
 ZAR_TAD                         
 UPA_AFG                         
-Res_KAM                         
+Res_KA1                         
+Res_KA2                         
 Res_TOK                         
 Res_AND                         
 Res_KAR                         
@@ -42,9 +43,12 @@ Res_SUR
 Res_KAS                         
 Res_TAL                         
 Res_BUK                         
-Res_NAR                         
+Res_NA1                         
+Res_NA2                         
 Res_FAR                         
-Res_VAH                         
+Res_VA1                         
+Res_VA2                         
+Res_PYD                         
 Res_CHI                         
 Src_TOK                         
 Src_NAR                         
@@ -130,11 +134,11 @@ SET resNew(b) "New reservoirs " /
                 
 res_DAS         
 res_ROG         
-res_KAM         
+Res_VA2         
+Res_PYD         
 res_ZAR         
-                
-                
-                
+Res_NA1         
+Res_KA1         
 /;
 
 SET bs "Basin sections" /

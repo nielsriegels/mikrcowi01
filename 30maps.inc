@@ -18,7 +18,8 @@ FER_TAD         .TAD
 UPA_TAD         .TAD             
 ZAR_TAD         .TAD             
 UPA_AFG         .AFG             
-Res_KAM         .KYR             
+Res_KA1         .KYR             
+Res_KA2         .KYR             
 Res_TOK         .KYR             
 Res_AND         .TAD             
 Res_KAR         .TAD             
@@ -42,9 +43,12 @@ Res_SUR         .UZB
 Res_KAS         .UZB             
 Res_TAL         .UZB             
 Res_BUK         .UZB             
-Res_NAR         .KYR             
+Res_NA1         .KYR             
+Res_NA2         .KYR             
 Res_FAR         .UZB             
-Res_VAH         .TAD             
+Res_VA1         .KYR             
+Res_VA2         .KYR             
+Res_PYD         .TAD             
 Res_CHI         .UZB             
 Src_TOK         .KYR             
 Src_NAR         .TAD             
@@ -89,7 +93,7 @@ Lak_ARN         .KAZ
 
 SET flow(bd,bo) "River flow arcs" /                 
                                  
-Res_KAM         .Src_TOK         
+Res_NA1         .Src_TOK         
 Res_AND         .Src_AND         
 NARYN           .Src_NAR         
 KRDRYA          .Src_KAR         
@@ -127,9 +131,11 @@ Res_KOK         .SYRDW1
 
 SET resv(bd,bo) "Arcs from reservoirs" /                 
                                  
-Res_TOK         .Res_KAM         
-Res_NAR         .Res_TOK         
-NARYN           .Res_NAR         
+Res_KA1         .Res_NA1         
+Res_KA2         .Res_KA1         
+Res_TOK         .Res_KA2         
+Res_NA1         .Res_TOK         
+NARYN           .Res_NA1         
 KRDRYA          .Res_AND         
 SYRFER          .Res_FER         
 FER_UZB         .Res_FER         
@@ -146,9 +152,11 @@ SYRDW1          .Res_SHA
 SYRDW2          .Res_KOK         
 SYRDW2          .Res_ARY         
 Res_NUR         .Res_ROG         
-Res_VAH         .Res_NUR         
-VAKHSH          .Res_VAH         
-PYANDJ          .Res_DAS         
+Res_VA1         .Res_NUR         
+Res_VA2         .Res_VA1         
+VAKHSH          .Res_VA2         
+Res_PYD         .Res_DAS         
+PYANDJ          .Res_PYD         
 AMUMID          .Res_SUR         
 KAS_UZB         .Res_KAS         
 ZAR_TAD         .Res_ZAR         
@@ -254,7 +262,8 @@ FER_TAD         .SYRUPS
 UPA_TAD         .AMUUPS          
 ZAR_TAD         .AMUMID          
 UPA_AFG         .AMUUPS          
-Res_KAM         .SYRUPS          
+Res_KA1         .SYRUPS          
+Res_KA2         .SYRUPS          
 Res_TOK         .SYRUPS          
 Res_AND         .SYRUPS          
 Res_KAR         .SYRUPS          
@@ -278,10 +287,13 @@ Res_SUR         .AMUMID
 Res_KAS         .AMUMID          
 Res_TAL         .AMUMID          
 Res_BUK         .AMUMID          
-Res_NAR         .SYRUPS          
+Res_NA1         .SYRUPS          
+Res_NA2         .SYRUPS          
 Res_FAR         .SYRUPS          
-Res_VAH         .SYRUPS          
-Res_CHI         .SYRMID          
+Res_VA1         .AMUUPS          
+Res_VA2         .AMUUPS          
+Res_PYD         .AMUUPS          
+Res_CHI         .SYRUPS          
 Src_TOK         .SYRUPS          
 Src_NAR         .SYRUPS          
 Src_AND         .SYRUPS          
@@ -317,10 +329,6 @@ AMUMID          .AMUMID
 AMUDWN          .AMUDWN          
 Lak_AYD         .SYRMID          
 Lak_SYR         .SYRDWN          
-Lak_GOL         .AMUKAI          
-Lak_AMU         .AMUMID          
-Lak_ARS         .ARALSO          
-Lak_ARN         .ARALNO          
 /;
 
 SET bBas(b,rb0) "Basin node map" /                 
@@ -342,7 +350,8 @@ FER_TAD         .SYR
 UPA_TAD         .AMU             
 ZAR_TAD         .AMU             
 UPA_AFG         .AMU             
-Res_KAM         .SYR             
+Res_KA1         .SYR             
+Res_KA2         .SYR             
 Res_TOK         .SYR             
 Res_AND         .SYR             
 Res_KAR         .SYR             
@@ -366,9 +375,12 @@ Res_SUR         .AMU
 Res_KAS         .AMU             
 Res_TAL         .AMU             
 Res_BUK         .AMU             
-Res_NAR         .SYR             
+Res_NA1         .SYR             
+Res_NA2         .SYR             
 Res_FAR         .SYR             
-Res_VAH         .SYR             
+Res_VA1         .AMU             
+Res_VA2         .AMU             
+Res_PYD         .AMU             
 Res_CHI         .SYR             
 Src_TOK         .SYR             
 Src_NAR         .SYR             
@@ -405,10 +417,6 @@ AMUMID          .AMU
 AMUDWN          .AMU             
 Lak_AYD         .SYR             
 Lak_SYR         .SYR             
-Lak_GOL         .AMU             
-Lak_AMU         .AMU             
-Lak_ARS         .AMU             
-Lak_ARN         .SYR             
 /;
 
 SET sXsecIn(bs,bd,bo) /                                  

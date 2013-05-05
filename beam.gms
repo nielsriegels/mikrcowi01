@@ -60,9 +60,9 @@ SET bResBuild(b)        / Res_NUR, Res_TOK /;
 * =============================================================================
 * Include data driven maps (i.e. intake, reservoir and river arcs)
 * =============================================================================
-$offlisting
+*$offlisting
 $include "%path%30maps.inc";
-$onlisting
+*$onlisting
 
 SETS
     bRes(b)                 "Reservoir body"
@@ -78,9 +78,9 @@ SETS
 * =============================================================================
 * Include data tables on water flows, agriculture and economics
 * =============================================================================
-$offlisting
+*$offlisting
 $include "%path%40data.inc";
-$onlisting
+*$onlisting
 
 * TEMPORARY - replace with Excel entries
 SET cot(j)  / cot /;
@@ -92,8 +92,8 @@ SET alf(j)  / alf /;
 SET oth(j)  / mzf, mzg /;
 SET bNat(b) / Lak_ARS, Lak_ARN, Lak_Ayd /;
 SET caps3(c) / KAZ, UZB, KYR /
-SET caps5(c) / KAZ, UZB, KYR, TAD /
-SET caps6(c) / KAZ, UZB, KYR, TAD /
+SET caps5(c) / KAZ, UZB, KYR, TAD, TUR /
+SET caps6(c) / KAZ, UZB, KYR, TAD, TUR /
 
 * =============================================================================
 * Include defition of scenario

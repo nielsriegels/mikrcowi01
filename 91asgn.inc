@@ -59,7 +59,7 @@
 
 
 *  Index for minimum land use for crops in procent of base
-    iMinLnd(b,j)         = SUM(c$bCty(b,c), iMinLnd0(c,j,sSce));
+    iMinLnd(b,j)         = SUM(c$bCty(b,c), iMinLnd0(c,j))$(scenarios("rMKT",sSce) eq 0);
 
 * Calculate land share for CET function
     lShare(b,q,j)$jAF(j)    = (lnd0(b,q,j) / SUM(jj$jAF(jj), lnd0(b,q,jj)))$SUM(jj$jAF(jj), lnd0(b,q,jj));
@@ -138,14 +138,19 @@
 * Set reservoir buildup
     ctrfBuild               = scenarios("rBuild",sSce);
 
-* Set levels if first run
-IF(ord(sSce) eq 1,
+* Set tentative levels if first run
+IF(SUM((s,bd,bo,y,m), FLW.l(s,bd,bo,y,m)) eq 0,
 * Flow variable levels
-        YWR.l(b,q0,j,y)             = 1;
+        YWR.l(b,q,j,y)              = 1$lnd0(b,q,j);
+        iET.l(b,q,j,p,y)            = 1$lnd0(b,q,j);
+        LCH.l(s,b,y,m)                = qLch0(b,"nor")$mLch0(b,m);
         IRG.l(b,q,j,y,m)            = irg0(b,q,j,y,m);
-        ITK.l(s,bd,bo,y,m)          = itk0(bd,bo)/12;
-        FLW.l(s,bd,bo,y,m)          = flw0(bd,bo)/12;
-        DIS.l(s,bd,bo,y,m)          = dis0(bd,bo)/12;
+        ITK.l(s,bd,bo,y,m)          = SUM((q,j), irg0(bd,q,j,y,m))$intk(bd,bo);
+        DIS.l(s,bd,bo,y,m)          = 0.5*reservoirs(bo,"capacity")*3600*30/1000000;
+        FLW.l(s,bd,bo,y,m)          = SUM(b, DIS.l(s,bo,b,y,m)$resv(bo,b) + sup0(s,bo,y,m)$flow(bd,bo));
+        FLW.l(s,bd,bo,y,m)$(FLW.l(s,bd,bo,y,m) eq 0)          = SUM(b, FLW.l(s,bo,b,y,m)$flow(bo,b));
+        FLW.l(s,bd,bo,y,m)$(FLW.l(s,bd,bo,y,m) eq 0)          = SUM(b, FLW.l(s,bo,b,y,m)$flow(bo,b));
+        FLW.l(s,bd,bo,y,m)$(FLW.l(s,bd,bo,y,m) eq 0)          = SUM(b, FLW.l(s,bo,b,y,m)$flow(bo,b));
         LOS.l(s,b,l,y,m)            = lossRivers(b,l,m)*(rtn0(b,m) + sup(s,b,m) + SUM(bo, FLW.l(s,b,bo,y,m)+DIS.l(s,b,bo,y,m)));
         GRW.l(b,y,m)                = SUM(mS, grwtrMax(b,mS))$mBgn(m);
         HHI.l(s,sSec,b,y,m)         = HHIuse(sSec,b,m);

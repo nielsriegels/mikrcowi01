@@ -5,9 +5,9 @@
         objAGRweight(b)             = 0.001;
         objELYweight                = 0.001;
         objHPPweight(b,m)           = 0.001;
-        objDISweight("Res_ROG",m)   = -1000$mSum(m) + 1000$mWin(m);
-        objDISweight("Res_TOK",m)   = -1000$mSum(m) + 1000$mWin(m);
-        objDISweight("Res_NUR",m)   = -1000$mSum(m) + 1000$mWin(m);
+        objDISweight("Res_ROG",m)   = -10$mSum(m) + 10$mWin(m);
+        objDISweight("Res_TOK",m)   = -10$mSum(m) + 10$mWin(m);
+        objDISweight("Res_NUR",m)   = -10$mSum(m) + 10$mWin(m);
     );
 
 * Constrained optimisation - maximise summer discharges
@@ -15,15 +15,15 @@
         objAGRweight(b)             = 0.001;
         objELYweight                = 0.001;
         objHPPweight(b,m)           = 0.001;
-        objDISweight("Res_ROG",m)   = -1000$mWin(m) + 1000$mSum(m);
-        objDISweight("Res_TOK",m)   = -1000$mWin(m) + 1000$mSum(m);
-        objDISweight("Res_NUR",m)   = -1000$mWin(m) + 1000$mSum(m);
+        objDISweight("Res_ROG",m)   = -10$mWin(m) + 10$mSum(m);
+        objDISweight("Res_TOK",m)   = -10$mWin(m) + 10$mSum(m);
+        objDISweight("Res_NUR",m)   = -10$mWin(m) + 10$mSum(m);
     );
 
 * Constrained optimisation - maximise total HPP electricity
     IF(scenarios("wHPPall",sSce),
         objAGRweight(b)             = 0.001;
-        objHPPweight(b,m)           = 1000$( bCty(b,"KYR") or bCty(b,"TAD"));
+        objHPPweight(b,m)           = 10$( bCty(b,"KYR") or bCty(b,"TAD"));
         objELYweight                = 0.001;
         objDISweight(b,m)           = 0;
     );
@@ -31,7 +31,7 @@
 * Constrained optimisation - maximise winter HPP electricity
     IF(scenarios("wHPPwin",sSce),
         objAGRweight(b)             = 0.001;
-        objHPPweight(b,m)           = 1000$( (bCty(b,"KYR") or bCty(b,"TAD")) AND mWin(m) );
+        objHPPweight(b,m)           = 10$( (bCty(b,"KYR") or bCty(b,"TAD")) AND mWin(m) );
         objELYweight                = 0.001;
         objDISweight(b,m)           = 0;
     );

@@ -281,15 +281,21 @@ ELYMKT(c,g,y,m)..
          + SUM((s,bd,bo),           0.001*ITK(s,bd,bo,y,m)* elyPump(bd,bo))
          + SUM(cc$trx0(c,cc),       TRX(c,cc,g,y,m) )
          + elySAqExp(c,m) * elyHours(c,g,m)/24
+*        + XPT(c,g,y,m)
          ;
 
 * Transmission constraints between countries (trx0 in MW, TRX in GW)
 ELYTRX(c,cc,g,y,m)$trx0(c,cc)..
     TRX(c,cc,g,y,m) =l= 0.001 * 30 *trx0(c,cc) * elyHours(c,g,m)$transx(c,cc);
 
+* Exports out of CAPS area
+*ELYEXP(c,g,y,m)..
+*    XPT(c,g,y,m) =l= qXpt(c,y,m) * elyHours(c,g,m) / 24;
+
 * Serve unserved demand before starting any export
 SRVUSD1ST(c,g,y,m)..
     SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m)) =e= 0;
+*    SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m)) =e= 0;
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
@@ -342,30 +348,31 @@ LANDLIMIT(b,q,y)$SUM(j, lnd0(b,q,j))..
    +SUM(j, LND(b,q,j,y))$(not useCMX)
     =l= SUM(j, lnd0(b,q,j));
 
-* Objective is the total value of water from electricity, industry and agriculture scaled to million USD
+* Objective is the total value of water from electricity, industry and agriculture scaled to billion USD
 OBJ..   TWV =e=
                 SUM(b$objNODEweight(b),
-                    SUM((q,j,y)$crp0(b,q,j),                  CRP(b,q,j,y) * pCrop(b,j)                                   * objAGRweight(b)    ) / 1000000
-                   -SUM((q,j,y)$lnd0(b,q,j),                  LND(b,q,j,y) * cCrop(b,j)                                   * objAGRweight(b)    ) / 1000000
+                    SUM((q,j,y)$crp0(b,q,j),                  CRP(b,q,j,y) * pCrop(b,j)                                   * objAGRweight(b)    ) / 1000000000
+                   -SUM((q,j,y)$lnd0(b,q,j),                  LND(b,q,j,y) * cCrop(b,j)                                   * objAGRweight(b)    ) / 1000000000
 * CAUTION: The row below are operating costs depending on water use, e.g. power consumption - correct specification when receiving inv. data from Bekzod
-                   -SUM((q,j,y,m)$irg0(b,q,j,y,m),            IRG(b,q,j,y,m)*iInv("usdPerMM3")                            * objAGRweight(b)    ) / 1000000
+                   -SUM((q,j,y,m)$irg0(b,q,j,y,m),            IRG(b,q,j,y,m)*iInv("usdPerMM3")                            * objAGRweight(b)    ) / 1000000000
 * CAUTION: The irrigation investments are probably misspecified: they depend on exogenous land use, not actual - check this!!!
-                   -SUM((q,j,y)$lnd0(b,q,j),                  LND(b,q,j,y) * iInv("usdPerHa")                             * objAGRweight(b)    ) / 1000000
+                   -SUM((q,j,y)$lnd0(b,q,j),                  LND(b,q,j,y) * iInv("usdPerHa")                             * objAGRweight(b)    ) / 1000000000
                    -SUM((y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       )
               )+SUM(c$objCTYweight(c),
-                   -SUM((u,g,y,m)$tppMap(c,u),                TPP(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000                 * objELYweight       ) / 1000000
-                   -SUM((d,g,y,m)$usd0(c,g,d),                USD(g,c,d,y,m)*usd0(c,g,d)*1000                             * objELYweight       ) / 1000000
-                   +SUM(m$elySAqExp(c,m),                     elySAqExp(c,m)*elySApExp(c,m)*1000                          * objELYweight       ) / 1000000
+                   -SUM((u,g,y,m)$tppMap(c,u),                TPP(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000                 * objELYweight       ) / 1000000000
+                   -SUM((d,g,y,m)$usd0(c,g,d),                USD(g,c,d,y,m)*usd0(c,g,d)*1000                             * objELYweight       ) / 1000000000
+                   +SUM(m$elySAqExp(c,m),                     elySAqExp(c,m)*elySApExp(c,m)*1000                          * objELYweight       ) / 1000000000
+*                  +SUM(m$qXpt(c,y,m),                        qXpt(c,y,m)*pXpt(c,y,m)*1000                                * objELYweight       ) / 1000000000
 * CAPEX and OPEX expense due to conveyance system
                    -conveyanceCost(c)
               )
 * Constrained optimisation for HPP and discharges
-                   +SUM((b,g,y,m)$objHPPweight(b,m),            HPP(b,g,y,m)                                                * objHPPweight(b,m)  ) / 1000000
-                   +SUM((s,bd,bo,j,y,m)$objDISweight(bo,m),     (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000
+                   +SUM((b,g,y,m)$objHPPweight(b,m),            HPP(b,g,y,m)                                                * objHPPweight(b,m)  ) / 1000000000
+                   +SUM((s,bd,bo,j,y,m)$objDISweight(bo,m),     (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000000
 * Subtract a tiny amount from spill flows in reservoirs, so that DIS is preferred above FLW
-                   -SUM((s,bd,bo,y,m)$resv(bd,bo),              FLW(s,bd,bo,y,m) * 0.001                                                         ) / 1000000
+                   -SUM((s,bd,bo,y,m)$resv(bd,bo),              FLW(s,bd,bo,y,m) * 0.001                                                         ) / 1000000000
 * Add SRVSUD1st to objective function to help solver 
-                   -SUM((c,g,y,m),                            SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m))                    ) * 1000000
+*                   -SUM((c,g,y,m),                            SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m))         )
 ;
 
 

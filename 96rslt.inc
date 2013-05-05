@@ -172,12 +172,12 @@ $offtext
 
     rBorder(sSce,y,"Amu-TAD-TUR",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUMID","AMUUPS",y,m));
     rBorder(sSce,y,"Amu-TUR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
-    rBorder(sSce,y,"Syr-KYR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"NARYN","Res_NAR",y,m) + DIS.l(s,"NARYN","Res_NAR",y,m));
+    rBorder(sSce,y,"Syr-KYR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"NARYN","Res_NA2",y,m) + DIS.l(s,"NARYN","Res_NA2",y,m));
     rBorder(sSce,y,"Syr-UZB-TAD",m)      = SUM((s)$sW(s),               FLW.l(s,"Res_KAR","SYRFER",y,m) );
     rBorder(sSce,y,"Syr-TAD-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"Res_FAR","Res_KAR",y,m) + DIS.l(s,"Res_FAR","Res_KAR",y,m));
     rBorder(sSce,y,"Syr-UZB-KAZ",m)      = SUM((s)$sW(s),               ITK.l(s,"Res_SHA","SYRMID",y,m) + FLW.l(s,"Res_SHA","SYRMID",y,m) - ITK.l(s,"SYR_KAZ","SYRMID",y,m));
-    rBorder(sSce,y,"DwnToktogul",m)      = SUM((s)$sW(s),               DIS.l(s,"Res_NAR","Res_TOK",y,m)+FLW.l(s,"Res_NAR","Res_TOK",y,m));
-    rBorder(sSce,y,"DwnNurek",m)         = SUM((s)$sW(s),               DIS.l(s,"Res_VAH","Res_NUR",y,m)+FLW.l(s,"Res_VAH","Res_NUR",y,m));
+    rBorder(sSce,y,"DwnToktogul",m)      = SUM((s)$sW(s),               DIS.l(s,"Res_NA2","Res_TOK",y,m)+FLW.l(s,"Res_NA2","Res_TOK",y,m));
+    rBorder(sSce,y,"DwnNurek",m)         = SUM((s)$sW(s),               DIS.l(s,"Res_VA1","Res_NUR",y,m)+FLW.l(s,"Res_VA1","Res_NUR",y,m));
 
     rcView(sSce,y,"AgriSales",c)            =  SUM((b,q,j)$bCty(b,c),       CRP.l(b,q,j,y) * pCrop(b,j)  ) / 1000000;
     rcView(sSce,y,"AgriCosts",c)            = -SUM((b,q,j)$bCty(b,c),       LND.l(b,q,j,y) * cCrop(b,j)  ) / 1000000;
