@@ -15,7 +15,7 @@ execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, 
 USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 
 
-    IF($scenarios("run",sSce), 
+    IF(scenarios("run",sSce), 
 * Fix hydrological variables that can never be non-zero
         FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);
         FLW.up(s,bd,bo,y,m)$resv(bd,bo)                             = 99999$resv(bd,bo);
