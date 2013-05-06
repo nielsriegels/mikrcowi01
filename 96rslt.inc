@@ -71,6 +71,11 @@
     rcFlow(sSce,c,y,"ResVol","annual")      = rcFlow(sSce,c,y,"ResVol","annual") + 0.000001;
     rcFlow(sSce,c,y,"Balance","annual")         = rcFlow(sSce,c,y,"Balance","annual") + 0.000001;
 
+* 
+    rRbFlow(sSce,rb0,c,y,"InItk")          = SUM((s,bd,bo,m)$(sW(s) AND bCty(bd,c) AND bBas(bd,rb0)), ITK.l(s,bd,bo,y,m));
+    rRbFlow(sSce,rb0,c,y,"HydroProd")      = SUM((g,b,m)$(bCty(b,c) AND bBas(b,rb0)), HPP.l(b,g,y,m))/1000;
+
+
 * Agricultural line results
     rAgri(sSce,b,"WaterUse",y,j,q)            = SUM(m, IRG.l(b,q,j,y,m));
     rAgri(sSce,b,"WaterUseB",y,j,q)           = SUM(m, irg0(b,q,j,y,m));
@@ -181,6 +186,7 @@ $offtext
     rcElecBal(sSce,y,c,mS,"qTrxNet")   = SUM(m$mSm(m,mS),          rcElec(sSce,"qTrxNet",y,c,m));
     rcElecBal(sSce,y,c,mS,"qTrxSA")    = SUM(m$mSm(m,mS),          rcElec(sSce,"qTrxSA" ,y,c,m));
 
+
     rBorder(sSce,y,"Amu-TAD-TUR",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUMID","AMUUPS",y,m));
     rBorder(sSce,y,"Amu-TUR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
     rBorder(sSce,y,"Syr-KYR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"NARYN","Res_NA2",y,m) + DIS.l(s,"NARYN","Res_NA2",y,m));
@@ -280,9 +286,9 @@ $offtext
 
 
 *  1) "Agricultural results"
-    rRbAgri(sSce,y,"AgriProd",rb,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb)), rAgri(sSce,b,"AgriProd",y,j,q));
-    rRbAgri(sSce,y,"WaterUse",rb,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb)), rAgri(sSce,b,"WaterUse",y,j,q));
-    rRbAgri(sSce,y,"LandUse",rb,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb)), rAgri(sSce,b,"LandUse",y,j,q));
+    rRbAgri(sSce,y,"AgriProd",rb0,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb0)), rAgri(sSce,b,"AgriProd",y,j,q));
+    rRbAgri(sSce,y,"WaterUse",rb0,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb0)), rAgri(sSce,b,"WaterUse",y,j,q));
+    rRbAgri(sSce,y,"LandUse",rb0,c)          =    SUM((b,j,q)$(bCty(b,c) AND bBas(b,rb0)), rAgri(sSce,b,"LandUse",y,j,q));
 
     rRbAgri(sSce,y,"LandChg","AMU","KAZ")    =     0.000001;
     rRbAgri(sSce,y,"LandChg","AMU","KYR")    =     0.000001;
@@ -292,18 +298,18 @@ $offtext
 
 * 2)"Economic results"
 
-    rRbEcon(sSce,y,"AgriSales",rb,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"AgriSales",y,m)  );
-    rRbEcon(sSce,y,"AgriSales",rb,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"AgriSales",y,m)  );
-    rRbEcon(sSce,y,"AgriInc",rb,c)          =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"AgriInc",y,m)    );
-    rRbEcon(sSce,y,"IrrInvCost",rb,c)       =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"IrrInvCost",y,m) );
-    rRbEcon(sSce,y,"AgriCost",rb,c)         =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"AgriCost",y,m)   );
-    rRbEcon(sSce,y,"HydroCost",rb,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"HydroCost",y,m)  );
-    rRbEcon(sSce,y,"HydroProd",rb,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"HydroProd",y,m)  );
-    rRbEcon(sSce,y,"HydroInc",rb,c)         =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"HydroInc",y,m)   );
-    rRbEcon(sSce,y,"TotInc",rb,c)           =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)), rEcon(sSce,b,"TotInc",y,m)     );
-    rRbEcon(sSce,y,"TotInc","AMU","KAZ")    =     0.000001;
-    rRbEcon(sSce,y,"TotInc","AMU","KYR")    =     0.000001;
-    rRbEcon(sSce,y,"TotInc","SYR","TUR")    =     0.000001;
+    rrbEcon(sSce,y,"AgriSales",rb0,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)), rEcon(sSce,b,"AgriSales",y,m)  );
+    rrbEcon(sSce,y,"AgriSales",rb0,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)), rEcon(sSce,b,"AgriSales",y,m)  );
+    rrbEcon(sSce,y,"AgriInc",rb0,c)          =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)), rEcon(sSce,b,"AgriInc",y,m)    );
+    rrbEcon(sSce,y,"IrrInvCost",rb0,c)       =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)), rEcon(sSce,b,"IrrInvCost",y,m) );
+    rrbEcon(sSce,y,"AgriCost",rb0,c)         =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)), rEcon(sSce,b,"AgriCost",y,m)   );
+    rrbEcon(sSce,y,"HydroCost",rb0,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)), rEcon(sSce,b,"HydroCost",y,m)  );
+    rrbEcon(sSce,y,"HydroProd",rb0,c)        =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)), rEcon(sSce,b,"HydroProd",y,m)  );
+    rrbEcon(sSce,y,"HydroInc",rb0,c)         =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)), rEcon(sSce,b,"HydroInc",y,m)   );
+    rrbEcon(sSce,y,"TotInc",rb0,c)           =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)), rEcon(sSce,b,"TotInc",y,m)     );
+    rrbEcon(sSce,y,"TotInc","AMU","KAZ")    =     0.000001;
+    rrbEcon(sSce,y,"TotInc","AMU","KYR")    =     0.000001;
+    rrbEcon(sSce,y,"TotInc","SYR","TUR")    =     0.000001;
 
 
 * 3)  "Reservoir information")
@@ -322,12 +328,12 @@ $offtext
 *  4) "Description of reservoirs on basin level"
 
 
-    rRbResv(sSce,y,"HydroCost",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rEcon(sSce,b,"HydroCost",y,m)    );
-    rRbResv(sSce,y,"HydroInc",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rEcon(sSce,b,"HydroInc",y,m)     );
-    rRbResv(sSce,y,"HydroProd",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"HydroProd",b,m)    );
-    rRbResv(sSce,y,"Discharge",rb,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"Discharge",b,m)    );
-    rRbResv(sSce,y,"Overflow",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"Overflow",b,m)     );
-    rRbResv(sSce,y,"ResLevel",rb,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb)),   rResv(sSce,y,"Reslevel",b,m)     );
+    rrbResv(sSce,y,"HydroCost",rb0,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)),   rEcon(sSce,b,"HydroCost",y,m)    );
+    rrbResv(sSce,y,"HydroInc",rb0,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)),   rEcon(sSce,b,"HydroInc",y,m)     );
+    rrbResv(sSce,y,"HydroProd",rb0,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)),   rResv(sSce,y,"HydroProd",b,m)    );
+    rrbResv(sSce,y,"Discharge",rb0,c)     =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)),   rResv(sSce,y,"Discharge",b,m)    );
+    rrbResv(sSce,y,"Overflow",rb0,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)),   rResv(sSce,y,"Overflow",b,m)     );
+    rrbResv(sSce,y,"ResLevel",rb0,c)      =     SUM((b,m)$(bCty(b,c) AND bBas(b,rb0)),   rResv(sSce,y,"Reslevel",b,m)     );
 
 
 

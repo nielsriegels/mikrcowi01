@@ -46,6 +46,7 @@ PARAMETERS
     rFlow(sSce,b,e_resFlow,y0,m0)   "Flow of water through bodies"
     rcFlow(sSce,c,y0,e_resFlow,m0)  "Flow of water by country"
     rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
+    rRbFlow(sSce,rb0,c,y0,*)        "Flow of water by basin in country" 
     rAgri(sSce,b,e_resAgri,y0,j,q0) "Agricultural results for zone parttions"
     rIrg(sSce,b,e_resIrg,y0,p,j,q0) "Irrigation results by zone, partition and growth phase"
     rEcon(sSce,b,e_resEcon,y0,m0)   "Economical results for zone"
@@ -58,10 +59,10 @@ PARAMETERS
     rBorder(sSce,y0,e_resBorder,m0) "Border flows (mm3)"
     checkoutput(*,sSce)             "Check of output values for no-change control"
 
-    rRbAgri(sSce,y0,e_resAgri,rb,c) "Agricultural results"
-    rRbEcon(sSce,y0,*,rb,c)         "Economic results"
+    rRbAgri(sSce,y0,e_resAgri,rb0,c) "Agricultural results"
+    rRbEcon(sSce,y0,*,rb0,c)         "Economic results"
     rResv(sSce,y0,*,b,m)            "Reservoir information"
-    rRbResv(sSce,y0,*,rb,c)       "Description of reservoirs on basin level"
+    rRbResv(sSce,y0,*,rb0,c)       "Description of reservoirs on basin level"
 
 * Temporary - to be replaced or deleted
     trx0(c,cc)
