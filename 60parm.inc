@@ -62,7 +62,7 @@ PARAMETERS
     rResv(sSce,y0,*,b,m)            "Reservoir information"
     rRbResv(sSce,y0,*,rb,c)       "Description of reservoirs on basin level"
 
-   rRbFlow(sSce,rb0,c,y0,e_resFlow)  "Flow of water by basin in country"
+   rRbFlow(sSce,rb0,c,y0,*)  "Flow of water by basin in country"
 
 * Temporary - to be replaced or deleted
     trx0(c,cc)

@@ -78,6 +78,9 @@
 
 * Sum up for countries in basin
     rRbFlow(sSce,rb0,c,y,"InItk")          = SUM((s,bd,bo,m)$(sW(s) AND bCty(bd,c) AND bBas(bd,rb0)), ITK.l(s,bd,bo,y,m));
+    rRbFlow(sSce,rb0,c,y,"HydroProd")      = SUM((g,b,m)$(bCty(b,c) AND bBas(b,rb0)), HPP.l(b,g,y,m))/1000;
+
+
 
 * Agricultural line results
     rAgri(sSce,b,"WaterUse",y,j,q)            = SUM(m, IRG.l(b,q,j,y,m));
@@ -105,7 +108,7 @@
     rEcon(sSce,b,"AgriInc",y,m)             = rEcon(sSce,b,"AgriSales",y,m) - rEcon(sSce,b,"AgriCost",y,m);
     rEcon(sSce,b,"HydroCost",y,m)           = -reservoirs(b,"cost")$(not bResNOP(b));
     rEcon(sSce,b,"HydroInc",y,m)            = -SUM(g, HPP.l(b,g,y,m) * SUM(c$bCty(b,c), ELYMKT.m(c,g,y,m)) ) + rEcon(sSce,b,"HydroCost",y,m);
-    rEcon(sSce,b,"HydroProd",y,m)           = SUM(g, HPP.l(b,g,y,m));
+    rEcon(sSce,B,"HydroProd",y,m)           = SUM(g, HPP.l(b,g,y,m));
     rEcon(sSce,b,"HydroHead",y,m)           = HHD.l(b,y,m)$bResEly(b);
     rEcon(sSce,b,"HydroGain",y,m)           = -( 1000*rEcon(sSce,b,"HydroProd",y,m) / rFlow(sSce,b,"OutDis",y,m) )$rFlow(sSce,b,"OutDis",y,m);
     rEcon(sSce,b,"TotInc",y,m)              = rEcon(sSce,b,"AgriInc",y,m) + rEcon(sSce,b,"HydroInc",y,m);
