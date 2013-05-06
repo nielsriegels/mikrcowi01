@@ -78,7 +78,7 @@
     rAgri(sSce,b,"YWR",y,j,q)                 = 100*YWR.l(b,q,j,y);
     rAgri(sSce,b,"ActMarg",y,j,q)$lnd0(b,q,j) = (pCrop(j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
     rAgri(sSce,b,"OptMarg",y,j,q)$lnd0(b,q,j) = (pCrop(j)* crp0(b,q,j)   - cCrop(b,j) *lnd0(b,q,j)  )/ lnd0(b,q,j);
- 
+
 * Economic results, line
     rEcon(sSce,b,"AgriSales",y,m)           = 0.000001*SUM((q,j), pCrop(j)*CRP.l(b,q,j,y) ) / 12;
     rEcon(sSce,b,"AgriCost",y,m)            = 0.000001*SUM((q,j), cCrop(b,j)*LND.l(b,q,j,y) ) / 12;
@@ -247,6 +247,8 @@ $offtext
     rRbAgri(sSce,y,"LandChg","SYR","TUR")    =     0.000001;
     rRbAgri(sSce,y,"LandChg","SYR","TUR")    =     0.000001;
 
+    rRbAgri(sSce,y,"cotton",rb,c)            = SUM((b,q)$(bCty(b,c) AND bBas(b,rb)), rAgri(sSce,b,"AgriProd",y,"cot",q));
+    rRbAgri(sSce,y,"wheat",rb,c)            =  SUM((b,q)$(bCty(b,c) AND bBas(b,rb)), rAgri(sSce,b,"AgriProd",y,"wht",q));
 
 * 2)"Economic results"
 
@@ -297,4 +299,3 @@ $offtext
     rBorder(sSce,y,e_resBorder,"nvg")    = sum(m$mWin(m),  rBorder(sSce,y,e_resBorder,m));
     rBorder(sSce,y,e_resBorder,"veg")    = sum(m$mSum(m),  rBorder(sSce,y,e_resBorder,m));
     rBorder(sSce,y,e_resBorder,"annual") = sum(m,  rBorder(sSce,y,e_resBorder,m));
-

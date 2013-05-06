@@ -80,6 +80,7 @@ EQUATIONS
     LANDLIMIT(b,y0)             "Maximum land use"
     AGRCMX(b,q0,j,y0)           "Convert crop mix land use to crop land use"
     OBJ                         "Objective function"
+    WATERSENSITIVITY(b,q0,j,y0,m0) "Water sensitivity - testing the yield function."
 ;
 
 * Water balance by nodes:
@@ -114,7 +115,7 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
                         + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
                         + sup(s,b,m)
                         + rtn0(b,m) )
-                     + lossChannels(b,l,m) * SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) 
+                     + lossChannels(b,l,m) * SUM(bo$intk(b,bo), ITK(s,b,bo,y,m))
 ;
 
 
@@ -138,7 +139,7 @@ IRGACT(b,q,j,y,m)$(irg0(b,q,j,y,m) AND noYWR and useCET)..
     IRG(b,q,j,y,m) =e= (LND(b,q,j,y)/lnd0(b,q,j))*irg0(b,q,j,y,m) * (1-iInv("improve"));
 
 * Yield water response function
-* Summed over growth phases with appropriate phase weights and phase specific crop yield 
+* Summed over growth phases with appropriate phase weights and phase specific crop yield
 YIELDWATER1(b,q,j,y)$((not noYWR) AND lnd0(b,q,j))..
 *    YWR(b,q,j,y) =e= 1 - SUM(p$etcP(b,j,p),  wPhase(b,j,p) * (1 - kYield(p,j) * iET(b,q,j,p,y))  );
     YWR(b,q,j,y) =e=     SUM(p$etcP(b,j,p),  wPhase(b,j,p) * (1 - kYield(p,j)*(1-iET(b,q,j,p,y)))  );
@@ -167,7 +168,7 @@ SEAVOL(s,b,y,m)$sea(b)..
 RESVOL(s,b,y,m)$(bRes(b) and (not resVolFix(b,y,m))  )..
     ( VOL(s,b,y,m) - SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)) ) * scalem3$bResSto(b)
         =e=   (
-                                           + STO(s,b,y,m) 
+                                           + STO(s,b,y,m)
                                            - SUM(bd$resv(bd,b), DIS(s,bd,b,y,m))
                                            - SUM(bd$resv(bd,b), FLW(s,bd,b,y,m))
                                            -ctrfBuild*reservoirs(b,"max")$(mBgn(m) AND bResBuild(b))
@@ -181,7 +182,7 @@ RESVOLMAX(b,y,m)$bRes(b)..
 RESVOLMIN(b,y,m)$bRes(b)..
     SUM(s$sW(s), VOL(s,b,y,m)) * scalem3 =g= (reservoirs(b,"min") * scalem3)$bResSto(b);
 
-* Maximal discharge through turbines 
+* Maximal discharge through turbines
 RESDISMAX(s,b,y,m)$(bRes(b) and (resVolFix(b,y,m) eq 0) )..
     SUM(bd$resv(bd,b), DIS(s,bd,b,y,m)) * scalem3 =l= scalem3 * resDisMax0(b,m);
 
@@ -206,7 +207,7 @@ RESHHDMAX(b,y,m)$maxHead(b)..
 * Filled reservoirs produce more per m3 than half empty
 * OBS: Check how average volume is calcuated in the start and end months!
 ELYHEAD(b,y,m)$bResEly(b)..
-    HHD(b,y,m)  =e= SUM(s$sW(s),  
+    HHD(b,y,m)  =e= SUM(s$sW(s),
                           reservoirs(b,"coef_a")
                          +reservoirs(b,"coef_b") *      (VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2
                          +reservoirs(b,"coef_c") *POWER((VOL(s,b,y,m)+SUM((yy,mm)$mLast(y,m,yy,mm), VOL(s,b,yy,mm)))/2 , 2)
@@ -216,9 +217,9 @@ ELYHEAD(b,y,m)$bResEly(b)..
 ELYSEG(b,g,y,m)$bResEly(b)..
     HPP(b,g,y,m) =l= 0.001 * 30 * reservoirs(b,"effect") * SUM(c$bCty(b,c), elyHours(c,g,m)) ;
 
-* HPP production is 1 kg * m * m/s^2 = 1 Joule 
+* HPP production is 1 kg * m * m/s^2 = 1 Joule
 * Since we use million m3 (=billion kg) as weight unit, the energy unit is GJ
-* We convert to GWh using 1 GWh = 3.6 TJ 
+* We convert to GWh using 1 GWh = 3.6 TJ
 ELYHPP(b,y,m)$bResEly(b)..
     SUM(g, HPP(b,g,y,m)) =e= 0.001 * gravity * reservoirs(b,"coef_eta") * SUM((s,bd)$resv(bd,b), DIS(s,bd,b,y,m)$sW(s)) * HHD(b,y,m) / 3.6;
 
@@ -240,10 +241,10 @@ ELYDEM(c,g,y,m)$elyDemand0(c,g,m)..
 * RHS is supply, LHS is demand, unit is GWh
 ELYMKT(c,g,y,m)..
            SUM(cc$trx0(cc,c),       TRX(cc,c,g,y,m) )
-         + SUM(u$tppMap(c,u),       TPP(c,u,g,y,m)) 
+         + SUM(u$tppMap(c,u),       TPP(c,u,g,y,m))
          + SUM(b$bResEly(b),        HPP(b,g,y,m)$bCty(b,c))
          + SUM(d$usd0(c,g,d),       USD(g,c,d,y,m))
-    =e=    
+    =e=
            DEM(g,c,y,m)
          + SUM((s,bd,bo),           0.001*ITK(s,bd,bo,y,m)* elyPump(bd,bo))
          + SUM(cc$trx0(c,cc),       TRX(c,cc,g,y,m) )
@@ -283,9 +284,9 @@ SUM(q, LND(b,q,j,y)) =g= SUM(q, lnd0(b,q,j)* iMinLnd(b,j));
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
 LEONTIEF(b,q,j,y)$lnd0(b,q,j)..
-    ( CRP(b,q,j,y) / crp0(b,q,j) ) =e= 
-        YWR(b,q,j,y) * (LND(b,q,j,y)/lnd0(b,q,j)) * (1$jAX(j) 
-                                                     +useCET*SUM(jj$lShare(b,q,jj), lShare(b,q,jj)*( CRP(b,q,jj,y) / crp0(b,q,jj) ) )$jAF(j) 
+    ( CRP(b,q,j,y) / crp0(b,q,j) ) =e=
+        YWR(b,q,j,y) * (LND(b,q,j,y)/lnd0(b,q,j)) * (1$jAX(j)
+                                                     +useCET*SUM(jj$lShare(b,q,jj), lShare(b,q,jj)*( CRP(b,q,jj,y) / crp0(b,q,jj) ) )$jAF(j)
                                                      +1$((not useCET) AND jAF(j))
                                                      ) ;
 
@@ -298,7 +299,7 @@ FIXEDLAND(b,q,j,y)$(lnd0(b,q,j) AND jAX(j))..
     ( LND(b,q,j,y) / lnd0(b,q,j) )$jAX(j)   =e= 1;
 
 * Land allocation from crop mix to land use
-* (crop mix covers a whole year, while crop mix may have 2nd crops 
+* (crop mix covers a whole year, while crop mix may have 2nd crops
 *  so land use can exceed available land, while crop mix use cannot)
 AGRCMX(b,q,j,y)$(lnd0(b,q,j))..
     LND(b,q,j,y) =e= SUM(x$cmx2lnd(b,j,x), cmx2lnd(b,j,x)*CMX(b,q,x,y));
@@ -308,6 +309,11 @@ LANDLIMIT(b,y)$SUM((q,j), lnd0(b,q,j))..
     SUM((q,x), CMX(b,q,x,y))$useCMX
    +SUM((q,j), LND(b,q,j,y))$(not useCMX)
     =l= SUM((q,j), lnd0(b,q,j));
+
+* Limit the water supply to each water zone to test capability. Numbers should be adjustable
+WATERSENSITIVITY(b,q0,j,y0,m0)$scenarios("waterLim", "s38")..
+IRG(b,q0,j,y0,m0) =l=  irg0(b,q0,j,y0,m0)  * SUM(sSce,scenarios("waterLim", "s38"));
+*("waterLim",sSce)) ;
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to million USD
 OBJ..   TWV =e=
@@ -331,16 +337,16 @@ OBJ..   TWV =e=
                    +SUM((s,bd,bo,j,y,m)$objDISweight(bo,m),     (DIS(s,bd,bo,y,m)+FLW(s,bd,bo,y,m))                         * objDISweight(bo,m) ) / 1000000
 * Subtract a tiny amount from spill flows in reservoirs, so that DIS is preferred above FLW
                    -SUM((s,bd,bo,y,m)$resv(bd,bo),              FLW(s,bd,bo,y,m) * 0.001                                                         ) / 1000000
-* Add SRVSUD1st to objective function to help solver 
+* Add SRVSUD1st to objective function to help solver
                    -SUM((c,g,y,m),                            SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m))                    ) * 1000000
 ;
 
 
 MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS
-                RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN, RESHHDMAX, 
+                RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN, RESHHDMAX,
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
-                ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
-                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, RETURNWATER
+                ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST,
+                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1, YIELDWATER2, iEVAPOTRANS, RETURNWATER, WATERSENSITIVITY,
                 OBJ
                 /;
 
@@ -350,4 +356,3 @@ beam.tolinfrep      = 0.001;
 beam.limrow         = 0;
 beam.limcol         = 0;
 beam.iterlim        = 50000;
-

@@ -62,7 +62,7 @@ PARAMETERS
     rBorder(sSce,y0,e_resBorder,m0) "Border flows (mm3)"
     checkoutput(*,sSce)             "Check of output values for no-change control"
 
-    rRbAgri(sSce,y0,e_resAgri,rb,c) "Agricultural results"
+    rRbAgri(sSce,y0,*,rb,c) "Agricultural results"
     rRbEcon(sSce,y0,*,rb,c)         "Economic results"
     rResv(sSce,y0,*,b,m)            "Reservoir information"
     rRbResv(sSce,y0,*,rb,c)       "Description of reservoirs on basin level"
