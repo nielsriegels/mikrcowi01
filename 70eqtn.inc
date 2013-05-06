@@ -100,7 +100,7 @@ WBALANCE(s,b,y,m)..
    + STO(s,b,y,m)$sea(b)
    + STO(s,b,y,m)$bRes(b)
    + SUM((q,j)$irg0(b,q,j,y,m), IRG(b,q,j,y,m))
-   + LCH(s,b,y,m)
+   + LCH(s,b,y,m)$bPlz(b)
    + SUM(sSec$HHIuse(sSec,b,m), HHI(s,sSec,b,y,m))
    + LOS(s,b,"seep",y,m)
 

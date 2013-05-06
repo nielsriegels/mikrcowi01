@@ -134,8 +134,8 @@ SET resv(bd,bo) "Arcs from reservoirs" /
 Res_KA1         .Res_NA1         
 Res_KA2         .Res_KA1         
 Res_TOK         .Res_KA2         
-Res_NA1         .Res_TOK         
-NARYN           .Res_NA1         
+Res_NA2         .Res_TOK         
+NARYN           .Res_NA2         
 KRDRYA          .Res_AND         
 SYRFER          .Res_FER         
 FER_UZB         .Res_FER         

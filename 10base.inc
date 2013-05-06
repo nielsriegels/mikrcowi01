@@ -204,13 +204,13 @@ SETS
 
     e_resElec /
         qDemNot         "Notional demand (GWh)"
+        qSupTPP         "Thermal electricity production (GWh)"
+        qSupHPP         "Hydro electricity production (GWh)"
+        qSupTot         "Electricity production (GWh)"
         qDemSrv         "Served demand (GWh)"
         qDemUsd         "Unserved demand (GWh)"
         qTrxNet         "Net CAPS electricity export (GWh)"
         qTrxSA          "Export to SA (GWh)"         
-        qSupTot         "Electricity production (GWh)"
-        qSupHPP         "Hydro electricity production (GWh)"
-        qSupTPP         "Thermal electricity production (GWh)"
         vCstTPP         "Thermal costs (mUSD)"
         vCstUSD         "Unserved demand costs (mUSD)"
         vCstCPX         "Capital costs (mUSD)"
