@@ -14,7 +14,6 @@ execute '%path%solutions\renameS.cmd';
 execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, TRX, DEM, USD, YWR, iET, CRP, LND, CMX, TWV ;
 USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 
-
     IF(scenarios("run",sSce), 
 * Fix hydrological variables that can never be non-zero
         FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);

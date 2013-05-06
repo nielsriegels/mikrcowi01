@@ -27,12 +27,13 @@ SET scOptions /
     transx      "Allow electricity transmission between KAZ-KYR-UZB-TAD"
 /;
 
-SCALAR xferResults "Transfer earlier results saved in GDX to output GDX and XLS" / 0 /;
+SCALAR xferResults "Transfer earlier results saved in GDX to output GDX and XLS" / 1 /;
 
 *        ENERGY SCENARIOS                   TEST AGRICULTURE SHOCK REACT.     SCEN. OF INTEREST                     Sequencing                         FAO data and YWR test
 TABLE scenarios(scOptions,sSce) "Scenario definition table"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17   s18 s19 s20 s21 s22 s23 s24 s25         s30 s31 s32 s33 s34 s35              s40 s41 s42 s43 s44 s45
-run     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   0   0                0   0   0   0   0   0  
+run     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                0   0   0   0   0   0  
+*run     0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0  
 *run     0   0   0   0   0   1   1   1   1   1   1   1   1   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0  
 *run     0   0   0   0   0   1   1   1   1   1   1   1   1   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
 *run     0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     1   1   1   1   1   1   1   1           0   0   0   0   0   0                0   0   0   0   0   0   
@@ -50,8 +51,8 @@ SAexp   0   0   0   0   1   0   0   0   1   0   0   0   1   0   0   0   0     0 
 fallow  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
 rBuild  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
 transx  0   0   5   5   5   0   5   5   5   0   5   5   5   0   5   5   5     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-nukus   1   0   0   0   0   1   1   1   1   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   1   0   0   0   
-wSingle 1   1   1   1   1   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           1   1   1   0   0   0                0   0   0   0   0   0   
+nukus   1   0   0   0   0   1   1   1   1   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           1   1   1   0   0   0                0   0   1   0   0   0   
+wSingle 1   1   1   1   1   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           1   1   1   1   1   1                0   0   0   0   0   0   
 wHPPwin 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     1   0   0   0   1   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
 wHPPall 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   1   0   0   0   1   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
 wDISwin 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   1   0   0   0   1   0           0   0   0   0   0   0                0   0   0   0   0   0   

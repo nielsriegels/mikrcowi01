@@ -87,10 +87,10 @@
     rAgri(sSce,b,"AgriProd",y,j,q)            = CRP.l(b,q,j,y)/1000;
     rAgri(sSce,b,"YWR",y,j,q)                 = 100*YWR.l(b,q,j,y);
 *    rAgri(sSce,b,"iET",y,j,q)                 = 100*YWR.l(b,q,j,y);
-    rAgri(sSce,b,"ActMarg",y,j,q)$lnd0(b,q,j) = (pCrop(b,j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
+    rAgri(sSce,b,"ActMarg",y,j,q)$LND.l(b,q,j,y) = (pCrop(b,j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
     rAgri(sSce,b,"OptMarg",y,j,q)$lnd0(b,q,j) = (pCrop(b,j)* crp0(b,q,j)   - cCrop(b,j) *lnd0(b,q,j)  )/ lnd0(b,q,j);
  
-    rIrg(sSce,b,"ActET",y,p,j,q)$lnd0(b,q,j)    = 1000000*SUM(m, IRG.l(b,q,j,y,m)*etcM2p(b,j,p,m)) / LND.l(b,q,j,y);
+    rIrg(sSce,b,"ActET",y,p,j,q)$LND.l(b,q,j,y)    = 1000000*SUM(m, IRG.l(b,q,j,y,m)*etcM2p(b,j,p,m)) / LND.l(b,q,j,y);
     rIrg(sSce,b,"OptET",y,p,j,q)$lnd0(b,q,j)    = etcP(b,j,p)*1000;
     rIrg(sSce,b,"iET",y,p,j,q)$lnd0(b,q,j)      = iET.l(b,q,j,p,y)*100;
     rIrg(sSce,b,"wPhase",y,p,j,q)$lnd0(b,q,j)   = wPhase(b,j,p)*100;
