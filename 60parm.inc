@@ -39,8 +39,8 @@ PARAMETERS
     useCET                          "Enable CET function for land yield response"
     useCMX                          "Enable Crop mix method"
     useNukus                        "Allocate water in accoradance with Nukus agreement"
-    elySApExp(c,m0)                 "Electricity export price to South Asia (USD/MWh)"
-    elySAqExp(c,m0)                 "Electricity export quantity to South Asia (MWh/month)"
+    pXpt(c,m0)                      "Electricity export price extra CAPS (USD/MWh)"
+    qXpt(c,m0)                      "Electricity export quantity extra CAPS (MW)"
 
 * Parameters for reporting of results to Excel
     rFlow(sSce,b,e_resFlow,y0,m0)   "Flow of water through bodies"
@@ -54,6 +54,7 @@ PARAMETERS
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
     rcView(sSce,y0,e_resView,c)     "Overview results summarised by scenario and country"
     rcElec(sSce,e_resElec,y0,c,m0)  "Electricity market results"
+    rcElecBal(sSce,y0,c,m0,e_resElec) "Electricity market balance bi-season"
     rBorder(sSce,y0,e_resBorder,m0) "Border flows (mm3)"
     checkoutput(*,sSce)             "Check of output values for no-change control"
 

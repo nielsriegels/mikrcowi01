@@ -19,7 +19,8 @@ POSITIVE VARIABLES
     TPP(c,u,g0,y0,m0)       "Thermal power production (GWh)"
     USD(g0,c,d0,y0,m0)      "Unserved demand (GWh)"
     DEM(g0,c,y0,m0)         "Served demand (GWh)"
-    TRX(c,cc,g0,y0,m0)      "Export of electricity from c to cc (GWh)"
+    TRX(c,cc,g0,y0,m0)      "Export of electricity intra CAPS from c to cc (GWh)"
+    XPT(c,g,y0,m0)          "Export of electricity out of CAPS (GWh)"
     RTN(s,bd,bo,y0,m0)      "Return of water from irrigating the fields (mm3)"
 VARIABLES
     TWV                     "Total water value (USD)"
@@ -40,6 +41,7 @@ OPTIONS CMX:0:2:2;
 OPTIONS YWR:4:2:2;
 OPTIONS iET:4:3:2;
 OPTIONS TRX:0:3:2;
+OPTIONS XPT:0:2:2;
 
 EQUATIONS
 * Hydrological constraints and identities
@@ -64,7 +66,8 @@ EQUATIONS
     ELYTPP(c,u,g0,y0,m0)        "Thermal power production"
     ELYDEM(c,g0,y0,m0)          "Electricity demand"
     ELYUSD(g0,c,d0,y0,m0)       "Unserved demand steps"
-    ELYTRX(c,cc,g0,y0,m0)       "Export of electricity from c to cc"
+    ELYTRX(c,cc,g0,y0,m0)       "Export of electricity intra CAPS from c to cc"
+    ELYEXP(c,g,y0,m0)           "Export of electricity out of CAPS"
     ELYMKT(c,g,y0,m0)           "Power market balance"
     SRVUSD1ST(c,g,y0,m0)        "Serve unserved demand before exports"
     MININFLOW(b,y0,m0)          "Minimum inflow to body"
@@ -269,21 +272,21 @@ ELYMKT(c,g,y,m)..
            DEM(g,c,y,m)
          + SUM((s,bd,bo),           0.001*ITK(s,bd,bo,y,m)* elyPump(bd,bo))
          + SUM(cc$trx0(c,cc),       TRX(c,cc,g,y,m) )
-         + elySAqExp(c,m) * elyHours(c,g,m)/24
-*        + XPT(c,g,y,m)
+*         + elySAqExp(c,m) * elyHours(c,g,m)/24
+        + XPT(c,g,y,m)
          ;
 
 * Transmission constraints between countries (trx0 in MW, TRX in GW)
 ELYTRX(c,cc,g,y,m)$trx0(c,cc)..
-    TRX(c,cc,g,y,m) =l= 0.001 * 30 *trx0(c,cc) * elyHours(c,g,m)$transx(c,cc);
+    TRX(c,cc,g,y,m) =l= 0.001 * 30 * trx0(c,cc) * elyHours(c,g,m)$transx(c,cc);
 
 * Exports out of CAPS area
-*ELYEXP(c,g,y,m)..
-*    XPT(c,g,y,m) =l= qXpt(c,y,m) * elyHours(c,g,m) / 24;
+ELYEXP(c,g,y,m)$qXpt(c,m)..
+    XPT(c,g,y,m) =l= 0.001 * 30 * qXpt(c,m) * elyHours(c,g,m);
 
 * Serve unserved demand before starting any export
 SRVUSD1ST(c,g,y,m)..
-    SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m)) =e= 0;
+    (SUM(cc$transx(c,cc), TRX(c,cc,g,y,m))+XPT(c,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m)) =e= 0;
 *    SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m)) =e= 0;
 
 * Maximum seasonal ground water extraction
@@ -338,6 +341,7 @@ LANDLIMIT(b,q,y)$SUM(j, lnd0(b,q,j))..
     =l= SUM(j, lnd0(b,q,j));
 
 * Objective is the total value of water from electricity, industry and agriculture scaled to billion USD
+* Note: reservoir costs are stated in million USD/year
 OBJ..   TWV =e=
                 SUM(b$objNODEweight(b),
                     SUM((q,j,y)$crp0(b,q,j),                  CRP(b,q,j,y) * pCrop(b,j)                                   * objAGRweight(b)    ) / 1000000000
@@ -346,12 +350,12 @@ OBJ..   TWV =e=
                    -SUM((q,j,y,m)$irg0(b,q,j,y,m),            IRG(b,q,j,y,m)*iInv("usdPerMM3")                            * objAGRweight(b)    ) / 1000000000
 * CAUTION: The irrigation investments are probably misspecified: they depend on exogenous land use, not actual - check this!!!
                    -SUM((q,j,y)$lnd0(b,q,j),                  LND(b,q,j,y) * iInv("usdPerHa")                             * objAGRweight(b)    ) / 1000000000
-                   -SUM((y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       )
+                   -SUM((y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       ) / 1000
               )+SUM(c$objCTYweight(c),
                    -SUM((u,g,y,m)$tppMap(c,u),                TPP(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000                 * objELYweight       ) / 1000000000
                    -SUM((d,g,y,m)$usd0(c,g,d),                USD(g,c,d,y,m)*usd0(c,g,d)*1000                             * objELYweight       ) / 1000000000
-                   +SUM(m$elySAqExp(c,m),                     elySAqExp(c,m)*elySApExp(c,m)*1000                          * objELYweight       ) / 1000000000
-*                  +SUM(m$qXpt(c,y,m),                        qXpt(c,y,m)*pXpt(c,y,m)*1000                                * objELYweight       ) / 1000000000
+*                   +SUM(m$elySAqExp(c,m),                     elySAqExp(c,m)*elySApExp(c,m)*1000                          * objELYweight       ) / 1000000000
+                   +SUM((g,y,m)$qXpt(c,m),                    XPT(c,g,y,m)*pXpt(c,m)*1000                                 * objELYweight       ) / 1000000000
 * CAPEX and OPEX expense due to conveyance system
                    -conveyanceCost(c)
               )

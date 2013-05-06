@@ -21,6 +21,7 @@
     rFlow(sSce,b,"OutSto",y,m)              = -SUM(s$sW(s), STO.l(s,b,y,m));
     rFlow(sSce,b,"OutDis",y,m)              = -SUM((s,bd)$sW(s), DIS.l(s,bd,b,y,m)$(not sea(bd)) );
     rFlow(sSce,b,"OutFlw",y,m)              = -SUM((s,bd)$sW(s), FLW.l(s,bd,b,y,m)$(not sea(bd)) );
+* OBS: Maybe limit to intakes to planning zones?
     rFlow(sSce,b,"OutInt",y,m)              = -SUM((s,bd)$sW(s), ITK.l(s,bd,b,y,m)$(not sea(bd)) );
     rFlow(sSce,b,"OutLak",y,m)              = -SUM((s,bd)$sW(s), (ITK.l(s,bd,b,y,m)+FLW.l(s,bd,b,y,m)+DIS.l(s,bd,b,y,m))$sea(bd) );
     rFlow(sSce,b,"OutLos",y,m)              = -SUM((s,l)$sW(s), LOS.l(s,b,l,y,m));
@@ -139,7 +140,7 @@ $offtext
     rcElec(sSce,"qDemSrv",y,c,m)        =  SUM(g,                   -DEM.l(g,c,y,m) + SUM(d, USD.l(g,c,d,y,m)));
     rcElec(sSce,"qDemUsd",y,c,m)        =  SUM((g,d),               USD.l(g,c,d,y,m));
     rcElec(sSce,"qTrxNet",y,c,m)        = -SUM((g,cc),              TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ;
-    rcElec(sSce,"qTrxSA",y,c,m)         =  elySAqExp(c,m);
+    rcElec(sSce,"qTrxSA",y,c,m)         = -SUM(g,                   XPT.l(c,g,y,m));
     rcElec(sSce,"qSupTot",y,c,m)        =  SUM((b,g)$bCty(b,c),     HPP.l(b,g,y,m)) + SUM((u,g)$tppMap(c,u), TPP.l(c,u,g,y,m));;
     rcElec(sSce,"qSupHPP",y,c,m)        =  SUM((b,g)$bCty(b,c),     HPP.l(b,g,y,m));
     rcElec(sSce,"qSupTPP",y,c,m)        =  SUM((u,g)$tppMap(c,u),   TPP.l(c,u,g,y,m));
@@ -151,7 +152,7 @@ $offtext
     rcElec(sSce,"vExpCst",y,c,m)        =  SUM((g,cc),             -ELYMKT.m(c,g,y,m)    * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ) ;
     rcElec(sSce,"vExpTrx",y,c,m)        =  SUM((g,cc)$trx0(c,cc),   ELYTRX.m(c,cc,g,y,m) * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ) ;
     rcElec(sSce,"vSrpHPP",y,c,m)        =  SUM((b,g)$bCty(b,c),    -ELYMKT.m(c,g,y,m)*HPP.l(b,g,y,m));
-    rcElec(sSce,"vTrxSA",y,c,m)         =  1000 * elySAqExp(c,m)*elySApExp(c,m) / 1000000;
+    rcElec(sSce,"vTrxSA",y,c,m)         =  SUM(g,                   1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;
 *   rcElec(sSce,"Electricity tariff (mUSD)",c,m)            = tariff(c) * SUM(u$uPrd(u), TPP.l(c,u,m))/1000;
 *   rcElec(sSce,"Thermal financial costs (mUSD)",c,m)       = SUM(u$uPrd(u), TPP.l(c,u,m)*tpp0(c,u,"SRMC") + TNI.l(c,u)*tpp0(c,u,"CAPX")*TNIweight(m))/1000 ;
 *   rcElec(sSce,"Thermal subsidy req. (mUSD)",c,m)          = rcElec(sSce,"Thermal financial costs (mUSD)",c,m) - rcElec(sSce,"Electricity tariff (mUSD)",c,m);
@@ -169,6 +170,16 @@ $offtext
     rcElec(sSce,e_resElec,y,c,"annual") = SUM(m,                    rcElec(sSce,e_resElec,y,c,m));
     rcElec(sSce,"pMCpeak",y,c,m0)$(not m(m0)) = 0;
     rcElec(sSce,"pMCbase",y,c,m0)$(not m(m0)) = 0;
+
+
+* Create data sheet for balance charts
+    rcElecBal(sSce,y,c,mS,"qSupHPP")   = SUM(m$mSm(m,mS),          rcElec(sSce,"qSupHPP",y,c,m));
+    rcElecBal(sSce,y,c,mS,"qSupTPP")   = SUM(m$mSm(m,mS),          rcElec(sSce,"qSupTPP",y,c,m));
+*    rcElecBal(sSce,y,c,mS,"qSupTPN")   = SUM(m$mSm(m,mS),          rcElec(sSce,"qSupTPN",y,c,m));
+    rcElecBal(sSce,y,c,mS,"qDemNot")   = SUM(m$mSm(m,mS),          rcElec(sSce,"qDemNot",y,c,m));
+    rcElecBal(sSce,y,c,mS,"qDemUsd")   = SUM(m$mSm(m,mS),          rcElec(sSce,"qDemUsd",y,c,m));
+    rcElecBal(sSce,y,c,mS,"qTrxNet")   = SUM(m$mSm(m,mS),          rcElec(sSce,"qTrxNet",y,c,m));
+    rcElecBal(sSce,y,c,mS,"qTrxSA")    = SUM(m$mSm(m,mS),          rcElec(sSce,"qTrxSA" ,y,c,m));
 
     rBorder(sSce,y,"Amu-TAD-TUR",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUMID","AMUUPS",y,m));
     rBorder(sSce,y,"Amu-TUR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
@@ -237,7 +248,7 @@ $offtext
     rcView(sSce,y,"aggWTP",c)               = SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcView(sSce,y,"usdVal",c) ;
     rcView(sSce,y,"demVal",c)               = SUM((g,m)$elyDemand0(c,g,m),  -ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
     rcView(sSce,y,"tppVal",c)               = SUM((g,m),                    -ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
-    rcView(sSce,y,"expVal",c)               = SUM(m,                        1000*elySAqExp(c,m) * elySAqExp(c,m) )/1000000;
+    rcView(sSce,y,"expVal",c)               = SUM((g,m),                    1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;
 
     rcView(sSce,y,"elyCS",c)                = rcView(sSce,y,"aggWTP",c) + rcView(sSce,y,"usdVal",c) - rcView(sSce,y,"demVAL",c);
     rcView(sSce,y,"tppPS",c)                = rcView(sSce,y,"tppVal",c) + rcView(sSce,y,"cTherm",c);

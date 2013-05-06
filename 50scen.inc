@@ -33,7 +33,7 @@ SCALAR xferResults "Transfer earlier results saved in GDX to output GDX and XLS"
 TABLE scenarios(scOptions,sSce) "Scenario definition table"
         s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17   s18 s19 s20 s21 s22 s23 s24 s25         s30 s31 s32 s33 s34 s35              s40 s41 s42 s43 s44 s45
 *run     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   0   0                1   1   1   1   0   0  
-run     0   0   0   0   0   1   1   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0  
+run     0   0   0   0   0   1   1   1   1   1   1   1   1   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0  
 *run     0   0   0   0   0   1   1   1   1   1   1   1   1   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
 *run     0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     1   1   1   1   1   1   1   1           0   0   0   0   0   0                0   0   0   0   0   0   
 *run     0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                1   1   1   1   0   0  
@@ -188,11 +188,20 @@ AFG     0       0       0       0
 ;
 
 
-* 500MW x 24h x 30d&month = 72000 MWh/month
-TABLE elySAexp0(*,c,m0) "Electricity export to South Asia (GWh/month)"
+
+
+* CASA-1000 (1,300 MW) with a maximum annual energy export of 4,000 GWh (shared by the Kyrgyz Republic [40%] 
+* and Tajikistan [60% = 2,400 GWh] from 2017 onwards; 
+* CASA Phase 2 (1,300 MW) with a maximum annual energy export from Tajikistan of 4,000 GWh, from 2023 onwards; 
+* Assuming an energy tariff of 3.5 cents/kWh, based on the tariff agreed with Afghanistan and competitive 
+* pricing for summer surpluses, the total export tariffs (including recovery of estimated transmission costs) 
+* will be 4.4 cents/kWh for CASA-1000 and 6.2 cents/kWh for CASA Phase 2. 
+TABLE elyExp0(*,c,m0) "Electricity export to South Asia (qExp in MW; pExp in USD/MWh)"
             m01     m02     m03     m04     m05     m06     m07     m08     m09     m10     m11     m12
-qExp.TAD    0       0       0       0       360     360     360     360     0       0       0       0   
-pExp.TAD    0       0       0       0       120     120     120     120     0       0       0       0   
+qExp.KYR    0       0       0       0       520     520     520     520     0       0       0       0   
+pExp.KYR    0       0       0       0       53      53      53      53      0       0       0       0   
+qExp.TAD    0       0       0       0       2080    2080    2080    2080    0       0       0       0   
+pExp.TAD    0       0       0       0       53      53      53      53      0       0       0       0   
 ;
 
 

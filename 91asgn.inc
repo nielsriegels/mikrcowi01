@@ -20,13 +20,15 @@
     maxHead(b)              = maxHead0(b,sSce);
 
 * Allow transmission according to transmission limits in trx0
+    transx(c,cc)                            = 0;
     transx(c,cc)$(scenarios("transx",sSce) eq 3) = 1$(caps3(c) AND caps3(cc));
-    transx(c,cc)$(scenarios("transx",sSce) eq 5) = 1$(caps5(c) AND caps3(cc));
-    transx(c,cc)$(scenarios("transx",sSce) eq 6) = 1$(caps6(c) AND caps3(cc));
+    transx(c,cc)$(scenarios("transx",sSce) eq 5) = 1$(caps5(c) AND caps5(cc));
+    transx(c,cc)$(scenarios("transx",sSce) eq 6) = 1$(caps6(c) AND caps6(cc));
+DISPLAY transx;
 
 * Enable electricity exports to South Asia
-    elySApExp(c,m)          = elySAexp0("pExp",c,m)$scenarios("SAexp",sSce);
-    elySAqExp(c,m)          = elySAexp0("qExp",c,m)$scenarios("SAexp",sSce);
+    pXpt(c,m)               = elyExp0("pExp",c,m)$scenarios("SAexp",sSce);
+    qXpt(c,m)               = elyExp0("qExp",c,m)$scenarios("SAexp",sSce);
  
 * Reset country and node objective function weights to their normal 1's and 0's
     objAGRweight(b)         = 1;
