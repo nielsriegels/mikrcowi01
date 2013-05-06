@@ -1,1 +1,1 @@
-"c:\Program Files\GAMS21.2-old\gdxxrw.exe" I=BEAM-overview.gdx O=BEAM-overview.xls par=rcView rng=rcView!D10 rdim =3          runMacros=3
+"c:\Program Files\GAMS21.2\gdxxrw.exe" I=BEAM-overview.gdx O=BEAM-overview.xls par=rcView rng=rcView!D10 rdim =3          runMacros=3

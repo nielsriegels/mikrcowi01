@@ -150,4 +150,4 @@ PUT "4";
 PUTCLOSE;
 DISPLAY rcView;
 
-DISPLAY checkOutput;
+DISPLAY checkOutput, rRbFlow;

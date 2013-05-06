@@ -62,6 +62,8 @@ PARAMETERS
     rResv(sSce,y0,*,b,m)            "Reservoir information"
     rRbResv(sSce,y0,*,rb,c)       "Description of reservoirs on basin level"
 
+   rRbFlow(sSce,rb0,c,y0,e_resFlow)  "Flow of water by basin in country"
+
 * Temporary - to be replaced or deleted
     trx0(c,cc)
     transx(c,cc)
@@ -88,9 +90,9 @@ checkoutput("totinc0","s02")   = 10164741.19;
 checkoutput("obj0","s01")      = -20157.33;
 checkoutput("obj0","s02")      = -19883.26;
 
-* Yield response parameters (etc0 is in mm/month = 10m3/ha/day, so scale with x 10 / 1000 to get to 1000 m3/ha/month) 
+* Yield response parameters (etc0 is in mm/month = 10m3/ha/day, so scale with x 10 / 1000 to get to 1000 m3/ha/month)
 * etcP and etcM is in 1000 m3/ha/month
-* irg0 is in mm3/month 
+* irg0 is in mm3/month
 wPhase(b,j,p)       = ( phaseDays(b,p,j) / SUM(pp, phaseDays(b,pp,j)) )$phaseDays(b,p,j);
 etcP(b,j,p)         = SUM(m, 10*etc0(b,p,m,j))/1000;
 etcM(b,j,m)         = SUM(p, 10*etc0(b,p,m,j))/1000;

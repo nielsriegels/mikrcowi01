@@ -5,6 +5,8 @@
     rFlow(sSce,b,"ResChg",y,m)$bResBuild(b) = -SUM(s$sW(s), -STO.l(s,b,y,m) + SUM(bd, DIS.l(s,bd,b,y,m) + FLW.l(s,bd,b,y,m)) );
     rFlow(sSce,b,"ResChg",y,m)$(sea(b) and mBgn(m)) = SUM(s$sW(s), VOL.l(s,b,y,m));
 
+
+
 * Inflows
     rFlow(sSce,b,"InSrc",y,m)               = SUM(s$sW(s), sup(s,b,m));
     rFlow(sSce,b,"InGrw",y,m)               = GRW.l(b,y,m);
@@ -26,6 +28,9 @@
     rFlow(sSce,b,"OutLos",y,m)              = -SUM((s,l)$sW(s), LOS.l(s,b,l,y,m));
     rFlow(sSce,b,"OutTot",y,m)              = rFlow(sSce,b,"OutDem",y,m) + rFlow(sSce,b,"OutDis",y,m) + rFlow(sSce,b,"OutFlw",y,m)
                                              +rFlow(sSce,b,"OutInt",y,m) + rFlow(sSce,b,"OutLos",y,m) + rFlow(sSce,b,"OutLak",y,m);
+
+
+
 * Balance
     rFlow(sSce,b,"Balance",y,m)             = round(rFlow(sSce,b,"InTot",y,m)+rFlow(sSce,b,"OutTot",y,m)-rFlow(sSce,b,"ResChg",y,m)$bRes(b), 3) ;
     rFlow(sSce,b,e_resFlow,y,"annual")      = SUM(m, rFlow(sSce,b,e_resFlow,y,m));
@@ -68,7 +73,11 @@
     rcFlow(sSce,c,y,"Balance",m)            = round(rcFlow(sSce,c,y,"InTot",m)+rcFlow(sSce,c,y,"OutTot",m)-rcFlow(sSce,c,y,"ResChg",m), 3) ;
     rcFlow(sSce,c,y,e_resFlow,"annual")     = SUM(m, rcFlow(sSce,c,y,e_resFlow,m));
     rcFlow(sSce,c,y,"ResVol","annual")      = rcFlow(sSce,c,y,"ResVol","annual") + 0.000001;
-    rcFlow(sSce,c,y,"Balance","annual")         = rcFlow(sSce,c,y,"Balance","annual") + 0.000001;
+    rcFlow(sSce,c,y,"Balance","annual")     = rcFlow(sSce,c,y,"Balance","annual") + 0.000001;
+
+
+* Sum up for countries in basin
+    rRbFlow(sSce,rb0,c,y,"InItk")          = SUM((s,bd,bo,m)$(sW(s) AND bCty(bd,c) AND bBas(bd,rb0)), ITK.l(s,bd,bo,y,m));
 
 * Agricultural line results
     rAgri(sSce,b,"WaterUse",y,j,q)            = SUM(m, IRG.l(b,q,j,y,m));
@@ -83,13 +92,13 @@
 *    rAgri(sSce,b,"iET",y,j,q)                 = 100*YWR.l(b,q,j,y);
     rAgri(sSce,b,"ActMarg",y,j,q)$lnd0(b,q,j) = (pCrop(b,j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
     rAgri(sSce,b,"OptMarg",y,j,q)$lnd0(b,q,j) = (pCrop(b,j)* crp0(b,q,j)   - cCrop(b,j) *lnd0(b,q,j)  )/ lnd0(b,q,j);
- 
+
     rIrg(sSce,b,"ActET",y,p,j,q)$lnd0(b,q,j)    = 1000000*SUM(m, IRG.l(b,q,j,y,m)*etcM2p(b,j,p,m)) / LND.l(b,q,j,y);
     rIrg(sSce,b,"OptET",y,p,j,q)$lnd0(b,q,j)    = etcP(b,j,p)*1000;
     rIrg(sSce,b,"iET",y,p,j,q)$lnd0(b,q,j)      = iET.l(b,q,j,p,y)*100;
     rIrg(sSce,b,"wPhase",y,p,j,q)$lnd0(b,q,j)   = wPhase(b,j,p)*100;
-    
- 
+
+
 * Economic results, line
     rEcon(sSce,b,"AgriSales",y,m)           = 0.000001*SUM((q,j), pCrop(b,j)*CRP.l(b,q,j,y) ) / 12;
     rEcon(sSce,b,"AgriCost",y,m)            = 0.000001*SUM((q,j), cCrop(b,j)*LND.l(b,q,j,y) ) / 12;
@@ -320,8 +329,6 @@ $offtext
 
 
 
-
     rBorder(sSce,y,e_resBorder,"nvg")    = sum(m$mWin(m),  rBorder(sSce,y,e_resBorder,m));
     rBorder(sSce,y,e_resBorder,"veg")    = sum(m$mSum(m),  rBorder(sSce,y,e_resBorder,m));
     rBorder(sSce,y,e_resBorder,"annual") = sum(m,  rBorder(sSce,y,e_resBorder,m));
-
