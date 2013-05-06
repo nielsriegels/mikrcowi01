@@ -1,6 +1,6 @@
-* Loop over scenarios to be analysed
+* Loop over scenarios to be reported 
 
-LOOP(sSce,
+LOOP(sSce$(scenarios("run",sSce) or xferResults),
 
 
 * Include assigning values to scenario specific parameters
@@ -71,6 +71,8 @@ $include "%path%96rslt.inc";
     checkoutput("totinc",sSce)                  = SUM((b,y,m), rEcon(sSce,b,"TotInc",y,m));
     checkoutput("obj",sSce)                     = TWV.l;
     checkoutput("mstat",sSce)                   = beam.modelstat;
+
+DISPLAY TPP.l, TRX.l, trx0, elyThermal;
 
 );
 
