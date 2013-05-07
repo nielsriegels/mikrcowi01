@@ -24,7 +24,6 @@
     transx(c,cc)$(scenarios("transx",sSce) eq 3) = 1$(caps3(c) AND caps3(cc));
     transx(c,cc)$(scenarios("transx",sSce) eq 5) = 1$(caps5(c) AND caps5(cc));
     transx(c,cc)$(scenarios("transx",sSce) eq 6) = 1$(caps6(c) AND caps6(cc));
-DISPLAY transx;
 
 * Enable electricity exports to South Asia
     pXpt(c,m)               = elyExp0("pExp",c,m)$scenarios("SAexp",sSce);

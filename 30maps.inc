@@ -46,8 +46,8 @@ Res_BUK         .UZB
 Res_NA1         .KYR             
 Res_NA2         .KYR             
 Res_FAR         .UZB             
-Res_VA1         .KYR             
-Res_VA2         .KYR             
+Res_VA1         .TAD             
+Res_VA2         .TAD             
 Res_PYD         .TAD             
 Res_CHI         .UZB             
 Src_TOK         .KYR             

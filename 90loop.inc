@@ -2,6 +2,7 @@
 
 LOOP(sSce$(scenarios("run",sSce) or xferResults),
 
+IRG.l(b,q0,j,y0,m0) = 0;
 
 * Include assigning values to scenario specific parameters
 $include "%path%91asgn.inc";
@@ -45,7 +46,7 @@ USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 $include "%path%92cstr.inc";
 
 * Solve model for the give scenario
-*    beam.solprint = yes;
+    beam.solprint = yes;
 *    beam.limrow = 50000;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
@@ -70,7 +71,6 @@ $include "%path%96rslt.inc";
     checkoutput("totinc",sSce)                  = SUM((b,y,m), rEcon(sSce,b,"TotInc",y,m));
     checkoutput("obj",sSce)                     = TWV.l;
     checkoutput("mstat",sSce)                   = beam.modelstat;
-
 
 );
 

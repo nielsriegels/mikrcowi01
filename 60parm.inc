@@ -1,6 +1,8 @@
 PARAMETERS
     sup(s,b,m)                      "Base year supply of river water (mm3/month)"
     irg0(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
+    irg1(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
+    irg2(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
     qLch(b)                         "Leaching requirement (m3/ha)"
     hhiUse(sSec,b,m0)               "Base year water use for households and industries (mm3)"
     lShare(b,q0,j)                  "Share of land for free crops in zone (%)"
@@ -54,6 +56,8 @@ PARAMETERS
     rcAgri(sSce,c,y0,e_resAgri,j)   "Agricultural results for countries"
     rcEcon(sSce,y0,e_resEcon,c)     "Economical results for countries"
     rcView(sSce,y0,e_resView,c)     "Overview results summarised by scenario and country"
+    rcRbView(sSce,y0,e_resView,rb0,c) "Overview results summarised by scenario, basin and country"
+    rSView(y0,e_resView,sSce)          "Overview results summarised by scenario"       
     rcElec(sSce,e_resElec,y0,c,m0)  "Electricity market results"
     rcElecBal(sSce,y0,c,m0,e_resElec) "Electricity market balance bi-season"
     rBorder(sSce,y0,e_resBorder,m0) "Border flows (mm3)"
@@ -98,7 +102,8 @@ etcP(b,j,p)         = SUM(m, 10*etc0(b,p,m,j))/1000;
 etcM(b,j,m)         = SUM(p, 10*etc0(b,p,m,j))/1000;
 etcM2P(b,j,p,m)     = (etc0(b,p,m,j)/SUM(pp, etc0(b,pp,m,j)) )$SUM(pp, etc0(b,pp,m,j));
 irg0(b,q0,j,y0,m)   = etcM(b,j,m) * lnd0(b,q0,j) / 1000;
-
+irg1(b,q0,j,y0,m)   = 0;
+irg2(b,q0,j,y0,m)   = 0;
 
 * TEMPORARY map between crops and crop mixes, move to Excel when we implement 2nd crops
 SET mapCMX(x,j) "Map between crops and crop mixes" / cotn.cot, whet.wht, rice.ric, ric2.ri2, alfa.alf, stfr.stf, tgrp.tgr, meln.mln, tomt.tmt, shav.shv, pota.pot, mung.mng, subt.sbt, mazf.mzf, mazg.mzg / ;
