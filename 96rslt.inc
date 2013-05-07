@@ -71,7 +71,7 @@
     rcFlow(sSce,c,y,"ResVol","annual")      = rcFlow(sSce,c,y,"ResVol","annual") + 0.000001;
     rcFlow(sSce,c,y,"Balance","annual")         = rcFlow(sSce,c,y,"Balance","annual") + 0.000001;
 
-* 
+*
     rRbFlow(sSce,rb0,c,y,"InItk")          = SUM((s,bd,bo,m)$(sW(s) AND bCty(bd,c) AND bBas(bd,rb0)), ITK.l(s,bd,bo,y,m));
     rRbFlow(sSce,rb0,c,y,"HydroProd")      = SUM((g,b,m)$(bCty(b,c) AND bBas(b,rb0)), HPP.l(b,g,y,m))/1000;
 
@@ -89,13 +89,13 @@
 *    rAgri(sSce,b,"iET",y,j,q)                 = 100*YWR.l(b,q,j,y);
     rAgri(sSce,b,"ActMarg",y,j,q)$LND.l(b,q,j,y) = (pCrop(b,j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
     rAgri(sSce,b,"OptMarg",y,j,q)$lnd0(b,q,j) = (pCrop(b,j)* crp0(b,q,j)   - cCrop(b,j) *lnd0(b,q,j)  )/ lnd0(b,q,j);
- 
+
     rIrg(sSce,b,"ActET",y,p,j,q)$LND.l(b,q,j,y)    = 1000000*SUM(m, IRG.l(b,q,j,y,m)*etcM2p(b,j,p,m)) / LND.l(b,q,j,y);
     rIrg(sSce,b,"OptET",y,p,j,q)$lnd0(b,q,j)    = etcP(b,j,p)*1000;
     rIrg(sSce,b,"iET",y,p,j,q)$lnd0(b,q,j)      = iET.l(b,q,j,p,y)*100;
     rIrg(sSce,b,"wPhase",y,p,j,q)$lnd0(b,q,j)   = wPhase(b,j,p)*100;
-    
- 
+
+
 * Economic results, line
     rEcon(sSce,b,"AgriSales",y,m)           = 0.000001*SUM((q,j), pCrop(b,j)*CRP.l(b,q,j,y) ) / 12;
     rEcon(sSce,b,"AgriCost",y,m)            = 0.000001*SUM((q,j), cCrop(b,j)*LND.l(b,q,j,y) ) / 12;
@@ -264,6 +264,138 @@ $offtext
     rcView(sSce,y,"OandM",c)                = rcView(sSce,y,"cField",c) + rcView(sSce,y,"cConvey",c) + rcView(sSce,y,"cHydro",c);
     rcView(sSce,y,"Surplus",c)              = rcView(sSce,y,"AgriVA",c) + rcView(sSce,y,"elyCS",c) + rcView(sSce,y,"elyPS",c) - rcView(sSce,y,"Invest",c) - rcView(sSce,y,"OandM",c);
 
+*********************************************
+    rcRbView(sSce,y,"AgriSales",rb0,c)           =  SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),       CRP.l(b,q,j,y) * pCrop(b,j)  ) / 1000000;
+    rcRbView(sSce,y,"AgriCosts",rb0,c)           = -SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),       LND.l(b,q,j,y) * cCrop(b,j)  ) / 1000000;
+    rcRbView(sSce,y,"AgriVA",rb0,c)              = rcRbView(sSce,y,"AgriSales",rb0,c) - rcRbView(sSce,y,"AgriCosts",rb0,c);
+    rcRbView(sSce,y,"AgriCot",rb0,c)             = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$cot(j))/1000000;
+    rcRbView(sSce,y,"AgriWht",rb0,c)              = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$wht(j))/1000000;
+    rcRbView(sSce,y,"AgriAlf",rb0,c)              = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$alf(j))/1000000;
+    rcRbView(sSce,y,"AgriVeg",rb0,c)              = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$veg(j))/1000000;
+    rcRbView(sSce,y,"AgriRic",rb0,c)              = SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$ric(j))/1000000;
+    rcRbView(sSce,y,"AgriFru",rb0,c)              = SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$fru(j))/1000000;
+    rcRbView(sSce,y,"AgriOth",rb0,c)              = SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$oth(j))/1000000;
+    rcRbView(sSce,y,"AgriWater",rb0,c)            = SUM((b,q,j,m)$(bCty(b,c) AND bBas(b,rb0)),      IRG.l(b,q,j,y,m));
+    rcRbView(sSce,y,"AgriWaterSum",rb0,c)         = SUM((b,q,j,m)$(bCty(b,c) AND bBas(b,rb0)),      IRG.l(b,q,j,y,m)$mSum(m));
+    rcRbView(sSce,y,"AgriWaterWin",rb0,c)         = SUM((b,q,j,m)$(bCty(b,c) AND bBas(b,rb0)),      IRG.l(b,q,j,y,m)$mWin(m));
+    rcRbView(sSce,y,"AgriWaterInt",rb0,c)         = ( SUM((b,q,j,m)$(bCty(b,c) AND bBas(b,rb0)),    IRG.l(b,q,j,y,m)*1000000$mWin(m))  / SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y)) )$SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y));
+    rcRbView(sSce,y,"AgriLandChg",rb0,c)          = ( SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),      LND.l(b,q,j,y)*100      )  / SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y));
+    rcRbView(sSce,y,"HHIuse",rb0,c)               = SUM((s,b,sSec,m)$(bCty(b,c) AND bBas(b,rb0)),   HHI.l(s, sSec,b,y,m)$sW(s));
+    rcRbView(sSce,y,"Intake",rb,c)               = SUM((s,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb) and bCty(bd,c))  );
+    rcRbView(sSce,y,"Nukus",rb,c)                = SUM((s,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb)) * sNukus(c,rb) );
+
+    rcRbView(sSce,y,"Losses",rb0,c)               = SUM((s,b,l,m)$(bCty(b,c) AND bBas(b,rb0)),      LOS.l(s,b,l,y,m)$sW(s));
+    rcRbView(sSce,y,"Nature",rb0,c)               = SUM((s,b,m)$(bCty(b,c) AND bBas(b,rb0)),        STO.l(s,b,y,m)$(bNat(b) AND sW(s)) );
+    rcRbView(sSce,y,"Amu-TAD-TUR","AMU","TAD")      =-SUM(m, rBorder(sSce,y,"AMU-TAD-TUR",m));
+    rcRbView(sSce,y,"Amu-TAD-TUR","AMU","TUR")      = SUM(m, rBorder(sSce,y,"AMU-TAD-TUR",m));
+    rcRbView(sSce,y,"Amu-TUR-UZB","AMU","TUR")      =-SUM(m, rBorder(sSce,y,"AMU-TUR-UZB",m));
+    rcRbView(sSce,y,"Amu-TUR-UZB","AMU","UZB")      = SUM(m, rBorder(sSce,y,"AMU-TUR-UZB",m));
+    rcRbView(sSce,y,"Syr-KYR-UZB","SYR","KYR")      =-SUM(m, rBorder(sSce,y,"Syr-KYR-UZB",m));
+    rcRbView(sSce,y,"Syr-KYR-UZB","SYR","UZB")      = SUM(m, rBorder(sSce,y,"Syr-KYR-UZB",m));
+    rcRbView(sSce,y,"Syr-UZB-TAD","SYR","UZB")      =-SUM(m, rBorder(sSce,y,"Syr-UZB-TAD",m));
+    rcRbView(sSce,y,"Syr-UZB-TAD","SYR","TAD")      = SUM(m, rBorder(sSce,y,"Syr-UZB-TAD",m));
+    rcRbView(sSce,y,"Syr-TAD-UZB","SYR","TAD")      =-SUM(m, rBorder(sSce,y,"Syr-TAD-UZB",m));
+    rcRbView(sSce,y,"Syr-TAD-UZB","SYR","UZB")      = SUM(m, rBorder(sSce,y,"Syr-TAD-UZB",m));
+    rcRbView(sSce,y,"Syr-UZB-KAZ","SYR","UZB")      =-SUM(m, rBorder(sSce,y,"Syr-UZB-KAZ",m));
+    rcRbView(sSce,y,"Syr-UZB-KAZ","SYR","KAZ")      = SUM(m, rBorder(sSce,y,"Syr-UZB-KAZ",m));
+    rcRbView(sSce,y,"cTherm",rb0,c)                 = -SUM((u,g,m)$tppMap(c,u),     TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000 )/1000000;
+    rcRbView(sSce,y,"iTherm",rb0,c)                 = 0;
+    rcRbView(sSce,y,"sTherm",rb0,c)                 = 0;
+    rcRbView(sSce,y,"cField",rb0,c)                 = 0;
+    rcRbView(sSce,y,"iField",rb0,c)                 = 0;
+    rcRbView(sSce,y,"cConvey",rb0,c)                = 0;
+    rcRbView(sSce,y,"iConvey",rb0,c)                = 0;
+    rcRbView(sSce,y,"cHydro",rb0,c)                 = 0;
+    rcRbView(sSce,y,"iHydro",rb0,c)                 = SUM(b$(bCty(b,c) AND bBas(b,rb0)),              resNewOp(b,sSce)*reservoirs(b,"cost") );
+    rcRbView(sSce,y,"qTherm",rb0,c)                 = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m));
+    rcRbView(sSce,y,"qThermWin",rb0,c)              = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mWin(m));
+    rcRbView(sSce,y,"qThermSum",rb0,c)              = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mSum(m));
+    rcRbView(sSce,y,"qHydro",rb0,c)                 = SUM((b,g,m)$(bCty(b,c) AND bBas(b,rb0)),        HPP.l(b,g,y,m));
+    rcRbView(sSce,y,"qHydroWin",rb0,c)              = SUM((b,g,m)$(bCty(b,c) AND bBas(b,rb0)),        HPP.l(b,g,y,m)$mWin(m));
+    rcRbView(sSce,y,"qHydroSum",rb0,c)              = SUM((b,g,m)$(bCty(b,c) AND bBas(b,rb0)),        HPP.l(b,g,y,m)$mSum(m));
+    rcRbView(sSce,y,"qElyDem",rb0,c)                = SUM((g,m)$elyDemand0(c,g,m),  DEM.l(g,c,y,m));
+    rcRbView(sSce,y,"qElySrvd",rb0,c)               = SUM((g,m)$elyDemand0(c,g,m),  DEM.l(g,c,y,m)-SUM(d, USD.l(g,c,d,y,m)));
+    rcRbView(sSce,y,"qElyUsrv",rb0,c)               = SUM((g,m)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m)));
+    rcRbView(sSce,y,"qElyUSDw",rb0,c)               = SUM((g,m)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mWin(m));
+    rcRbView(sSce,y,"qElyUSDs",rb0,c)               = SUM((g,m)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mSum(m));
+
+    rcRbView(sSce,y,"usdVal",rb0,c)                 =-SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
+    rcRbView(sSce,y,"aggWTP",rb0,c)                 = SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcRbView(sSce,y,"usdVal",rb0,c) ;
+    rcRbView(sSce,y,"demVal",rb0,c)                 = SUM((g,m)$elyDemand0(c,g,m),  -ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
+    rcRbView(sSce,y,"tppVal",rb0,c)                 = SUM((g,m),                    -ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
+    rcRbView(sSce,y,"expVal",rb0,c)                 = SUM((g,m),                    1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;
+
+    rcRbView(sSce,y,"elyCS",rb0,c)                  = rcRbView(sSce,y,"aggWTP",rb0,c) + rcRbView(sSce,y,"usdVal",rb0,c) - rcRbView(sSce,y,"demVAL",rb0,c);
+    rcRbView(sSce,y,"tppPS",rb0,c)                  = rcRbView(sSce,y,"tppVal",rb0,c) + rcRbView(sSce,y,"cTherm",rb0,c);
+    rcRbView(sSce,y,"elyPS",rb0,c)                  = rcRbView(sSce,y,"demVAL",rb0,c) + rcRbView(sSce,y,"cTherm",rb0,c) + rcRbView(sSce,y,"cHydro",rb0,c) + rcRbView(sSce,y,"expVal",rb0,c);
+
+    rcRbView(sSce,y,"Invest",rb0,c)                 = rcRbView(sSce,y,"iField",rb0,c) + rcRbView(sSce,y,"iConvey",rb0,c) + rcRbView(sSce,y,"iHydro",rb0,c) + rcRbView(sSce,y,"iTherm",rb0,c) ;
+    rcRbView(sSce,y,"OandM",rb0,c)                  = rcRbView(sSce,y,"cField",rb0,c) + rcRbView(sSce,y,"cConvey",rb0,c) + rcRbView(sSce,y,"cHydro",rb0,c);
+    rcRbView(sSce,y,"Surplus",rb0,c)                = rcRbView(sSce,y,"AgriVA",rb0,c) + rcRbView(sSce,y,"elyCS",rb0,c) + rcRbView(sSce,y,"elyPS",rb0,c) - rcRbView(sSce,y,"Invest",rb0,c) - rcRbView(sSce,y,"OandM",rb0,c);
+
+
+***********************************************
+***********************************************
+
+    rSView(sSce,y,"AgriSales")            =  SUM((b,q,j),       CRP.l(b,q,j,y) * pCrop(b,j)  ) / 1000000;
+    rSView(sSce,y,"AgriCosts")            = -SUM((b,q,j),       LND.l(b,q,j,y) * cCrop(b,j)  ) / 1000000;
+    rSView(sSce,y,"AgriVA")               = rSView(sSce,y,"AgriSales") - rSView(sSce,y,"AgriCosts");
+    rSView(sSce,y,"AgriCot")              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$cot(j))/1000000;
+    rSView(sSce,y,"AgriWht")              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$wht(j))/1000000;
+    rSView(sSce,y,"AgriAlf")              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$alf(j))/1000000;
+    rSView(sSce,y,"AgriVeg")              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$veg(j))/1000000;
+    rSView(sSce,y,"AgriRic")              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$ric(j))/1000000;
+    rSView(sSce,y,"AgriFru")              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$fru(j))/1000000;
+    rSView(sSce,y,"AgriOth")              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$oth(j))/1000000;
+    rSView(sSce,y,"AgriWater")            = SUM((b,q,j,m),      IRG.l(b,q,j,y,m));
+    rSView(sSce,y,"AgriWaterSum")         = SUM((b,q,j,m),      IRG.l(b,q,j,y,m)$mSum(m));
+    rSView(sSce,y,"AgriWaterWin")         = SUM((b,q,j,m),      IRG.l(b,q,j,y,m)$mWin(m));
+    rSView(sSce,y,"AgriWaterInt")         = ( SUM((b,q,j,m),    IRG.l(b,q,j,y,m)*1000000$mWin(m))  / SUM((b,q,j), LND.l(b,q,j,y)) )$SUM((b,q,j), LND.l(b,q,j,y));
+    rSView(sSce,y,"AgriLandChg")          = ( SUM((b,q,j),      LND.l(b,q,j,y)*100      )  / SUM((b,q,j), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j), LND.l(b,q,j,y));
+    rSView(sSce,y,"HHIuse")               = SUM((s,b,sSec,m),   HHI.l(s, sSec,b,y,m)$sW(s));
+    rSView(sSce,y,"Intake")               = SUM((s,rb,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb))  );
+    rSView(sSce,y,"Nukus")                = SUM((s,rb,c,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb)) * sNukus(c,rb)  );
+    rSView(sSce,y,"Losses")               = SUM((s,b,l,m),      LOS.l(s,b,l,y,m)$sW(s));
+    rSView(sSce,y,"Nature")               = SUM((s,b,m),        STO.l(s,b,y,m)$(bNat(b) AND sW(s)) );
+    rSView(sSce,y,"cTherm")               = -SUM((u,g,m,c)$tppMap(c,u),     TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000 )/1000000;
+    rSView(sSce,y,"iTherm")               = 0;
+    rSView(sSce,y,"sTherm")               = 0;
+    rSView(sSce,y,"cField")               = 0;
+    rSView(sSce,y,"iField")               = 0;
+    rSView(sSce,y,"cConvey")              = 0;
+    rSView(sSce,y,"iConvey")              = 0;
+    rSView(sSce,y,"cHydro")               = 0;
+    rSView(sSce,y,"iHydro")               = SUM(b,                resNewOp(b,sSce)*reservoirs(b,"cost") );
+    rSView(sSce,y,"qTherm")               = SUM((u,g,m,c)$tppMap(c,u),      TPP.l(c,u,g,y,m));
+    rSView(sSce,y,"qThermWin")            = SUM((u,g,m,c)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mWin(m));
+    rSView(sSce,y,"qThermSum")            = SUM((u,g,m,c)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mSum(m));
+    rSView(sSce,y,"qHydro")               = SUM((b,g,m),        HPP.l(b,g,y,m));
+    rSView(sSce,y,"qHydroWin")            = SUM((b,g,m),        HPP.l(b,g,y,m)$mWin(m));
+    rSView(sSce,y,"qHydroSum")            = SUM((b,g,m),        HPP.l(b,g,y,m)$mSum(m));
+    rSView(sSce,y,"qElyDem")              = SUM((g,m,c)$elyDemand0(c,g,m),  DEM.l(g,c,y,m));
+    rSView(sSce,y,"qElySrvd")             = SUM((g,m,c)$elyDemand0(c,g,m),  DEM.l(g,c,y,m)-SUM(d, USD.l(g,c,d,y,m)));
+    rSView(sSce,y,"qElyUsrv")             = SUM((g,m,c)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m)));
+    rSView(sSce,y,"qElyUSDw")             = SUM((g,m,c)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mWin(m));
+    rSView(sSce,y,"qElyUSDs")             = SUM((g,m,c)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mSum(m));
+
+    rSView(sSce,y,"usdVal")               =-SUM((d,g,m,c)$usd0(c,g,d),      usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
+    rSView(sSce,y,"aggWTP")               = SUM((d,g,m,c)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rSView(sSce,y,"usdVal") ;
+    rSView(sSce,y,"demVal")               = SUM((g,m,c)$elyDemand0(c,g,m),  -ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
+    rSView(sSce,y,"tppVal")               = SUM((g,m,c),                    -ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
+    rSView(sSce,y,"expVal")               = SUM((g,m,c),                    1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;
+
+    rSView(sSce,y,"elyCS")                = rSView(sSce,y,"aggWTP") + rSView(sSce,y,"usdVal") - rSView(sSce,y,"demVAL");
+    rSView(sSce,y,"tppPS")                = rSView(sSce,y,"tppVal") + rSView(sSce,y,"cTherm");
+    rSView(sSce,y,"elyPS")                = rSView(sSce,y,"demVAL") + rSView(sSce,y,"cTherm") + rSView(sSce,y,"cHydro") + rSView(sSce,y,"expVal");
+
+    rSView(sSce,y,"Invest")               = rSView(sSce,y,"iField") + rSView(sSce,y,"iConvey") + rSView(sSce,y,"iHydro") + rSView(sSce,y,"iTherm") ;
+    rSView(sSce,y,"OandM")                = rSView(sSce,y,"cField") + rSView(sSce,y,"cConvey") + rSView(sSce,y,"cHydro");
+    rSView(sSce,y,"Surplus")              = rSView(sSce,y,"AgriVA") + rSView(sSce,y,"elyCS") + rSView(sSce,y,"elyPS") - rSView(sSce,y,"Invest") - rSView(sSce,y,"OandM");
+
+***********************************************
+***********************************************
+
+
     checkElybal(sSce,g,c,y,"TPP",m)               = SUM(u$tppMap(c,u),  TPP.l(c,u,g,y,m));
     checkElybal(sSce,g,c,y,"HPP",m)               = SUM(b$bCty(b,c),    HPP.l(b,g,y,m));
     checkElybal(sSce,g,c,y,"DEM",m)               = -DEM.l(g,c,y,m);
@@ -341,4 +473,3 @@ $offtext
     rBorder(sSce,y,e_resBorder,"nvg")    = sum(m$mWin(m),  rBorder(sSce,y,e_resBorder,m));
     rBorder(sSce,y,e_resBorder,"veg")    = sum(m$mSum(m),  rBorder(sSce,y,e_resBorder,m));
     rBorder(sSce,y,e_resBorder,"annual") = sum(m,  rBorder(sSce,y,e_resBorder,m));
-
