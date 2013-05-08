@@ -2194,8 +2194,8 @@ AFG             .peak
 
 PARAMETER  trx0(c,cc) "Transmission capacities, MW" /                                 
                                                  
-KAZ             .UZB             2.789146E+03    
-KAZ             .KYR             4.961012E+03    
+KAZ             .UZB             0.000000E+00   
+KAZ             .KYR             0.000000E+00    
 KAZ             .TAD             0.000000E+00    
 KAZ             .TUR             0.000000E+00    
 KAZ             .AFG             0.000000E+00    

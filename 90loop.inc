@@ -1,6 +1,6 @@
 * Loop over scenarios to be reported 
 
-LOOP(sSce$(scenarios("run",sSce) or xferResults),
+LOOP(sSce$scenarios("out",sSce),
 
 IRG.l(b,q0,j,y0,m0) = 0;
 
@@ -46,7 +46,7 @@ USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 $include "%path%92cstr.inc";
 
 * Solve model for the give scenario
-    beam.solprint = yes;
+*    beam.solprint = yes;
 *    beam.limrow = 50000;
 *    beam.limcol = 50000;
 *    beam.iterlim = 0;
