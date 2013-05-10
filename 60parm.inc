@@ -1,8 +1,8 @@
 PARAMETERS
     sup(s,b,m)                      "Base year supply of river water (mm3/month)"
     irg0(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
-    irg1(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
-    irg2(b,q0,j,y0,m0)              "Base year water for irrigation (mm3/month)"
+    itk1(s,bd,y0,m0)             "Base year water for irrigation (mm3/month)"
+    itk2(s,bd,y0,m0)             "Base year water for irrigation (mm3/month)"
     qLch(b)                         "Leaching requirement (m3/ha)"
     hhiUse(sSec,b,m0)               "Base year water use for households and industries (mm3)"
     lShare(b,q0,j)                  "Share of land for free crops in zone (%)"
@@ -71,8 +71,14 @@ PARAMETERS
 * Temporary - to be replaced or deleted
     trx0(c,cc)
     transx(c,cc)
+
+rItk(b,sSce,*)
+rPlz(b,sSce,*)
+rLos(b,sSce);
 ;
 
+OPTIONS itk1:0:2:2;
+OPTIONS itk2:0:2:2;
 
 OPTIONS crp0:0:2:1;
 OPTIONS lnd0:0:2:1;
@@ -86,6 +92,7 @@ OPTIONS rsFlow:2:4:1;
 OPTIONS rsAgri:2:4:1;
 OPTIONS rcAgri:2:4:1;
 OPTIONS rcEcon:2:3:1;
+OPTIONS rcRbView:0:3:2;
 OPTIONS checkoutput:2:1:1;
 
 * Provide baseline for check against former model runs - UPDATE WHEN CHANGE IN totinc IS WARRANTED!
@@ -102,8 +109,9 @@ etcP(b,j,p)         = SUM(m, 10*etc0(b,p,m,j))/1000;
 etcM(b,j,m)         = SUM(p, 10*etc0(b,p,m,j))/1000;
 etcM2P(b,j,p,m)     = (etc0(b,p,m,j)/SUM(pp, etc0(b,pp,m,j)) )$SUM(pp, etc0(b,pp,m,j));
 irg0(b,q0,j,y0,m)   = etcM(b,j,m) * lnd0(b,q0,j) / 1000;
-irg1(b,q0,j,y0,m)   = 0;
-irg2(b,q0,j,y0,m)   = 0;
+
+itk1(s,bd,y0,m0) = 0;
+itk2(s,bd,y0,m0) = 0;
 
 * TEMPORARY map between crops and crop mixes, move to Excel when we implement 2nd crops
 SET mapCMX(x,j) "Map between crops and crop mixes" / cotn.cot, whet.wht, rice.ric, ric2.ri2, alfa.alf, stfr.stf, tgrp.tgr, meln.mln, tomt.tmt, shav.shv, pota.pot, mung.mng, subt.sbt, mazf.mzf, mazg.mzg / ;

@@ -139,6 +139,10 @@
 * Set reservoir buildup
     ctrfBuild               = scenarios("rBuild",sSce);
 
+* Set levels for intake reduction scenarios
+    itk2(s,bd,y,m)$bPlz(bd)       = itk1(s,bd,y,m)*minIntake0(sSce);
+
+
 * Set tentative levels if first run
 IF(SUM((s,bd,bo,y,m), FLW.l(s,bd,bo,y,m)) eq 0,
 * Flow variable levels

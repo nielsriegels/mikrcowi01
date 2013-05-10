@@ -2222,3 +2222,12 @@ AFG             .TUR             0.000000E+00
 TUR             .UZB             2.000000E+03    
 /;
 
+TABLE lossReservoirs(b,l,m) "Reservoir loss, % of total volume"
+                 m01
+Res_TOK.evap     0
+;
+
+TABLE lossLakes(b,l,m) "Lake loss, % of total volume"
+                 m01
+Lak_AMU.evap     0
+;

@@ -53,6 +53,12 @@ $include "%path%92cstr.inc";
 *    if(ord(ssce) eq 3,    beam.solprint = yes; );
     
         SOLVE beam MAXIMIZING twv USING NLP;
+* Save intake for intake reduction scenarios
+IF(ord(sSce) eq 40, 
+    itk1(s,bd,y,m)$bPlz(bd) = 
+      SUM(bo, ITK.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m))
+     +GRW.l(bd,y,m) - HHI.l(s,"HH",bd,y,m) - HHI.l(s,"Ind",bd,y,m); 
+);
 
 * Save solution to re-use later
         IF( ((beam.modelstat le 2) or (beam.modelstat eq 7)), 
@@ -71,6 +77,29 @@ $include "%path%96rslt.inc";
     checkoutput("totinc",sSce)                  = SUM((b,y,m), rEcon(sSce,b,"TotInc",y,m));
     checkoutput("obj",sSce)                     = TWV.l;
     checkoutput("mstat",sSce)                   = beam.modelstat;
+
+rItk(bd,sSce,"itk1")$bPlz(bd) = SUM((s,y,m), itk1(s,bd,y,m));
+rItk(bd,sSce,"itk2")$bPlz(bd) = SUM((s,y,m), itk2(s,bd,y,m));
+rItk(bd,sSce,"HHI")$bPlz(bd) = SUM((s,y,m), HHI.l(s,"HH",bd,y,m)+HHI.l(s,"Ind",bd,y,m));
+rItk(bd,sSce,"ITKl")$bPlz(bd) = SUM((s,bo,y,m), ITK.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)) + SUM((y,m), GRW.l(bd,y,m)) - rItk(bd,sSce,"HHI");
+rItk(bd,sSce,"IRGl")$bPlz(bd) = SUM((s,q,j,y,m), IRG.l(bd,q,j,y,m));
+
+rPlz(bd,sSce,"ITK")$bPlz(bd) = SUM((s,bo,y,m),  ITK.l(s,bd,bo,y,m));
+rPlz(bd,sSce,"FLW")$bPlz(bd) = SUM((s,bo,y,m),  FLW.l(s,bd,bo,y,m));
+rPlz(bd,sSce,"DIS")$bPlz(bd) = SUM((s,bo,y,m),  DIS.l(s,bd,bo,y,m));
+rPlz(bd,sSce,"GRW")$bPlz(bd) = SUM((s,y,m),     GRW.l(bd,y,m));
+rPlz(bd,sSce,"LOS")$bPlz(bd) =-SUM((s,y,m),     LOS.l(s,bd,"seep",y,m));
+rPlz(bd,sSce,"IRG")$bPlz(bd) =-SUM((s,q,j,y,m), IRG.l(bd,q,j,y,m));
+rPlz(bd,sSce,"LCH")$bPlz(bd) =-SUM((s,y,m),     LCH.l(s,bd,y,m));
+rPlz(bd,sSce,"RTN")$bPlz(bd) = SUM((s,y,m),     rtn0(bd,m));
+rPlz(bd,sSce,"HHI")$bPlz(bd) =-SUM((s,y,m),     HHI.l(s,"HH",bd,y,m)+HHI.l(s,"Ind",bd,y,m));
+rPlz(bd,sSce,"sup")$bPlz(bd) = rPlz(bd,sSce,"ITK") + rPlz(bd,sSce,"FLW") + rPlz(bd,sSce,"DIS") + rPlz(bd,sSce,"GRW"); 
+rPlz(bd,sSce,"dem")$bPlz(bd) = rPlz(bd,sSce,"LOS") + rPlz(bd,sSce,"LCH") + rPlz(bd,sSce,"HHI") + rPlz(bd,sSce,"IRG") + rPlz(bd,sSce,"RTN"); 
+rPlz(bd,sSce,"bal")$bPlz(bd) = round(rPlz(bd,sSce,"sup")+ rPlz(bd,sSce,"dem"),3);
+
+*rLos(bd,sSce,"riv")$bRiv(bd) = SUM((s,m,y),           LOS(s,bd,"seep",y,m)+LOS(s,bd,"evap",y,m));
+*rLos(bd,sSce,"res")$bRiv(bd) = SUM((s,m,y),           LOS(s,bd,"seep",y,m)+LOS(s,bd,"evap",y,m));
+rLos(bd,sSce)                 = SUM((s,m,y),           LOS.l(s,bd,"seep",y,m)+LOS.l(s,bd,"evap",y,m));
 
 );
 

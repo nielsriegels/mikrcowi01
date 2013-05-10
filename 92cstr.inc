@@ -65,27 +65,9 @@
         objNODEweight(b)                        = 0;
 
 
-* Optimise for UZB first (sensitivity analysis)
-        IF((ord(sSce) eq 33) or (ord(sSce) eq 32) ,
-            IF(ord(sSce) eq 33,
-                objCTYweight("UZB")                     = 1;
-                objNODEweight(b)$bCty(b,"UZB")          = 1;
-            );
-            IF(ord(sSce) eq 32,
-                objCTYweight("KYR")                     = 1;
-                objNODEweight(b)$bCty(b,"KYR")          = 1;
-            );
-            SOLVE beam MAXIMIZING twv USING NLP;
-            LOOP(b$objNODEweight(b),
-                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
-                resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
-                ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
-            );
-        );
-
 * Individual country optimisation
-* Sequence A (s30+s33) - 1st: TAD+KYR+FER_UZB; 2nd: TUR;     3rd: UZB; 4th: KAZ 
-* Sequence B (s31+s34) - 1st: TAD+KYR;         2nd: TUR;     3rd: UZB; 4th: KAZ 
+* Sequence A (s30+s33) - 1st: TAD+KYR+FER_UZB;                         2nd: TUR; 3rd: UZB; 4th: KAZ 
+* Sequence B (s31+s34) - 1st: TAD+KYR;                                 2nd: TUR; 3rd: UZB; 4th: KAZ 
 * Sequence C (s32+s35) - 1st: KYR;             2nd: FER_UZB; 3rd: TAD; 4th: TUR; 5th: UZB, 6th: KAZ
 
 
@@ -93,7 +75,7 @@
         objCTYweight("KYR")                     = 1;
         objNODEweight(b)$bCty(b,"KYR")          = 1;
         objCTYweight("TAD")                     = 1$((ord(sSce) ne 32) and (ord(sSce) ne 35) );
-        objNODEweight(b)$bCty(b,"TAD")          = 1$((ord(sSce) ne 30) and (ord(sSce) ne 33) );
+        objNODEweight(b)$bCty(b,"TAD")          = 1$((ord(sSce) ne 32) and (ord(sSce) ne 35) );
 * In sequence A (s30 and s33), we also include FER_UZB in 1st pick
         objNODEweight("FER_UZB")                = 1$((ord(sSce) ne 31) and (ord(sSce) ne 32) and (ord(sSce) ne 34) and (ord(sSce) ne 35) );
         SOLVE beam MAXIMIZING twv USING NLP;
@@ -105,8 +87,9 @@
 
 
 * In sequence C, FER_UZB is 2nd pick
+* We disregard Uzbek electricity market (CTYweight)
         IF(((ord(sSce) eq 32) or (ord(sSce) eq 35)),
-            objCTYweight("UZB")                     = 1;
+*            objCTYweight("UZB")                     = 1;
             objNODEweight("FER_UZB")                = 1;
             SOLVE beam MAXIMIZING twv USING NLP;
             LOOP(b$objNODEweight(b),
@@ -118,7 +101,7 @@
 
 * In sequence C, TAD is 3rd pick
         IF( ((ord(sSce) eq 32) or (ord(sSce) eq 35)),
-            objCTYweight("UZB")                     = 0;
+*            objCTYweight("UZB")                     = 0;
             objCTYweight("TAD")                     = 1;
             objNODEweight(b)$bCty(b,"TAD")          = 1;
             SOLVE beam MAXIMIZING twv USING NLP;

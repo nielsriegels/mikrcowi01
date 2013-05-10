@@ -417,6 +417,11 @@ AMUMID          .AMU
 AMUDWN          .AMU             
 Lak_AYD         .SYR             
 Lak_SYR         .SYR             
+Lak_ARN         .SYR             
+Lak_ARS         .AMU             
+Lak_AMU         .AMU             
+Lak_GOL         .AMU
+
 /;
 
 SET sXsecIn(bs,bd,bo) /                                  
@@ -451,5 +456,26 @@ alf             1.000000E+00
                                 
                                 
                                 
+/;
+
+SET bNukus(b,rb) /
+AMUUPS  .AMU
+AMUMID  .AMU
+Res_TMP .AMU
+Res_TMR .AMU
+AMUDWN  .AMU
+NARYN   .SYR
+KRDRYA  .SYR
+SYRFER  .SYR
+Res_KAR .SYR
+Res_FAR .SYR
+SYRMID  .SYR
+Res_SHA .SYR
+SYRDW1  .SYR
+Res_KOK .SYR
+SYRDW2  .SYR
+Lak_ARN .SYR
+Lak_ARS .AMU
+
 /;
 

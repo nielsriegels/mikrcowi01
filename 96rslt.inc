@@ -144,7 +144,7 @@ $offtext
     rcElec(sSce,"qDemNot",y,c,m)        =  SUM(g,                   -DEM.l(g,c,y,m));
     rcElec(sSce,"qDemSrv",y,c,m)        =  SUM(g,                   -DEM.l(g,c,y,m) + SUM(d, USD.l(g,c,d,y,m)));
     rcElec(sSce,"qDemUsd",y,c,m)        =  SUM((g,d),               USD.l(g,c,d,y,m));
-    rcElec(sSce,"qTrxNet",y,c,m)        = -SUM((g,cc),              TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ;
+    rcElec(sSce,"qTrxNet",y,c,m)        = -SUM((g,cc),              TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)*0.9) ;
     rcElec(sSce,"qTrxSA",y,c,m)         = -SUM(g,                   XPT.l(c,g,y,m));
     rcElec(sSce,"qSupTot",y,c,m)        =  SUM((b,g)$bCty(b,c),     HPP.l(b,g,y,m)) + SUM((u,g)$tppMap(c,u), TPP.l(c,u,g,y,m));;
     rcElec(sSce,"qSupHPP",y,c,m)        =  SUM((b,g)$bCty(b,c),     HPP.l(b,g,y,m));
@@ -154,10 +154,16 @@ $offtext
 *   rcElec(sSce,"vCstCPX",c,m)          = -SUM(u$uPrd(u),           TNI.l(c,u)*tpp0(c,u,"CAPX"))*TNIweight(m) ;
     rcElec(sSce,"pMCbase",y,c,m)        =                          -1000000 * ELYMKT.m(c,"base",y,m)$(-ELYMKT.m(c,"base",y,m) gt eps);
     rcElec(sSce,"pMCpeak",y,c,m)        =                          -1000000 * ELYMKT.m(c,"peak",y,m)$(-ELYMKT.m(c,"peak",y,m) gt eps);
-    rcElec(sSce,"vExpCst",y,c,m)        =  SUM((g,cc),             -1000000 * ELYMKT.m(c,g,y,m)    * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ) ;
-    rcElec(sSce,"vExpTrx",y,c,m)        =  SUM((g,cc)$trx0(c,cc),   1000 * ELYTRX.m(c,cc,g,y,m) * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)) ) / 1000000;
-    rcElec(sSce,"vSrpHPP",y,c,m)        =  SUM((b,g)$bCty(b,c),    -1000 * ELYMKT.m(c,g,y,m)*HPP.l(b,g,y,m)) / 1000000;
+    rcElec(sSce,"vExpCst",y,c,m)        =  SUM((g,cc),             -1000 * ELYMKT.m(c,g,y,m)    * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)*0.9) ) ;
+    rcElec(sSce,"vExpTrx",y,c,m)        =  SUM((g,cc)$trx0(c,cc),   1000 * ELYTRX.m(c,cc,g,y,m) * (TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)*0.9) ) ;
+    rcElec(sSce,"vSrpHPP",y,c,m)        =  SUM((b,g)$bCty(b,c),    -1000 * ELYMKT.m(c,g,y,m)*HPP.l(b,g,y,m)  );
+*    rcElec(sSce,"vSrpTPP",y,c,m)        =  SUM((u,g)$tppMap(c,u),  -1000 * ELYMKT.m(c,g,y,m)*TPP.l(c,u,g,y,m));
     rcElec(sSce,"vTrxSA",y,c,m)         =  SUM(g,                   1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;
+    
+
+
+*vCS_tpp    
+*vCS_hpp    
 *   rcElec(sSce,"Electricity tariff (mUSD)",c,m)            = tariff(c) * SUM(u$uPrd(u), TPP.l(c,u,m))/1000;
 *   rcElec(sSce,"Thermal financial costs (mUSD)",c,m)       = SUM(u$uPrd(u), TPP.l(c,u,m)*tpp0(c,u,"SRMC") + TNI.l(c,u)*tpp0(c,u,"CAPX")*TNIweight(m))/1000 ;
 *   rcElec(sSce,"Thermal subsidy req. (mUSD)",c,m)          = rcElec(sSce,"Thermal financial costs (mUSD)",c,m) - rcElec(sSce,"Electricity tariff (mUSD)",c,m);
@@ -173,8 +179,10 @@ $offtext
     rcElec(sSce,e_resElec,y,c,"nvg")    = SUM(m$mWin(m),            rcElec(sSce,e_resElec,y,c,m));
     rcElec(sSce,e_resElec,y,c,"veg")    = SUM(m$mSum(m),            rcElec(sSce,e_resElec,y,c,m));
     rcElec(sSce,e_resElec,y,c,"annual") = SUM(m,                    rcElec(sSce,e_resElec,y,c,m));
-    rcElec(sSce,"pMCpeak",y,c,m0)$(not m(m0)) = 0;
-    rcElec(sSce,"pMCbase",y,c,m0)$(not m(m0)) = 0;
+*    rcElec(sSce,"pMCpeak",y,c,m0)$(not m(m0))       =(SUM(m, ( SUM(b$bCty(b,c), HPP.l(b,"peak",y,m))+SUM(u, TPP.l(c,u,"peak",y,m)) ) * rcElec(sSce,"pMCpeak",y,c,m0) )
+*                                                     /SUM(m, ( SUM(b$bCty(b,c), HPP.l(b,"peak",y,m))+SUM(u, TPP.l(c,u,"peak",y,m)) ) ) )$rcElec(sSce,"pMCpeak",y,c,m0);
+*    rcElec(sSce,"pMCbase",y,c,m0)$(not m(m0))       =(SUM(m, ( SUM(b$bCty(b,c), HPP.l(b,"base",y,m))+SUM(u, TPP.l(c,u,"base",y,m)) ) * rcElec(sSce,"pMCbase",y,c,m0) )
+*                                                     /SUM(m, ( SUM(b$bCty(b,c), HPP.l(b,"base",y,m))+SUM(u, TPP.l(c,u,"base",y,m)) ) ) )$rcElec(sSce,"pMCbase",y,c,m0);
 
 
 * Create data sheet for balance charts
@@ -185,11 +193,14 @@ $offtext
     rcElecBal(sSce,y,c,mS,"qDemUsd")   = SUM(m$mSm(m,mS),          rcElec(sSce,"qDemUsd",y,c,m));
     rcElecBal(sSce,y,c,mS,"qTrxNet")   = SUM(m$mSm(m,mS),          rcElec(sSce,"qTrxNet",y,c,m));
     rcElecBal(sSce,y,c,mS,"qTrxSA")    = SUM(m$mSm(m,mS),          rcElec(sSce,"qTrxSA" ,y,c,m));
+    rcElecBal(sSce,y,c,mS,"pMCbase")    = SUM(m$mSm(m,mS),          rcElec(sSce,"pMCbase" ,y,c,m));
+    rcElecBal(sSce,y,c,mS,"pMCpeak")    = SUM(m$mSm(m,mS),          rcElec(sSce,"pMCpeak" ,y,c,m));
+    
 
 
     rBorder(sSce,y,"Amu-TAD-TUR",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUMID","AMUUPS",y,m));
-    rBorder(sSce,y,"Amu-TUR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUMID","AMUUPS",y,m) - ITK.l(s,"Res_ZD","AMUMID",y,m));
-    rBorder(sSce,y,"Syr-KYR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"NARYN","Res_NA2",y,m) + DIS.l(s,"NARYN","Res_NA2",y,m));
+    rBorder(sSce,y,"Amu-MID-DWN",m)      = SUM((s)$sW(s),               FLW.l(s,"AMUDWN","Res_TMR",y,m) + DIS.l(s,"AMUDWN","Res_TMR",y,m)) ;
+    rBorder(sSce,y,"Syr-KYR-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"NARYN","Res_NA2",y,m)  + DIS.l(s,"NARYN","Res_NA2",y,m));
     rBorder(sSce,y,"Syr-UZB-TAD",m)      = SUM((s)$sW(s),               FLW.l(s,"Res_KAR","SYRFER",y,m) );
     rBorder(sSce,y,"Syr-TAD-UZB",m)      = SUM((s)$sW(s),               FLW.l(s,"Res_FAR","Res_KAR",y,m) + DIS.l(s,"Res_FAR","Res_KAR",y,m));
     rBorder(sSce,y,"Syr-UZB-KAZ",m)      = SUM((s)$sW(s),               ITK.l(s,"Res_SHA","SYRMID",y,m) + FLW.l(s,"Res_SHA","SYRMID",y,m) - ITK.l(s,"SYR_KAZ","SYRMID",y,m));
@@ -212,15 +223,20 @@ $offtext
     rcView(sSce,y,"AgriWaterInt",c)         = ( SUM((b,q,j,m)$bCty(b,c),    IRG.l(b,q,j,y,m)*1000000$mWin(m))  / SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y)) )$SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y));
     rcView(sSce,y,"AgriLandChg",c)          = ( SUM((b,q,j)$bCty(b,c),      LND.l(b,q,j,y)*100      )  / SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y));
     rcView(sSce,y,"HHIuse",c)               = SUM((s,b,sSec,m)$bCty(b,c),   HHI.l(s, sSec,b,y,m)$sW(s));
-    rcView(sSce,y,"Intake",c)               = SUM((s,rb,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb) and bCty(bd,c))  );
-    rcView(sSce,y,"Nukus",c)                = SUM((s,rb,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb)) * sNukus(c,rb)  );
+    rcView(sSce,y,"Intake",c)               = SUM((rb,s), SUM((bd,bo,m)$(bNukus(bo,rb) and bCty(bd,c)),             ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m)  )); 
+    rcView(sSce,y,"Nukus",c)                = SUM((rb,s), SUM((bd,bo,m)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ),   ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m)  )*sNukus(c,rb)) 
+                                             +SUM((rb,s), SUM((bd,m)$bNukus(bd,rb), rtn0(bd,m))*sNukus(c,rb));
+    
+
+
+
 
     rcView(sSce,y,"Losses",c)               = SUM((s,b,l,m)$bCty(b,c),      LOS.l(s,b,l,y,m)$sW(s));
     rcView(sSce,y,"Nature",c)               = SUM((s,b,m)$bCty(b,c),        STO.l(s,b,y,m)$(bNat(b) AND sW(s)) );
     rcView(sSce,y,"Amu-TAD-TUR","TAD")      =-SUM(m, rBorder(sSce,y,"AMU-TAD-TUR",m));
     rcView(sSce,y,"Amu-TAD-TUR","TUR")      = SUM(m, rBorder(sSce,y,"AMU-TAD-TUR",m));
-    rcView(sSce,y,"Amu-TUR-UZB","TUR")      =-SUM(m, rBorder(sSce,y,"AMU-TUR-UZB",m));
-    rcView(sSce,y,"Amu-TUR-UZB","UZB")      = SUM(m, rBorder(sSce,y,"AMU-TUR-UZB",m));
+    rcView(sSce,y,"Amu-MID-DWN","TUR")      =-SUM(m, rBorder(sSce,y,"Amu-MID-DWN",m));
+    rcView(sSce,y,"Amu-MID-DWN","UZB")      = SUM(m, rBorder(sSce,y,"Amu-MID-DWN",m));
     rcView(sSce,y,"Syr-KYR-UZB","KYR")      =-SUM(m, rBorder(sSce,y,"Syr-KYR-UZB",m));
     rcView(sSce,y,"Syr-KYR-UZB","UZB")      = SUM(m, rBorder(sSce,y,"Syr-KYR-UZB",m));
     rcView(sSce,y,"Syr-UZB-TAD","UZB")      =-SUM(m, rBorder(sSce,y,"Syr-UZB-TAD",m));
@@ -252,8 +268,8 @@ $offtext
 
     rcView(sSce,y,"usdVal",c)               =-SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
     rcView(sSce,y,"aggWTP",c)               = SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcView(sSce,y,"usdVal",c) ;
-    rcView(sSce,y,"demVal",c)               = SUM((g,m)$elyDemand0(c,g,m),  -1000*ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
-    rcView(sSce,y,"tppVal",c)               = SUM((g,m),                    -1000*ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
+    rcView(sSce,y,"demVal",c)               = SUM((g,m)$elyDemand0(c,g,m),  -1000*ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
+    rcView(sSce,y,"tppVal",c)               = SUM((g,m),                    -1000*ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
     rcView(sSce,y,"expVal",c)               = SUM((g,m),                    1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;
 
     rcView(sSce,y,"elyCS",c)                = rcView(sSce,y,"aggWTP",c) + rcView(sSce,y,"usdVal",c) - rcView(sSce,y,"demVAL",c);
@@ -283,15 +299,22 @@ $offtext
     rcRbView(sSce,y,"AgriWaterInt",rb0,c)         = ( SUM((b,q,j,m)$(bCty(b,c) AND bBas(b,rb0)),    IRG.l(b,q,j,y,m)*1000000$mWin(m))  / SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y)) )$SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y));
     rcRbView(sSce,y,"AgriLandChg",rb0,c)          = ( SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),      LND.l(b,q,j,y)*100      )  / SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y));
     rcRbView(sSce,y,"HHIuse",rb0,c)               = SUM((s,b,sSec,m)$(bCty(b,c) AND bBas(b,rb0)),   HHI.l(s, sSec,b,y,m)$sW(s));
-    rcRbView(sSce,y,"Intake",rb,c)               = SUM((s,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb) and bCty(bd,c))  );
-    rcRbView(sSce,y,"Nukus",rb,c)                = SUM((s,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb)) * sNukus(c,rb) );
+*    rcRbView(sSce,y,"Intake",rb,c)               = SUM((s,bd,bo,m)$(bNukus(bo,rb) and (not bNukus(bd,rb)) and bCty(bd,c) and bPlz(bd)),  
+*                                                    (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb) and bCty(bd,c))  );
+    rcRbView(sSce,y,"Intake",rb,c)               = SUM((s,bd,bo,m)$(bCty(bd,c) and bPlz(bd)),  
+                                                    (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb) and bCty(bd,c))  );
+    rcRbView(sSce,y,"Nukus",rb,c)                = SUM((s,bd,bo,m)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ),  
+                                                    (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb)) * sNukus(c,rb) )
+                                                  +SUM((b,m)$bNukus(b,rb), rtn0(b,m)*sNukus(c,rb)); 
 
-    rcRbView(sSce,y,"Losses",rb0,c)               = SUM((s,b,l,m)$(bCty(b,c) AND bBas(b,rb0)),      LOS.l(s,b,l,y,m)$sW(s));
+
+
+    rcRbView(sSce,y,"Losses",rb0,c)               = SUM((s,b,l,m)$(bCty(b,c) AND bBas(b,rb0) and sW(s)),      LOS.l(s,b,l,y,m)$(not bPlz(b)));
     rcRbView(sSce,y,"Nature",rb0,c)               = SUM((s,b,m)$(bCty(b,c) AND bBas(b,rb0)),        STO.l(s,b,y,m)$(bNat(b) AND sW(s)) );
     rcRbView(sSce,y,"Amu-TAD-TUR","AMU","TAD")      =-SUM(m, rBorder(sSce,y,"AMU-TAD-TUR",m));
     rcRbView(sSce,y,"Amu-TAD-TUR","AMU","TUR")      = SUM(m, rBorder(sSce,y,"AMU-TAD-TUR",m));
-    rcRbView(sSce,y,"Amu-TUR-UZB","AMU","TUR")      =-SUM(m, rBorder(sSce,y,"AMU-TUR-UZB",m));
-    rcRbView(sSce,y,"Amu-TUR-UZB","AMU","UZB")      = SUM(m, rBorder(sSce,y,"AMU-TUR-UZB",m));
+    rcRbView(sSce,y,"Amu-MID-DWN","AMU","TUR")      =-SUM(m, rBorder(sSce,y,"Amu-MID-DWN",m));
+    rcRbView(sSce,y,"Amu-MID-DWN","AMU","UZB")      = SUM(m, rBorder(sSce,y,"Amu-MID-DWN",m));
     rcRbView(sSce,y,"Syr-KYR-UZB","SYR","KYR")      =-SUM(m, rBorder(sSce,y,"Syr-KYR-UZB",m));
     rcRbView(sSce,y,"Syr-KYR-UZB","SYR","UZB")      = SUM(m, rBorder(sSce,y,"Syr-KYR-UZB",m));
     rcRbView(sSce,y,"Syr-UZB-TAD","SYR","UZB")      =-SUM(m, rBorder(sSce,y,"Syr-UZB-TAD",m));
@@ -323,8 +346,8 @@ $offtext
 
     rcRbView(sSce,y,"usdVal",rb0,c)                 =-SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
     rcRbView(sSce,y,"aggWTP",rb0,c)                 = SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcRbView(sSce,y,"usdVal",rb0,c) ;
-    rcRbView(sSce,y,"demVal",rb0,c)                 = SUM((g,m)$elyDemand0(c,g,m),  -ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
-    rcRbView(sSce,y,"tppVal",rb0,c)                 = SUM((g,m),                    -ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
+    rcRbView(sSce,y,"demVal",rb0,c)                 = SUM((g,m)$elyDemand0(c,g,m),  -1000*ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
+    rcRbView(sSce,y,"tppVal",rb0,c)                 = SUM((g,m),                    -1000*ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
     rcRbView(sSce,y,"expVal",rb0,c)                 = SUM((g,m),                    1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;
 
     rcRbView(sSce,y,"elyCS",rb0,c)                  = rcRbView(sSce,y,"aggWTP",rb0,c) + rcRbView(sSce,y,"usdVal",rb0,c) - rcRbView(sSce,y,"demVAL",rb0,c);
@@ -355,8 +378,8 @@ $offtext
     rSView(y,"AgriWaterInt",sSce)         = ( SUM((b,q,j,m),    IRG.l(b,q,j,y,m)*1000000$mWin(m))  / SUM((b,q,j), LND.l(b,q,j,y)) )$SUM((b,q,j), LND.l(b,q,j,y));
     rSView(y,"AgriLandChg",sSce)          = ( SUM((b,q,j),      LND.l(b,q,j,y)*100      )  / SUM((b,q,j), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j), LND.l(b,q,j,y));
     rSView(y,"HHIuse",sSce)               = SUM((s,b,sSec,m),   HHI.l(s, sSec,b,y,m)$sW(s));
-    rSView(y,"Intake",sSce)               = SUM((s,rb,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb))  );
-    rSView(y,"Nukus",sSce)                = SUM((s,rb,c,bd,bo,m)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb)) * sNukus(c,rb)  );
+    rSView(y,"Intake",sSce)               = SUM((s,rb,bd,bo,m)$bPlz(bd),    (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb))  );
+    rSView(y,"Nukus",sSce)                = SUM((s,rb,bd,bo,m,c)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb)) * sNukus(c,rb)  );
     rSView(y,"Losses",sSce)               = SUM((s,b,l,m),      LOS.l(s,b,l,y,m)$sW(s));
     rSView(y,"Nature",sSce)               = SUM((s,b,m),        STO.l(s,b,y,m)$(bNat(b) AND sW(s)) );
     rSView(y,"cTherm",sSce)               = -SUM((u,g,m,c)$tppMap(c,u),     TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000 )/1000000;
@@ -382,8 +405,8 @@ $offtext
 
     rSView(y,"usdVal",sSce)               =-SUM((d,g,m,c)$usd0(c,g,d),      usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
     rSView(y,"aggWTP",sSce)               = SUM((d,g,m,c)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rSView(y,"usdVal",sSce) ;
-    rSView(y,"demVal",sSce)               = SUM((g,m,c)$elyDemand0(c,g,m),  -ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
-    rSView(y,"tppVal",sSce)               = SUM((g,m,c),                    -ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000001) );
+    rSView(y,"demVal",sSce)               = SUM((g,m,c)$elyDemand0(c,g,m),  -1000*ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
+    rSView(y,"tppVal",sSce)               = SUM((g,m,c),                    -1000*ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
     rSView(y,"expVal",sSce)               = SUM((g,m,c),                    1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;
 
     rSView(y,"elyCS",sSce)                = rSView(y,"aggWTP",sSce) + rSView(y,"usdVal",sSce) - rSView(y,"demVAL",sSce);

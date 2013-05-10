@@ -26,9 +26,9 @@ VARIABLES
     TWV                     "Total water value (USD)"
 ;
 
-OPTIONS DIS:0:3:1;
-OPTIONS FLW:0:3:1;
-OPTIONS ITK:0:3:1;
+OPTIONS DIS:0:3:2;
+OPTIONS FLW:0:3:2;
+OPTIONS ITK:0:3:2;
 OPTIONS IRG:0:4:1;
 OPTIONS LOS:0:4:1;
 OPTIONS STO:0:2:1;
@@ -46,7 +46,8 @@ OPTIONS XPT:0:2:2;
 EQUATIONS
 * Hydrological constraints and identities
     WBALANCE(s,b,y0,m0)         "Water balance at all nodes"
-    WNUKUS(s,rb0,c,y0,m0)       "Constrain within Nukus agreement"
+ITKMAX(s,bd,y0)
+    WNUKUS(s,rb0,c,y0)          "Constrain within Nukus agreement"
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
     LOSSES(s,b,l,y0,m0)         "Losses to seepage and evaporation"
     LEACHING(s,b,y0)            "Leaching requirements"
@@ -116,16 +117,27 @@ WBALANCE(s,b,y,m)..
      ) * scalem3
 ;
 
+* Intake maximum
+ITKMAX(s,bd,y)$(SUM((m), itk2(s,bd,y,m)))..
+    SUM((bo,m), ITK(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)+DIS(s,bd,bo,y,m))
+   +SUM(m, GRW(bd,y,m)) 
+   -SUM((sSec,m)$HHIuse(sSec,bd,m), HHI(s,sSec,bd,y,m)) 
+    
+    =l= SUM((m), itk2(s,bd,y,m));
+
+
 * Account for losses to seepage and evaporation
-LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
+LOSSES(s,b,l,y,m)..
     LOS(s,b,l,y,m) =e= lossRivers(b,l,m) * (
-                          SUM(bo$flow(b,bo), FLW(s,b,bo,y,m))
-                        + SUM(bo$resv(b,bo), FLW(s,b,bo,y,m))
-                        + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
+                          SUM(bo$flow(b,bo), FLW(s,b,bo,y,m)+DIS(s,b,bo,y,m)+ITK(s,b,bo,y,m))
+*                        + SUM(bo$resv(b,bo), FLW(s,b,bo,y,m))
+*                        + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
                         + sup(s,b,m)
-                        + rtn0(b,m) )
-                     + lossChannels(b,l,m) * SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)) 
-                     + SUM((j,q)$irg0(b,q,j,y,m), lossFields(b,j,l,m) * IRG(b,q,j,y,m))
+                        + rtn0(b,m) )$bRiv(b)
+                     + lossChannels(b,l,m) * SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)       )$bPLz(b) 
+                     + SUM((j,q)$irg0(b,q,j,y,m), lossFields(b,j,l,m) * IRG(b,q,j,y,m))$bPlz(b)
+                     + lossReservoirs(b,l,m) * VOL(s,b,y,m)$bRes(b)
+                     + lossLakes(b,l,m)      * VOL(s,b,y,m)$Sea(b)
 ;
 
 
@@ -134,12 +146,16 @@ LOSSES(s,b,l,y,m)$(lossRivers(b,l,m) + lossChannels(b,l,m))..
 
 * Nukus agreement
 * Allocate given shares of river basin runoff on semi annual basis
-WNUKUS(s,rb,c,y,mS)$(sW(s) AND sNukus(c,rb) AND useNukus)..
-    SUM((bd,bo,m)$(mSm(m,mS) and bPlz(bd) and bCty(bd,c) and bBas(bd,rb) ), 
+* Left side is country demand by basin
+* Right side is country supply by basin
+WNUKUS(s,rb,c,y)$(sW(s) AND sNukus(c,rb) AND useNukus)..
+    SUM((bd,bo,m)$(bNukus(bo,rb) and (not bNukus(bd,rb)) and bCty(bd,c)), 
         ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  ) 
     =l= sNukus(c,rb) * 
-    SUM((bd,bo,m)$(mSm(m,mS) AND bPlz(bd) AND bBas(bd,rb)), 
-        ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  ) ;
+    SUM((bd,bo,m)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ), 
+            ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  ) 
+   +SUM((bd,m)$bNukus(bd,rb), rtn0(bd,m));
+
 
 * Account for return of water due to drainage
 RETURNWATER(s,b,y,m)..
@@ -156,10 +172,16 @@ LEACHING(s,b,y)..
 IRGACT(b,q,j,y,m)$(irg0(b,q,j,y,m) AND noYWR and useCET)..
     IRG(b,q,j,y,m) =e= (LND(b,q,j,y)/lnd0(b,q,j))*irg0(b,q,j,y,m) * (1-iInv("improve"));
 
+
 * Yield water response function
 * Summed over growth phases with appropriate phase weights and phase specific crop yield 
 YIELDWATER1w(b,q,j,y)$((not noYWR) AND lnd0(b,q,j))..
     YWR(b,q,j,y) =e=     SUM(p$etcP(b,j,p),  wPhase(b,j,p) * (1 - kYield(p,j)*(1-iET(b,q,j,p,y)))  );
+
+* YLS(b,q,j,p,y) =l= 0.1;
+* 1 - iET(b,q,j,p,y) =e= SUM(p, YLS(b,q,j,p,y));
+* YWR() =e= L1*yl1*w1 + L2*yl2*w2 + L3*yl3*w3 + L4*yl4*wPhase(b,j,p)
+
 
 * Yield water response function - minimum formulation
 * Summed over growth phases with appropriate phase weights and phase specific crop yield 
@@ -265,7 +287,8 @@ ELYDEM(c,g,y,m)$elyDemand0(c,g,m)..
 *       if trade possibilities makes the plant more attractive
 * RHS is supply, LHS is demand, unit is GWh
 ELYMKT(c,g,y,m)..
-           SUM(cc$trx0(cc,c),       TRX(cc,c,g,y,m) )
+* OBS: Parametrise 10% TRX loss!!!!
+           SUM(cc$trx0(cc,c),       TRX(cc,c,g,y,m) )*0.9
          + SUM(u$tppMap(c,u),       TPP(c,u,g,y,m)) 
          + SUM(b$bResEly(b),        HPP(b,g,y,m)$bCty(b,c))
          + SUM(d$usd0(c,g,d),       USD(g,c,d,y,m))
@@ -376,6 +399,7 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS, LEACHING,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
                 LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1w, YIELDWATER2, iEVAPOTRANS, MINiET, RETURNWATER
                 OBJ
+*                ITKMAX
                 /;
 
 * Set model options

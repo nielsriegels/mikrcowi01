@@ -218,8 +218,11 @@ SETS
         pMCpeak         "Peak marginal cost (USD/MWh)"
         vExpCst         "CAPS export cost coverage (mUSD)" 
         vExpTrx         "CAPS transmission profits (mUSD)" 
-        vSrpHPP         "Hydro power surplus (mUSD)"
+        vSrpHPP         "Hydro power PS at marg cost (mUSD)"
+        vSrpTPP         "Thermal power PS at marg cost (mUSD)"
         vTrxSA          "SA export income (mUSD)" 
+        vCS_tpp         "Consumer surplus attributed to thermal (mUSD)"
+        vCS_hpp         "Consumer surplus attributed to hydro (mUSD)"
     /
 
 
@@ -249,7 +252,7 @@ SETS
         Losses          "Losses to ground water and evaporation"
         Nature          "Water allocated to nature"
         Amu-TAD-TUR     "Amu Water flows from TAD to TUR"
-        Amu-TUR-UZB     "Amu Water flows from TUR to UZB"
+        Amu-MID-DWN
         Syr-KYR-UZB     "Syr Water flows from FER to UZB"
         Syr-UZB-TAD     "Syr Water flows from UZb to TAD"   
         Syr-TAD-UZB     "Syr Water flows from TAD to UZB"
@@ -291,7 +294,7 @@ SETS
 
     e_resBorder /
         Amu-TAD-TUR     
-        Amu-TUR-UZB
+        Amu-MID-DWN
         Syr-KYR-UZB
         Syr-UZB-TAD
         Syr-TAD-UZB
