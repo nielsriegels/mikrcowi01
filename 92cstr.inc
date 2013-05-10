@@ -74,10 +74,10 @@
 * Optimise for KYR+TAD 1st pick except for s32 and s35
         objCTYweight("KYR")                     = 1;
         objNODEweight(b)$bCty(b,"KYR")          = 1;
-*        objCTYweight("TAD")                     = 1$((ord(sSce) ne 32) and (ord(sSce) ne 35) );
-*        objNODEweight(b)$bCty(b,"TAD")          = 1$((ord(sSce) ne 32) and (ord(sSce) ne 35) );
+        objCTYweight("TAD")                     = 1$((ord(sSce) ne 32) and (ord(sSce) ne 35) );
+        objNODEweight(b)$bCty(b,"TAD")          = 1$((ord(sSce) ne 32) and (ord(sSce) ne 35) );
 * In sequence A (s30 and s33), we also include FER_UZB in 1st pick
-*        objNODEweight("FER_UZB")                = 1$((ord(sSce) ne 31) and (ord(sSce) ne 32) and (ord(sSce) ne 34) and (ord(sSce) ne 35) );
+        objNODEweight("FER_UZB")                = 1$((ord(sSce) ne 31) and (ord(sSce) ne 32) and (ord(sSce) ne 34) and (ord(sSce) ne 35) );
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
             resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps;
@@ -88,8 +88,8 @@
 
 * In sequence C, FER_UZB is 2nd pick
 * We disregard Uzbek electricity market (CTYweight)
-*        IF(((ord(sSce) eq 32) or (ord(sSce) eq 35)),
-*            objCTYweight("UZB")                     = 1;
+        IF(((ord(sSce) eq 32) or (ord(sSce) eq 35)),
+            objCTYweight("UZB")                     = 1;
             objNODEweight("FER_UZB")                = 1;
             SOLVE beam MAXIMIZING twv USING NLP;
             LOOP(b$objNODEweight(b),
@@ -97,11 +97,11 @@
                 resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
                 ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
             );
-*        );
+        );
 
 * In sequence C, TAD is 3rd pick
-*        IF( ((ord(sSce) eq 32) or (ord(sSce) eq 35)),
-*            objCTYweight("UZB")                     = 0;
+        IF( ((ord(sSce) eq 32) or (ord(sSce) eq 35)),
+            objCTYweight("UZB")                     = 0;
             objCTYweight("TAD")                     = 1;
             objNODEweight(b)$bCty(b,"TAD")          = 1;
             SOLVE beam MAXIMIZING twv USING NLP;
@@ -110,7 +110,7 @@
                 resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
                 ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
             );
-*        );
+        );
 
 * Assuming TUR (and not UZB) have control over intake to Res_ZD and Kairakum canal
 * given fixed intakes upstream
