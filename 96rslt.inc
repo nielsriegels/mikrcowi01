@@ -86,6 +86,7 @@
     rAgri(sSce,b,"LandChg",y,j,q)$lnd0(b,q,j) = 100*LND.l(b,q,j,y)/lnd0(b,q,j)-100;
     rAgri(sSce,b,"AgriProd",y,j,q)            = CRP.l(b,q,j,y)/1000;
     rAgri(sSce,b,"YWR",y,j,q)                 = 100*YWR.l(b,q,j,y);
+    rAgri(sSce,b,"YieldAct",y,j,q)$lnd0(b,q,j)= CRP.l(b,q,j,y) /  LND.l(b,q,j,y);
 *    rAgri(sSce,b,"iET",y,j,q)                 = 100*YWR.l(b,q,j,y);
     rAgri(sSce,b,"ActMarg",y,j,q)$LND.l(b,q,j,y) = (pCrop(b,j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
     rAgri(sSce,b,"OptMarg",y,j,q)$lnd0(b,q,j) = (pCrop(b,j)* crp0(b,q,j)   - cCrop(b,j) *lnd0(b,q,j)  )/ lnd0(b,q,j);

@@ -171,6 +171,7 @@ SETS
         WaterChg        "Water change compared to base year (%)"
         WaterInt        "Water intensity (m3/ha)"
         WaterIntB       "Water intensity (m3/ha)"
+        YieldAct        "Yield, actual (ton/ha)"
         LandUse         "Agricultural land use (ha)",
         LandChg         "Agricultural land use change rel. to baseyear (%)"
         LabrUse         "Agricultural labour use (mUSD/year)",

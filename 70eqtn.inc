@@ -151,10 +151,12 @@ LOSSES(s,b,l,y,m)..
 WNUKUS(s,rb,c,y)$(sW(s) AND sNukus(c,rb) AND useNukus)..
     SUM((bd,bo,m)$(bNukus(bo,rb) and (not bNukus(bd,rb)) and bCty(bd,c)), 
         ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  ) 
-    =l= sNukus(c,rb) * 
-    SUM((bd,bo,m)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ), 
+    =l= sNukus(c,rb) * (
+         SUM((bd,bo,m)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ), 
             ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  ) 
-   +SUM((bd,m)$bNukus(bd,rb), rtn0(bd,m));
+        +SUM((bd,m)$bNukus(bd,rb), rtn0(bd,m))
+        -SUM(b$bBas(b,rb), natExtra(b))
+   );
 
 
 * Account for return of water due to drainage
@@ -337,10 +339,10 @@ SUM(q, LND(b,q,j,y)) =g= SUM(q, lnd0(b,q,j)* iMinLnd(b,j));
 
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
-LEONTIEF(b,q,j,y)$lnd0(b,q,j)..
+LEONTIEF(b,q,j,y)$(lnd0(b,q,j) and crp0(b,q,j))..
     ( CRP(b,q,j,y) / crp0(b,q,j) ) =e= 
         YWR(b,q,j,y) * (LND(b,q,j,y)/lnd0(b,q,j)) * (1$jAX(j) 
-                                                     +useCET*SUM(jj$lShare(b,q,jj), lShare(b,q,jj)*( CRP(b,q,jj,y) / crp0(b,q,jj) ) )$jAF(j) 
+*                                                     +useCET*SUM(jj$lShare(b,q,jj), lShare(b,q,jj)*( CRP(b,q,jj,y) / crp0(b,q,jj) ) )$jAF(j) 
                                                      +1$((not useCET) AND jAF(j))
                                                      ) ;
 
@@ -399,7 +401,7 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS, LEACHING,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
                 LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1w, YIELDWATER2, iEVAPOTRANS, MINiET, RETURNWATER
                 OBJ
-*                ITKMAX
+                ITKMAX
                 /;
 
 * Set model options

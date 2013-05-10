@@ -14,6 +14,8 @@ execute '%path%solutions\renameS.cmd';
 
 execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, TRX, DEM, USD, YWR, iET, CRP, LND, CMX, TWV ;
 USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
+HPP.l("Res_KA2",g,y,m) = 0;
+HHD.l("Res_KA2",y,m) = 0;
 
     IF(scenarios("run",sSce), 
 * Fix hydrological variables that can never be non-zero
@@ -32,7 +34,7 @@ USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
         TRX.up(c,cc,g,y,m)                                           = INF$trx0(c,cc);
         LOS.up(s,b,l,y0,m0)                                         = INF;
 *    YWR.up(b,q,j,y)                                             = 1;
-        CRP.lo(b,q,j,y)                                             = crp0(b,q,j) * 0.1;
+        CRP.lo(b,q,j,y)                                             = crp0(b,q,j) * 0;
         CRP.up(b,q,j,y)                                             = crp0(b,q,j) * 3 ;
         LND.lo(b,q,j,y)                                             = lnd0(b,q,j) * 0.1;
         LND.up(b,q,j,y)                                             = lnd0(b,q,j) * 3 ;
