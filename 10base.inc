@@ -56,7 +56,7 @@ SETS
     sSec                    "Non-agri sectors"      / HH, ind /
     sRtn                    "Return flow types"     / total, irrig, river, lakes/
     sEly                    "Elec. data types"      / elyCap, aCAPEX, aFOPEX, uVOPEX, uFUELEX, eELEC, eHEAT, rHEAT /
-    sSce                    "Scenarios"             / s01*s50 /
+    sSce                    "Scenarios"             / s01*s110 /
     l                       "Loss types"            / seep, evap /
     x                       "Crop mixes"            / cotn, whet, alfa, rice, ric2, stfr, tgrp, meln, tomt, shav, pota, mung, subt, mazf, mazg /
 
@@ -303,6 +303,24 @@ SETS
         DwnToktogul
         DwnNurek
     /
+
+    e_resPublic /
+        canals          "Canal lining"
+        pumps           "Pump refurbishment"
+        thermal         "Thermal power plants (MW)"
+        rogunHPP        "Rogun HPP (mUSD/year)"
+        kam1HPP         "Kamberata-1 HPP (mUSD/year)"
+        RoRHPP          "Run-of-River HPP (mUSD/year)"
+        elyTariff       "Electricity tariff income (mUSD/year)"
+        SAxlines        "SA transmission lines"
+        CAxlines        "CA transmission lines"
+        cotton          "Cotton public income"
+        water           "Water public income"
+        elec            "Electricity tariff"
+    /
+
+    e_resPubItems     / capex, opex, physical, revenue /
+
 ;
 
 PARAMETER usdSh(d0) "Share of demand in step unserved"

@@ -67,6 +67,7 @@ PARAMETERS
     rRbEcon(sSce,y0,*,rb0,c)         "Economic results"
     rResv(sSce,y0,*,b,m)            "Reservoir information"
     rRbResv(sSce,y0,*,rb0,c)       "Description of reservoirs on basin level"
+    rcPublic(sSce,y0,e_resPublic,c,e_resPubItems)   "Public finance output"
 
 * Temporary - to be replaced or deleted
     trx0(c,cc)
@@ -93,6 +94,7 @@ OPTIONS rsAgri:2:4:1;
 OPTIONS rcAgri:2:4:1;
 OPTIONS rcEcon:2:3:1;
 OPTIONS rcRbView:0:3:2;
+OPTIONS rcPublic:0:3:2;
 OPTIONS checkoutput:2:1:1;
 
 * Provide baseline for check against former model runs - UPDATE WHEN CHANGE IN totinc IS WARRANTED!
@@ -123,6 +125,8 @@ bBas(b,"All") = 1;
 * set all crops free
 jAF0(j) = 1;
 jAF0("stf") = 0;
-
+JAX(j) = 0;
+resVolFix(b,y0,m) = 0;
+resDisFix(bd,bo,y0,m) = 0;
 
 nuk0(rb,c,y0,mS) = SUM((s,b)$bBas(b,rb), SUM(m$mSm(m,mS), sup0(s,b,y0,m))) * sNukus(c,rb);

@@ -2,32 +2,32 @@
     y(y0)                   = scenRainYear(sSce,y0);
 
 * Set elasticity of transformation 
-    rL = (scenarios("sT",sSce)+1)/scenarios("sT",sSce);
+    rL = 1;
 
 * Allow yield response
-    noYWR                   = 1$scenarios("noYWR",sSce);
+    noYWR                   = 0;
 
 * Disable CET function by scenario choice
-    useCET                  = 1$scenarios("useCET",sSce);
+    useCET                  = 0;
 
 * Enable crop mix method
-    useCMX                  = 1$scenarios("useCMX",sSce);
+    useCMX                  = 1;
 
 * Enable Nukus agreement
-    useNukus                = 1$scenarios("nukus",sSce);
+    useNukus                = 1$scenarios(sSce,"nukus");
 
 * Impose head limits on selected reservoirs
-    maxHead(b)              = maxHead0(b,sSce);
+    maxHead(b)              = maxHead0(sSce,b);
 
 * Allow transmission according to transmission limits in trx0
     transx(c,cc)                            = 0;
-    transx(c,cc)$(scenarios("transx",sSce) eq 3) = 1$(caps3(c) AND caps3(cc));
-    transx(c,cc)$(scenarios("transx",sSce) eq 5) = 1$(caps5(c) AND caps5(cc));
-    transx(c,cc)$(scenarios("transx",sSce) eq 6) = 1$(caps6(c) AND caps6(cc));
+    transx(c,cc)$(scenarios(sSce,"trCAPS") eq 3) = 1$(caps3(c) AND caps3(cc));
+    transx(c,cc)$(scenarios(sSce,"trCAPS") eq 5) = 1$(caps5(c) AND caps5(cc));
+    transx(c,cc)$(scenarios(sSce,"trCAPS") eq 6) = 1$(caps6(c) AND caps6(cc));
 
 * Enable electricity exports to South Asia
-    pXpt(c,m)               = elyExp0("pExp",c,m)$scenarios("SAexp",sSce);
-    qXpt(c,m)               = elyExp0("qExp",c,m)$scenarios("SAexp",sSce);
+    pXpt(c,m)               = elyExp0("pExp",c,m)$scenarios(sSce,"SAexpt");
+    qXpt(c,m)               = elyExp0("qExp",c,m)$scenarios(sSce,"SAexpt");
  
 * Reset country and node objective function weights to their normal 1's and 0's
     objAGRweight(b)         = 1;
@@ -40,27 +40,28 @@
 
 * Allow flexibility in land allocation and account for any fallow land
 * unless scenario user chose fixed land allocation (opLND=0)
-    IF(scenarios("fixLND",sSce) gt 0,
+*    IF(scenarios("fixLND",sSce) gt 0,
         jAF(j)                  = NO;
 *        jAF("wht")              = YES;
-    );
-    IF(scenarios("fixLND",sSce) eq 0,
-        jAF(j)                  = jAF0(j);
-    );
+*    );
+*    IF(scenarios("fixLND",sSce) eq 0,
+*        jAF(j)                  = jAF0(j);
+*    );
 *    jAF("fal")              = YES$scenarios("fallow",sSce);
-    jAX(j)                  = 1$(not jAF(j));
+*    jAX(j)                  = 1$(not jAF(j));
 *    lnd0(b,q,"fal")         = SUM(j$jAF(j), lnd0(b,q,j)) * scenarios("fallow",sSce);
 
 * Disable average yields and enable partitioning by soil suitability class
-    q(qAvg)                 = YES$scenarios("avgSoil",sSce);
-    q(qPar)                 = YES$(not scenarios("avgSoil",sSce));
+*    q(qAvg)                 = YES$scenarios("avgSoil",sSce);
+*    q(qPar)                 = YES$(not scenarios("avgSoil",sSce));
+    q(qPar)                 = YES;
 
     CRP.l(b,q0,j,y)$(not q(q0))         = 0;
     LND.l(b,q0,j,y)$(not q(q0))         = 0;
 
 
 *  Index for minimum land use for crops in procent of base
-    iMinLnd(b,j)         = SUM(c$bCty(b,c), iMinLnd0(c,j))$(scenarios("rMKT",sSce) eq 0);
+    iMinLnd(b,j)         = SUM(c$bCty(b,c), iMinLnd0(c,j))$(scenarios(sSce,"lndRfm") eq 0);
 
 * Calculate land share for CET function
     lShare(b,q,j)$jAF(j)    = (lnd0(b,q,j) / SUM(jj$jAF(jj), lnd0(b,q,jj)))$SUM(jj$jAF(jj), lnd0(b,q,jj));
@@ -71,7 +72,7 @@
     hhiUse("ind",b,m)       = SUM(y0$scenModelYear(sSce,y0),    qIwater(b,m)*(1+demography(y0,"ind")) );
 
 * Set new reservoirs in operation according to scenario definition
-    bResNOP(b)              = YES$(resNew(b) AND not resNewOp(b,sSce));
+    bResNOP(b)              = YES$(resNew(b) AND not resNewOp(sSce,b));
     bResSto(b)              = YES$(reservoirs(b,"max") gt reservoirs(b,"min"));
     bResSto(b)$bResNOP(b)   = NO;
     bResEly(b)              = YES$(reservoirs(b,"Ely") > 0 AND not bResNOP(b));
@@ -87,17 +88,16 @@
                                  )$bResEly(b);
 
 * Set loss in channels according to investment choices
-    lossChannels(b,l,m) = lossChannels0(b,l,m)$(scenarios("iChnl",sSce) eq 0)
-                        + lossChannels1(b,l,m)$(scenarios("iChnl",sSce) ne 0);
+    lossChannels(b,l,m)     = lossChannels0(b,l,m) * scenarios(sSce,"iCanal");
 
 * Set conveyance cost according to investment choices
-    conveyanceCost(c) = conveyCost0(c)$(scenarios("iChnl",sSce)= 0) + conveyCost1(c)$scenarios("iChnl",sSce);
+    conveyanceCost(c)       = conveyCost0(c)  * scenarios(sSce,"cCanal"); 
 
 * Change pumping requirements due to investment in chanellosses
-    elyPump(bd,bo) = elyPump0(bd,bo)$(scenarios("iChnl",sSce))* (1-scenarios("iChnl",sSce))
-                   + elyPump1(bd,bo)$(scenarios("iChnl",sSce))* scenarios("iChnl",sSce);
+    elyPump(bd,bo)          = elyPump0(bd,bo) * scenarios(sSce,"iCanal");
 
 * Fix discharge and volumen patterns for selected reservoirs
+$ontext
     IF(scenarios("fixRES",sSce) ne 0,
         resVolFix(b,y,m)              = resVolFix0(b,y,m);
         resDisFix(bd,bo,y,m)          = resDisFix0(bd,bo,y,m);
@@ -106,6 +106,10 @@
         resVolFix(b,y,m)              = 0;
         resDisFix(bd,bo,y,m)          = 0;
     );
+$offtext
+    resVolFix(b,y,m)              = 0;
+    resDisFix(bd,bo,y,m)          = 0;
+
 
 * Require extra nature needs for counterfactual
     natExtra(b)             = natExtra0(b,sSce);
@@ -113,8 +117,8 @@
 * Set crop prices according to scenario indices for crop price
 *    pCrop(j)                = pCrop0("economic","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) eq 0)
 *                            + pCrop0("financial","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) ne 0);
-    pCrop(b,j)              = ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"economic","pCrp")  )$(scenarios("rMkt",sSce) eq 0)
-                             +ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"financial","pCrp") )$(scenarios("rMkt",sSce) ne 0);
+    pCrop(b,j)              = ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"economic","pCrp")  )$(scenarios(sSce,"aPrice") eq 0)
+                             +ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"financial","pCrp") )$(scenarios(sSce,"aPrice") ne 0);
 
 * Set crop costs according to scenario indices for crop costs
 *    cCrop(b,j)$bPlz(b)      = SUM(k, cCrop0("noReform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) eq 0)
@@ -123,12 +127,12 @@
                                     icCrop("labr",sSce) * pAgri0(c,j,"financial","qLbr") * pAgri0(c,j,"financial","pLbr")
                                    +icCrop("inpt",sSce) * pAgri0(c,j,"financial","pIpt")
                                    +icCrop("cptl",sSce) * pAgri0(c,j,"financial","pCap")
-                              )$(scenarios("rMkt",sSce) ne 0)
+                              )$(scenarios(sSce,"aPrice") ne 0)
                              +SUM(c$bCty(b,c), 
                                     icCrop("labr",sSce) * pAgri0(c,j,"economic","qLbr") * pAgri0(c,j,"economic","pLbr")
                                    +icCrop("inpt",sSce) * pAgri0(c,j,"economic","pIpt")
                                    +icCrop("cptl",sSce) * pAgri0(c,j,"economic","pCap")
-                              )$(scenarios("rMkt",sSce) eq 0);
+                              )$(scenarios(sSce,"aPrice") eq 0);
     
 * Set leaching requirements
     qLch(b)      = SUM(y0$y(y0), qLch0(b,"dry")$y("2001") +  qLch0(b,"nor")$y("2009") ); 
@@ -137,7 +141,7 @@
     iInv(sInv)              = 0;
 
 * Set reservoir buildup
-    ctrfBuild               = scenarios("rBuild",sSce);
+    ctrfBuild               = 0;
 
 * Set levels for intake reduction scenarios
     itk2(s,bd,y,m)$bPlz(bd)       = itk1(s,bd,y,m)*minIntake0(sSce);

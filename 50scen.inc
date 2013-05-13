@@ -1,131 +1,346 @@
 SET scOptions /
-    out         "Output this scenario to result GDX (in case of no solve from previous results)"
-    run         "Run this scenario"
-    sT          "Value of CET transformation elasticity"
-    iField      "Invest in field level irrigation improvements"
-    iChnl       "Invest in channel level loss avoidance"
-    iDrain      "Invest in drainage"
-    iTRX        "Invest in transmission"
-    iELY        "Invest in thermal electricity generation"
-    iWSS        "Invest in Water Supply and Sanitation"
-    rLnd        "Reform of land management (increased yields)"
-    rMkt        "Reform of crop markets (economic vs. financial pricing)"
-    SAexp       "Electricity exports to South Asia"
-    fixLND      "Fix land use to baseline values"
-    fixRES      "Fix release patterns for selected reservoirs"
-    fallow      "Increase available land with fallow land (% of total land available)"
-    rBuild      "Increase or decrease reservoir levels"
-    noYWR       "Disable Yield-Water response function"
-    wDISwin     "Heavily increase objective value of winter discharges"
-    wHPPall     "Heavily increase objective value of all HPP"
-    wHPPwin     "Heavily increase objective value of winter HPP"
-    wDISsum     "Heavily increase objective value of summer discharges"
-    wSingle     "Perform sequential individual country optimisation"
-    nukus       "Allocate within Nukus agreement"
-    avgSoil     "Use one partition with average soil quality"
-    useCMX      "Use crop mix method for land allocation"
-    useCET      "Use CET function"
-    transx      "Allow electricity transmission between KAZ-KYR-UZB-TAD"
+    objvar      "Variables entering into objective function"
+    seqnce      "Sequencing used"
+    nukus       "Use Nukus agreement"
+    clmChg      "Climate change"
+    prLevl      "Price level"
+    aPrice      "Agricultural prices (financial/economic)"
+    ePrice      "Energy prices (financial/economic)"
+    lndRfm      "Land reform"
+    iCanal      "Improvements in canals"
+    iField      "Improvements in field level irrigation"
+    iWSS        "Investments in WSS"
+    trCAPS      "CAPS trade"
+    SAexpt      "South Asia exports"
+    cCanal      "Canal investment costs (% of max)"
+    cField      "Field irrigation investment costs (% of max)"
+    cElect      "Investments in thermal power"
 /;
 
-SCALAR xferResults "Transfer earlier results saved in GDX to output GDX and XLS" / 0 /;
-
-*        ENERGY SCENARIOS                   TEST AGRICULTURE SHOCK REACT.     SCEN. OF INTEREST                     Sequencing                         FAO data and YWR test
-TABLE scenarios(scOptions,sSce) "Scenario definition table"
-        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17   s18 s19 s20 s21 s22 s23 s24 s25         s30 s31 s32 s33 s34 s35              s40 s41 s42 s43 s44 s45
-run     0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0  
-*out     0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0
-*out     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   0   0     1   1   1   1   1   1   1   1           1   1   1   1   1   1                0   0   0   0   0   0  
-*run     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   0   0     1   1   1   1   1   1   1   1           1   1   1   1   1   1                0   0   0   0   0   0  
-*out     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   0   0     1   1   1   1   1   1   1   1           1   1   1   1   1   1                0   0   0   0   0   0  
-*run     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   0   0     1   1   1   1   1   1   1   1           1   1   1   1   1   1                0   0   0   0   0   0  
-*run     0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0
-*run     0   0   0   0   0   1   1   1   1   1   1   1   1   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0  
-*run     0   0   0   0   0   1   0   0   0   0   0   0   0   1   0   0   0     0   0   0   0   0   0   0   0           1   1   1   1   1   1                1   0   0   0   0   0  
-*run     0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     1   1   1   1   1   1   1   1           0   0   0   0   0   0                0   0   0   0   0   0   
-out     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   0   0     1   1   1   1   1   1   1   1           1   1   1   1   1   1                0   0   0   0   0   0  
-*run     0   0   0   0   0   0   0   0   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           0   0   0   0   0   0                0   0   0   0   0   0  
-iField  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-iChnl   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-iDrain  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-iTRX    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-iELY    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-iWSS    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-rLnd    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-rMkt    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-SAexp   0   0   1   1   1   0   1   1   1   0   1   1   1   0   1   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-fallow  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-rBuild  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-transx  0   0   0   0   5   0   0   0   5   0   0   0   5   0   5   5   5     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-nukus   1   0   0   0   0   1   1   1   1   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           1   1   1   0   0   0                0   0   0   0   0   0   
-wSingle 1   1   1   1   1   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           1   1   1   1   1   1                0   0   0   0   0   0   
-wHPPwin 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     1   0   0   0   1   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-wHPPall 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   1   0   0   0   1   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-wDISwin 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   1   0   0   0   1   0           0   0   0   0   0   0                0   0   0   0   0   0   
-wDISsum 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   1   0   0   0   1           0   0   0   0   0   0                0   0   0   0   0   0   
-fixLND  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-fixRES  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-noYWR   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-avgSoil 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-useCET  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0   
-useCMX  1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1   
-sT      0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5   0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5         0.5 0.5 0.5 0.5 0.5 0.5              0.5 0.5 0.5 0.5 0.5 0.5 
+TABLE scenCalc(*,sSce) "Control calculation flow"
+    s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17 s18 s19 s20 s21 s22 s23 s24 s25 s26 s27 s28 s29 s30 s31 s32 s33 s34 s35 s40 s41 s42 s43 s44 s45 s100 s101 s102 s103 s104 s105
+run 1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   0   0   0   0   0   0   0   0   0   1    1    1    1    1    1
+out 1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   0   0   0   0   0   0   0   0   0   1    1    1    1    1    1 
 ;
 
-* Energy scenario: 1 -autarchic, 2: autarch+SA export, 3: autarch+SA export+ROR, 4: CAPS+SA export+ROR
-
-TABLE resNewOp(b,sSce) "New reservoir in operation"
-        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17   s18 s19 s20 s21 s22 s23 s24 s25         s30 s31 s32 s33 s34 s35              s40 s41 s42 s43 s44 s45
-Res_ZAR 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0
-Res_ROG 0   0   0   0   0   0   0   0   0   1   1   1   1   0   0   0   0     1   1   1   1   1   1   1   1           0   0   0   0   1   1                0   0   0   0   0   0
-Res_VA2 0   0   0   1   0   0   0   1   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0
-Res_NA1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0
-Res_KA1 0   0   0   0   0   0   0   0   0   1   1   1   1   0   0   0   0     1   1   1   1   1   1   1   1           0   0   0   0   0   0                0   0   0   0   0   0
-Res_KA2 0   0   0   1   1   0   0   1   1   0   0   0   0   0   1   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0
-Res_DAS 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0
-Res_PYD 0   0   0   1   0   0   0   1   0   0   0   0   0   0   0   0   0     0   0   0   0   0   0   0   0           0   0   0   0   0   0                0   0   0   0   0   0
+TABLE scenarios(sSce,scOptions) "Scenario definition table"
+           objvar   seqnce   nukus    clmChg   prLevl   aPrice   ePrice   lndRfm   iCanal   iField   iWSS     trCAPS   SAexpt   cCanal   cField   cElect 
+s01        0        3        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s02        0        3        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s03        0        3        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s04        0        3        0        0        0        0        0        0        0        0        0        5        0        0        0        1
+s05        0        3        0        0        0        0        0        0        0        0        0        5        0        0        0        1
+s06        0        3        0        0        0        0        0        0        0        0        0        5        1        0        0        1
+s07        0        3        0        0        0        0        0        0        0        0        0        0        1        0        0        1
+s08        0        3        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s09        0        3        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s10        0        3        1        0        0        0        0        0        0        0        0        5        0        0        0        1
+s11        0        3        1        0        0        0        0        0        0        0        0        5        0        0        0        1
+s12        0        3        1        0        0        0        0        0        0        0        0        5        1        0        0        1
+s13        0        3        1        0        0        0        0        0        0        0        0        0        1        0        0        1
+s14        0        3        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s15        0        3        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s16        0        3        1        0        0        0        0        0        0        0        0        5        0        0        0        1
+s17        0        3        1        0        0        0        0        0        0        0        0        5        0        0        0        1
+s18        0        3        1        0        0        0        0        0        0        0        0        5        1        0        0        1
+s19        0        3        1        0        0        0        0        0        0        0        0        0        1        0        0        1
+s20        0        0        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s21        0        0        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s22        0        0        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s23        0        0        1        0        0        0        0        0        0        0        0        5        0        0        0        1
+s24        0        0        1        0        0        0        0        0        0        0        0        5        0        0        0        1
+s25        0        0        1        0        0        0        0        0        0        0        0        5        1        0        0        1
+s26        0        0        1        0        0        0        0        0        0        0        0        0        1        0        0        1
+s27        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s28        0        0        0        0        0        0        0        0        0        0        0        5        0        0        0        1
+s29        0        0        0        0        0        0        0        0        0        0        0        5        0        0        0        1
+s30        0        0        0        0        0        0        0        0        0        0        0        5        1        0        0        1
+s31        0        0        0        0        0        0        0        0        0        0        0        0        1        0        0        1
+s100       0        1        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s101       0        2        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s102       0        3        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s103       0        1        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s104       0        2        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s105       0        3        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s32        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s33        0        0        0        0        0        0        0        0        0        0        0        5        0        0        0        1
+s34        0        0        0        0        0        0        0        0        100      100      0        5        0        0        0        1
+s35        0        0        0        0        0        0        0        1        100      100      0        5        0        0        0        1
+s36        1        0        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s37        2        0        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s38        3        0        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s39        4        0        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s40        1        0        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s41        2        0        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s42        3        0        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s43        4        0        0        0        0        0        0        0        0        0        0        0        0        0        0        1
+s44        0        3        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s45        0        3        1        0        1        0        0        0        0        0        0        0        0        0        0        1
+s46        0        3        1        0        0        1        1        0        0        0        0        0        0        0        0        1
+s47        0        3        1        1        0        0        0        0        0        0        0        0        0        0        0        1
+s48        0        3        1        0        0        1        0        1        100      100      0        0        0        100      100      1
+s49        0        3        1        1        0        1        0        1        100      100      0        0        0        100      100      1
+s50        0        3        1        0        0        0        0        0        99       99       0        0        0        99       99       1
+s51        0        3        1        0        0        0        0        0        100      0        0        0        0        100      0        1
+s52        0        3        1        1        0        0        0        0        100      0        0        0        0        100      0        1
+s53        0        3        1        0        0        0        0        0        0        0        1        0        0        0        0        1
+s54        0        3        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s55        0        3        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s56        0        3        1        0        0        0        0        0        0        0        0        0        0        0        0        1
+s57        0        3        1        0        0        0        0        0        0        0        0        5        0        0        0        1
+s58        0        3        1        1        0        0        0        0        0        0        0        5        0        0        0        1
+s59        0        3        1        0        0        0        0        0        0        0        0        0        1        0        0        1
+s60        0        3        1        0        0        0        0        0        0        0        0        3        0        0        0        1
+s61        0        3        1        0        0        0        0        0        0        0        0        5        0        0        0        1
+s62        0        3        1        0        0        0        0        0        0        0        0        5        0        0        0        1
+s63        0        3        1        1        0        0        0        0        0        0        0        5        0        0        0        1
+s64        0        3        0        0        0        0        0        0        0        0        0        5        0        0        0        1
+s65        1        3        0        0        0        0        0        0        0        0        0        5        0        0        0        1
+s66        3        3        0        0        0        0        0        0        0        0        0        5        0        0        0        1
+s67        0        3        1        0        0        0        0        0        0        0        0        5        1        0        0        1
+s68        0        3        1        0        0        0        0        0        0        0        0        5        1        0        0        1
+s69        0        3        1        1        0        0        0        0        0        0        0        5        1        0        0        1
+s70        1        3        0        0        0        0        0        0        0        0        0        5        1        0        0        1
+s71        4        3        0        0        0        0        0        0        0        0        0        5        1        0        0        1
+s72        0        3        0        0        0        0        0        0        0        0        0        5        1        0        0        1
+s73        0        0        1        0        0        0        0        0        0        0        0        5        1        0        0        1
+s74        0        0        0        0        0        0        0        0        0        0        0        5        1        0        0        1
+s75        0        3        0        0        0        1        1        1        100      100      1        5        0        100      100      1
+s76        0        3        1        0        0        1        1        1        100      100      1        6        0        100      100      1
+s77        0        3        0        1        0        1        1        1        100      100      1        5        0        100      100      1
+s78        0        3        0        0        0        1        1        1        100      100      1        5        1        100      100      1
+s79        0        3        0        1        0        1        1        1        100      100      1        5        1        100      100      1
+s80        1        3        0        0        0        1        1        1        100      100      1        5        1        100      100      1
+s81        3        3        0        0        0        1        1        1        100      100      1        5        1        100      100      1
+s82        0        0        1        0        0        1        1        1        100      100      1        5        1        100      100      1
+s83        0        0        0        0        0        1        1        1        100      100      1        5        1        100      100      1
+s84        0        3        0        0        0        0        0        0        100      0        1        5        1        100      0        1
 ;
 
-TABLE maxHead0(b,sSce) "Maximum limit head for selected reservoirs (meter)"
-        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17   s18 s19 s20 s21 s22 s23 s24 s25         s30 s31 s32 s33 s34 s35              s40 s41 s42 s43 s44 s45
-Res_ROG 335 335 335 335 335 335 335 335 335 335 335 265 335 335 335 335 335   335 335 335 335 265 265 265 265         335 335 335 335 335 335              335 335 335 335 335 335 
-* HIgh 3200 MW high, 2400 MW low
+TABLE resNewOp(sSce,b) "New reservoir in operation"
+          Res_ROG Res_KA1 Res_DAS Res_ZAR Res_VA2 Res_NA1 Res_KA2 Res_PYD 
+s01       0       0       0       0       0       0       0       0
+s02       0       0       0       0       0       0       0       0
+s03       0       0       0       1       0       0       1       1
+s04       0       0       0       0       0       0       0       0
+s05       0       0       0       1       0       0       1       1
+s06       0       0       0       0       0       0       0       0
+s07       0       0       0       0       0       0       0       0
+s08       0       0       0       0       0       0       0       0
+s09       0       0       0       1       0       0       1       1
+s10       0       0       0       0       0       0       0       0
+s11       0       0       0       1       0       0       1       1
+s12       0       0       0       0       0       0       0       0
+s13       0       0       0       0       0       0       0       0
+s14       1       1       0       0       0       0       0       0
+s15       1       1       0       1       0       0       1       1
+s16       1       1       0       0       0       0       0       0
+s17       1       1       0       1       0       0       1       1
+s18       1       1       0       0       0       0       0       0
+s19       1       1       0       0       0       0       0       0
+s20       0       0       0       0       0       0       0       0
+s21       1       1       0       0       0       0       0       0
+s22       0       0       0       1       0       0       1       1
+s23       0       0       0       0       0       0       0       0
+s24       0       0       0       1       0       0       1       1
+s25       0       0       0       0       0       0       0       0
+s26       0       0       0       0       0       0       0       0
+s27       1       1       0       0       0       0       0       0
+s28       1       1       0       0       0       0       0       0
+s29       1       1       0       0       0       0       0       0
+s30       1       1       0       0       0       0       0       0
+s31       0       0       0       0       0       0       0       0
+s100      0       0       0       0       0       0       0       0
+s101      0       0       0       0       0       0       0       0
+s102      0       0       0       0       0       0       0       0
+s103      0       0       0       0       0       0       0       0
+s104      0       0       0       0       0       0       0       0
+s105      0       0       0       0       0       0       0       0
+s32       0       0       0       0       0       0       0       0
+s33       0       0       0       0       0       0       0       0
+s34       0       0       0       0       0       0       0       0
+s35       0       0       0       0       0       0       0       0
+s36       1       1       0       0       0       0       0       0
+s37       1       1       0       0       0       0       0       0
+s38       1       1       0       0       0       0       0       0
+s39       1       1       0       0       0       0       0       0
+s40       1       1       0       0       0       0       0       0
+s41       1       1       0       0       0       0       0       0
+s42       1       1       0       0       0       0       0       0
+s43       1       1       0       0       0       0       0       0
+s44       0       0       0       0       0       0       0       0
+s45       0       0       0       0       0       0       0       0
+s46       0       0       0       0       0       0       0       0
+s47       0       0       0       0       0       0       0       0
+s48       0       0       0       0       0       0       0       0
+s49       0       0       0       0       0       0       0       0
+s50       0       0       0       0       0       0       0       0
+s51       0       0       0       0       0       0       0       0
+s52       0       0       0       0       0       0       0       0
+s53       0       0       0       0       0       0       0       0
+s54       0       0       0       0       0       0       0       0
+s55       0       0       0       1       0       0       1       1
+s56       1       1       0       1       0       0       1       1
+s57       0       0       0       0       0       0       0       0
+s58       0       0       0       0       0       0       0       0
+s59       0       0       0       0       0       0       0       0
+s60       1       1       0       0       0       0       0       0
+s61       1       1       0       0       0       0       0       0
+s62       1       1       0       1       0       0       1       1
+s63       1       1       0       0       0       0       0       0
+s64       1       1       0       0       0       0       0       0
+s65       1       1       0       0       0       0       0       0
+s66       1       1       0       0       0       0       0       0
+s67       1       1       0       0       0       0       0       0
+s68       1       1       0       1       0       0       1       1
+s69       1       1       0       0       0       0       0       0
+s70       1       1       0       0       0       0       0       0
+s71       1       1       0       0       0       0       0       0
+s72       1       1       0       0       0       0       0       0
+s73       1       1       0       0       0       0       0       0
+s74       1       1       0       0       0       0       0       0
+s75       1       1       0       0       0       0       0       0
+s76       1       1       0       0       0       0       0       0
+s77       1       1       0       0       0       0       0       0
+s78       1       1       0       0       0       0       0       0
+s79       1       1       0       0       0       0       0       0
+s80       1       1       0       0       0       0       0       0
+s81       1       1       0       0       0       0       0       0
+s82       1       1       0       0       0       0       0       0
+s83       1       1       0       0       0       0       0       0
+s84       1       1       0       0       0       0       0       0
+;
+
+
+TABLE maxHead0(sSce,b) "Maximum limit head for selected reservoirs (meter)"
+          Res_ROG
+s01       335
+s02       335
+s03       335
+s04       335
+s05       335
+s06       335
+s07       335
+s08       335
+s09       335
+s10       335
+s11       335
+s12       335
+s13       335
+s14       335
+s15       335
+s16       335
+s17       335
+s18       335
+s19       335
+s20       335
+s21       335
+s22       335
+s23       335
+s24       335
+s25       335
+s26       335
+s27       335
+s28       335
+s29       265
+s30       335
+s31       335
+s100      335
+s101      335
+s102      335
+s103      335
+s104      335
+s105      335
+s32       335
+s33       335
+s34       335
+s35       335
+s36       335
+s37       335
+s38       335
+s39       335
+s40       265
+s41       265
+s42       265
+s43       265
+s44       335
+s45       335
+s46       335
+s47       335
+s48       335
+s49       335
+s50       335
+s51       335
+s52       335
+s53       335
+s54       335
+s55       335
+s56       335
+s57       335
+s58       335
+s59       335
+s60       335
+s61       335
+s62       335
+s63       335
+s64       335
+s65       335
+s66       335
+s67       335
+s68       335
+s69       335
+s70       335
+s71       335
+s72       335
+s73       335
+s74       335
+s75       335
+s76       335
+s77       335
+s78       335
+s79       335
+s80       335
+s81       335
+s82       335
+s83       335
+s84       335
+;
 
 TABLE icCrop(k,sSce) "Indices for crop costs"                                                               
-        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17   s18 s19 s20 s21 s22 s23 s24 s25         s30 s31 s32 s33 s34 s35              s40 s41 s42 s43 s44 s45
-labr    1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-inpt    1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-cptl    1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
+        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17   s18 s19 s20 s21 s22 s23 s24 s25         s30 s31 s32 s33 s34 s35              s40 s41 s42 s43 s44 s45      s100 s101 s102 s103 s104 s105
+labr    1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+inpt    1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+cptl    1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
 ;
 
 TABLE ipCrop(j,sSce) "Indices for crop prices"
-        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17   s18 s19 s20 s21 s22 s23 s24 s25         s30 s31 s32 s33 s34 s35              s40 s41 s42 s43 s44 s45
-cot     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-wht     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-ric     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-ri2     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-alf     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-tmt     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-shv     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-pot     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-mng     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-sbt     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-stf     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-tgr     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-mln     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-mzf     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
-mzg     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1
+        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17   s18 s19 s20 s21 s22 s23 s24 s25         s30 s31 s32 s33 s34 s35              s40 s41 s42 s43 s44 s45      s100 s101 s102 s103 s104 s105
+cot     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+wht     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+ric     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+ri2     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+alf     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+tmt     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+shv     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+pot     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+mng     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+sbt     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+stf     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+tgr     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+mln     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+mzf     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
+mzg     1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1     1   1   1   1   1   1   1   1           1   1   1   1   1   1                1   1   1   1   1   1        1    1    1    1    1    1
 ;
 
 TABLE natExtra0(b,sSce) "Extra nature needs (mm3/year)"
-        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15  s16 s17 s18 s19 s20 s21 s22 s23 s24 s25        s30  s31  s32  s33  s34  s35         s40  s41  s42   s43   s44   s45
+        s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15  s16 s17 s18 s19 s20 s21 s22 s23 s24 s25        s30  s31  s32  s33  s34  s35         s40  s41  s42   s43   s44   s45    s100 s101 s102 s103 s104 s105
 Lak_ARN 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0    0   0   0   0   0   0   0   0   0   0          0    0    0    0    0    0           0    0    0     0     0     0     
 Lak_ARS 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0    0   0   0   0   0   0   0   0   0   0          0    0    0    0    0    0           0    0    0     0     0     0     
 Lak_GOL 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0    0   0   0   0   0   0   0   0   0   0          0    0    0    0    0    0           0    0    0     0     0     0   
 ;
 
 
-PARAMETER minIntake0(sSce) / s41 0.9, s42 0.8, s43 0.7, s44 0.65 /;
+PARAMETER minIntake0(sSce) / s99 0 /;
 
 
 TABLE sNukus(c,rb) "Country share of river basin runoff"
@@ -171,14 +386,16 @@ s11.2009, s12.2009, s13.2009, s14.2009, s15.2009, s16.2009, s17.2009, s18.2009, 
 s21.2009, s22.2009, s23.2009, s24.2009, s25.2009, s26.2009, s27.2009, s28.2009, s29.2009, s30.2009,
 s31.2009, s32.2009, s33.2009, s34.2009, s35.2009, s36.2009, s37.2009, s38.2009, s39.2009, s40.2009,
 s41.2009, s42.2009, s43.2009, s44.2009, s45.2009, s46.2009, s47.2009, s48.2009, s49.2009, s50.2009
+s100.2009, s101.2009, s102.2009, s103.2009, s104.2009, s105.2009
 /;
 
 SET scenRainYear(sSce,y0) "Rainfall year" /
-s01.2001, s02.2001, s03.2001, s04.2001, s05.2001, s06.2001, s07.2001, s08.2001, s09.2001, s10.2001,
-s11.2001, s12.2001, s13.2001, s14.2001, s15.2001, s16.2001, s17.2001, s18.2001, s19.2001, s20.2001,
-s21.2001, s22.2001, s23.2001, s24.2001, s25.2001, s26.2001, s27.2001, s28.2001, s29.2001, s30.2001,
-s31.2001, s32.2001, s33.2001, s34.2001, s35.2001, s36.2001, s37.2001, s38.2001, s39.2001, s40.2009,
-s41.2009, s42.2009, s43.2009, s44.2009, s45.2009, s46.2001, s47.2001, s48.2001, s49.2001, s50.2001
+s01.2009, s02.2009, s03.2009, s04.2009, s05.2009, s06.2009, s07.2009, s08.2009, s09.2009, s10.2009,
+s11.2009, s12.2009, s13.2009, s14.2009, s15.2009, s16.2009, s17.2009, s18.2009, s19.2009, s20.2009,
+s21.2009, s22.2009, s23.2009, s24.2009, s25.2009, s26.2009, s27.2009, s28.2009, s29.2009, s30.2009,
+s31.2009, s32.2009, s33.2009, s34.2009, s35.2009, s36.2009, s37.2009, s38.2009, s39.2009, s40.2009,
+s41.2009, s42.2009, s43.2009, s44.2009, s45.2009, s46.2009, s47.2009, s48.2009, s49.2009, s50.2009
+s100.2009, s101.2009, s102.2009, s103.2009, s104.2009, s105.2009
 /;
 
 TABLE pEly0(y0,m) "Electricity prices USD/MWh"

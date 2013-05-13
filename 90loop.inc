@@ -1,8 +1,8 @@
 * Loop over scenarios to be reported 
 
-LOOP(sSce$scenarios("out",sSce),
+LOOP(sSce$scenCalc("out",sSce),
 
-IRG.l(b,q0,j,y0,m0) = 0;
+*IRG.l(b,q0,j,y0,m0) = 0;
 
 * Include assigning values to scenario specific parameters
 $include "%path%91asgn.inc";
@@ -13,11 +13,11 @@ putclose sRename 'copy /Y %path%solutions\solution-' sSce.tl:0 '.gdx %path%solut
 execute '%path%solutions\renameS.cmd';
 
 execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, TRX, DEM, USD, YWR, iET, CRP, LND, CMX, TWV ;
-USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
-HPP.l("Res_KA2",g,y,m) = 0;
-HHD.l("Res_KA2",y,m) = 0;
+*USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
+*HPP.l("Res_KA2",g,y,m) = 0;
+*HHD.l("Res_KA2",y,m) = 0;
 
-    IF(scenarios("run",sSce), 
+    IF(scenCalc("run",sSce), 
 * Fix hydrological variables that can never be non-zero
         FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);
         FLW.up(s,bd,bo,y,m)$resv(bd,bo)                             = 99999$resv(bd,bo);
@@ -29,6 +29,7 @@ HHD.l("Res_KA2",y,m) = 0;
         GRW.up(b,y,m)                                               = INF$SUM(ms$mSeason(m,ms), grwtrMax(b,ms));
         VOL.up(s,b,y,m)                                             = INF$(bRes(b) or sea(b));
         STO.up(s,b,y,m)                                             = INF$(bRes(b) or sea(b));
+        HHD.up(b,y,m)                                               = INF$bResEly(b);
         HPP.up(b,g,y,m)                                             = INF$bResEly(b);
         TPP.up(c,u,g,y,m)                                           = INF$(elyThermal("elyCap",u) and tppMap(c,u));
         TRX.up(c,cc,g,y,m)                                           = INF$trx0(c,cc);
@@ -56,11 +57,11 @@ $include "%path%92cstr.inc";
     
         SOLVE beam MAXIMIZING twv USING NLP;
 * Save intake for intake reduction scenarios
-IF(ord(sSce) eq 40, 
-    itk1(s,bd,y,m)$bPlz(bd) = 
-      SUM(bo, ITK.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m))
-     +GRW.l(bd,y,m) - HHI.l(s,"HH",bd,y,m) - HHI.l(s,"Ind",bd,y,m); 
-);
+*IF(ord(sSce) eq 40, 
+*    itk1(s,bd,y,m)$bPlz(bd) = 
+*      SUM(bo, ITK.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m))
+*     +GRW.l(bd,y,m) - HHI.l(s,"HH",bd,y,m) - HHI.l(s,"Ind",bd,y,m); 
+*);
 
 * Save solution to re-use later
         IF( ((beam.modelstat le 2) or (beam.modelstat eq 7)), 

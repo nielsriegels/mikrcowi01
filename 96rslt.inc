@@ -102,7 +102,7 @@
     rEcon(sSce,b,"AgriCost",y,m)            = 0.000001*SUM((q,j), cCrop(b,j)*LND.l(b,q,j,y) ) / 12;
     rEcon(sSce,b,"AgriInc",y,m)             = rEcon(sSce,b,"AgriSales",y,m) - rEcon(sSce,b,"AgriCost",y,m);
     rEcon(sSce,b,"HydroCost",y,m)           = -reservoirs(b,"cost")$(not bResNOP(b));
-    rEcon(sSce,b,"HydroInc",y,m)            = -SUM(g, HPP.l(b,g,y,m) * SUM(c$bCty(b,c), ELYMKT.m(c,g,y,m)) ) + rEcon(sSce,b,"HydroCost",y,m);
+    rEcon(sSce,b,"HydroInc",y,m)            = -SUM(g, HPP.l(b,g,y,m) * SUM(c$bCty(b,c), ELYMKT.m(c,g,y,m))*1000 ) + rEcon(sSce,b,"HydroCost",y,m);
     rEcon(sSce,b,"HydroProd",y,m)           = SUM(g, HPP.l(b,g,y,m));
     rEcon(sSce,b,"HydroHead",y,m)           = HHD.l(b,y,m)$bResEly(b);
     rEcon(sSce,b,"HydroGain",y,m)           = -( 1000*rEcon(sSce,b,"HydroProd",y,m) / rFlow(sSce,b,"OutDis",y,m) )$rFlow(sSce,b,"OutDis",y,m);
@@ -254,7 +254,7 @@ $offtext
     rcView(sSce,y,"cConvey",c)              = 0;
     rcView(sSce,y,"iConvey",c)              = 0;
     rcView(sSce,y,"cHydro",c)               = 0;
-    rcView(sSce,y,"iHydro",c)               = SUM(b$bCty(b,c),              resNewOp(b,sSce)*reservoirs(b,"cost") );
+    rcView(sSce,y,"iHydro",c)               = SUM(b$bCty(b,c),              resNewOp(sSce,b)*reservoirs(b,"cost") );
     rcView(sSce,y,"qTherm",c)               = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m));
     rcView(sSce,y,"qThermWin",c)            = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mWin(m));
     rcView(sSce,y,"qThermSum",c)            = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mSum(m));
@@ -332,7 +332,7 @@ $offtext
     rcRbView(sSce,y,"cConvey",rb0,c)                = 0;
     rcRbView(sSce,y,"iConvey",rb0,c)                = 0;
     rcRbView(sSce,y,"cHydro",rb0,c)                 = 0;
-    rcRbView(sSce,y,"iHydro",rb0,c)                 = SUM(b$(bCty(b,c) AND bBas(b,rb0)),              resNewOp(b,sSce)*reservoirs(b,"cost") );
+    rcRbView(sSce,y,"iHydro",rb0,c)                 = SUM(b$(bCty(b,c) AND bBas(b,rb0)),              resNewOp(sSce,b)*reservoirs(b,"cost") );
     rcRbView(sSce,y,"qTherm",rb0,c)                 = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m));
     rcRbView(sSce,y,"qThermWin",rb0,c)              = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mWin(m));
     rcRbView(sSce,y,"qThermSum",rb0,c)              = SUM((u,g,m)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mSum(m));
@@ -391,7 +391,7 @@ $offtext
     rSView(y,"cConvey",sSce)              = 0;
     rSView(y,"iConvey",sSce)              = 0;
     rSView(y,"cHydro",sSce)               = 0;
-    rSView(y,"iHydro",sSce)               = SUM(b,                resNewOp(b,sSce)*reservoirs(b,"cost") );
+    rSView(y,"iHydro",sSce)               = SUM(b,                resNewOp(sSce,b)*reservoirs(b,"cost") );
     rSView(y,"qTherm",sSce)               = SUM((u,g,m,c)$tppMap(c,u),      TPP.l(c,u,g,y,m));
     rSView(y,"qThermWin",sSce)            = SUM((u,g,m,c)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mWin(m));
     rSView(y,"qThermSum",sSce)            = SUM((u,g,m,c)$tppMap(c,u),      TPP.l(c,u,g,y,m)$mSum(m));
@@ -497,4 +497,36 @@ $offtext
     rBorder(sSce,y,e_resBorder,"nvg")    = sum(m$mWin(m),  rBorder(sSce,y,e_resBorder,m));
     rBorder(sSce,y,e_resBorder,"veg")    = sum(m$mSum(m),  rBorder(sSce,y,e_resBorder,m));
     rBorder(sSce,y,e_resBorder,"annual") = sum(m,  rBorder(sSce,y,e_resBorder,m));
+
+
+    rcPublic(sSce,y,"canals",c,"physical")   = 0.1;
+    rcPublic(sSce,y,"canals",c,"capex")      = 0.1;
+    rcPublic(sSce,y,"canals",c,"opex")       = 0.1;
+    rcPublic(sSce,y,"pumps",c,"physical")    = 0.1;
+    rcPublic(sSce,y,"pumps",c,"capex")       = 0.1;
+    rcPublic(sSce,y,"pumps",c,"opex")        = 0.1;
+    rcPublic(sSce,y,"thermal",c,"physical")  = 0.1;
+    rcPublic(sSce,y,"thermal",c,"capex")     = 0.1;
+    rcPublic(sSce,y,"thermal",c,"opex")      = 0.1;
+    rcPublic(sSce,y,"rogunHPP",c,"physical") = reservoirs("Res_ROG","effect");
+    rcPublic(sSce,y,"kam1HPP",c,"physical")  = reservoirs("Res_KA1","effect");
+    rcPublic(sSce,y,"RoRHPP",c,"physical")   = reservoirs("Res_VA2","effect")+reservoirs("Res_NA1","effect")+reservoirs("Res_PYD","effect");
+    rcPublic(sSce,y,"rogunHPP",c,"capex")    = reservoirs("Res_ROG","cost");
+    rcPublic(sSce,y,"kam1HPP",c,"capex")     = reservoirs("Res_KA1","cost");
+    rcPublic(sSce,y,"RoRHPP",c,"capex")      = reservoirs("Res_VA2","cost")+reservoirs("Res_NA1","cost")+reservoirs("Res_PYD","cost");
+    rcPublic(sSce,y,"rogunHPP",c,"opex")     = 0.1;
+    rcPublic(sSce,y,"kam1HPP",c,"opex")      = 0.1;
+    rcPublic(sSce,y,"RoRHPP",c,"opex")       = 0.1;
+    rcPublic(sSce,y,"SAxlines",c,"physical") = 0.1;
+    rcPublic(sSce,y,"SAxlines",c,"capex")    = 0.1;
+    rcPublic(sSce,y,"SAxlines",c,"opex")     = 0.1;
+    rcPublic(sSce,y,"SAxlines",c,"revenue")  = 0.1;
+    rcPublic(sSce,y,"CAxlines",c,"physical") = 0.1;
+    rcPublic(sSce,y,"CAxlines",c,"capex")    = 0.1;
+    rcPublic(sSce,y,"CAxlines",c,"opex")     = 0.1;
+    rcPublic(sSce,y,"CAxlines",c,"revenue")  = 0.1;
+    rcPublic(sSce,y,"cotton",c,"revenue")    = 0.1;
+    rcPublic(sSce,y,"water",c,"revenue")     = 0.1;
+    rcPublic(sSce,y,"elec",c,"revenue")      = 0.1;
+    
 
