@@ -94,6 +94,7 @@ SET bNat(b) / Lak_ARS, Lak_ARN, Lak_Ayd /;
 SET caps3(c) / KAZ, UZB, KYR /
 SET caps5(c) / KAZ, UZB, KYR, TAD, TUR /
 SET caps6(c) / KAZ, UZB, KYR, TAD, TUR /
+SET bResInd(b)  / Res_TOK, Res_AND, Res_NUR /
 
 * =============================================================================
 * Include defition of scenario

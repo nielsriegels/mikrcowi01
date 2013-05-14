@@ -91,6 +91,20 @@
     rAgri(sSce,b,"ActMarg",y,j,q)$LND.l(b,q,j,y) = (pCrop(b,j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
     rAgri(sSce,b,"OptMarg",y,j,q)$lnd0(b,q,j) = (pCrop(b,j)* crp0(b,q,j)   - cCrop(b,j) *lnd0(b,q,j)  )/ lnd0(b,q,j);
  
+* Agricultural line results by node
+    rAgriNode(sSce,b,"WaterUse",y)            = SUM((m,q, j), IRG.l(b,q,j,y,m));
+    rAgriNode(sSce,b,"LandUse",y)             = SUM((q,j), LND.l(b,q,j,y))/1000;
+    rAgriNode(sSce,b,"AgriProd",y)            = SUM((q,j), CRP.l(b,q,j,y))/1000;
+    rAgriNode(sSce,b,"Leaching",y)        = SUM((s,m), LCH.l(s,b,y,m)); 
+    
+* Agricultural line results by crop
+    rAgriCrop(sSce,b,"WaterUse",y,j)            = SUM((m,q), IRG.l(b,q,j,y,m));
+    rAgriCrop(sSce,b,"LandUse",y,j)             = SUM(q, LND.l(b,q,j,y))/1000;
+    rAgriCrop(sSce,b,"AgriProd",y,j)            = SUM(q, CRP.l(b,q,j,y))/1000;
+    
+    
+    
+    
     rIrg(sSce,b,"ActET",y,p,j,q)$LND.l(b,q,j,y)    = SUM(m, IRG.l(b,q,j,y,m)*etcM2p(b,j,p,m)) / LND.l(b,q,j,y);
     rIrg(sSce,b,"OptET",y,p,j,q)$lnd0(b,q,j)    = etcP(b,j,p)*1000;
     rIrg(sSce,b,"iET",y,p,j,q)$lnd0(b,q,j)      = iET.l(b,q,j,p,y)*100;
@@ -305,7 +319,7 @@ $offtext
 *    rcRbView(sSce,y,"Intake",rb,c)               = SUM((s,bd,bo,m)$(bNukus(bo,rb) and (not bNukus(bd,rb)) and bCty(bd,c) and bPlz(bd)),  
 *                                                    (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb) and bCty(bd,c))  );
     rcRbView(sSce,y,"Intake",rb,c)               = SUM((s,bd,bo,m)$(bCty(bd,c) and bPlz(bd)),  
-                                                    (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb) and bCty(bd,c))  );
+                                                    (ITK.l(s,bd,bo,y,m)$intk(bd,bo) + (FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$resv(bd,bo) )$(bBas(bd,rb) and bCty(bd,c))  );
     rcRbView(sSce,y,"Nukus",rb,c)                = SUM((s,bd,bo,m)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ),  
                                                     (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb)) * sNukus(c,rb) )
                                                   +SUM((b,m)$bNukus(b,rb), rtn0(b,m)*sNukus(c,rb)); 

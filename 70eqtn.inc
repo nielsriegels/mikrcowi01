@@ -151,11 +151,13 @@ LOSSES(s,b,l,y,m)..
 * Right side is country supply by basin
 WNUKUS(s,rb,c,y)$(sW(s) AND sNukus(c,rb) AND useNukus)..
     SUM((bd,bo,m)$(bNukus(bo,rb) and (not bNukus(bd,rb)) and bCty(bd,c)), 
-        ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  ) 
+        ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  
+    ) 
     =l= sNukus(c,rb) * (
          SUM((bd,bo,m)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ), 
             ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  ) 
         +SUM((bd,m)$bNukus(bd,rb), rtn0(bd,m))
+        -SUM((b,m0)$(mA(m0) AND bBas(b,rb)), minInFlow0(b,y,m0))
         -SUM(b$bBas(b,rb), natExtra(b))
    );
 
@@ -331,7 +333,7 @@ MINOUTFLOW(b,y,m)$(minInFlow0(b,y,m) AND bRiv(b))..
 
 * Annual minimum flow requirements
 MININFLOWa(b,y,mA)$(minInFlow0(b,y,mA) + natExtra(b))..
-    (SUM((m,s)$sW(s), SUM(bo, DIS(s,b,bo,y,m)$resv(b,bo)+FLW(s,b,bo,y,m)$resv(b,bo)+ITK(s,b,bo,y,m)$intk(b,bo)) + sup(s,b,m))
+    (SUM((m,s)$sW(s), SUM(bo, DIS(s,b,bo,y,m)$resv(b,bo) + FLW(s,b,bo,y,m)$(flow(b,bo) or resv(b,bo)) +ITK(s,b,bo,y,m)$intk(b,bo)) + sup(s,b,m))
    +SUM(m, rtn0(b,m))) * scalem3 =g= (minInFlow0(b,y,mA) + natExtra(b)) * scalem3;
 
 * Annual minimum land use requirements

@@ -3,7 +3,7 @@ execute_unload "%path%output\BEAM-flows.gdx"    rFlow, rsFlow, rcFlow;
 execute_unload "%path%output\BEAM-overview.gdx" rcView;
 execute_unload "%path%output\BEAM-agri.gdx"     rAgri;
 execute_unload "%path%output\BEAM-elec.gdx"     rcElec;
-execute_unload "%path%output\BEAM-details.gdx"  rAgri, rcElec, rcElecBal, rRbAgri, rRbEcon, rResv, rRbResv, rBorder, rcView, rcRbView, rSView, rIrg, rRbFlow;
+execute_unload "%path%output\BEAM-details.gdx"  rAgri, rcElec, rcElecBal, rRbAgri, rRbEcon, rResv, rRbResv, rBorder, rcView, rcRbView, rSView, rIrg, rRbFlow, rAgriNode, rAgriCrop;
 
 * Display checks that results have not changed
 file objvalues /%path%output\objvalues.txt/;

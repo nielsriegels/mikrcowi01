@@ -178,7 +178,9 @@ SETS
         YWR             "Yield water response (1=optimal yield)"
         ActMarg         "Actual margin (USD/ha)"
         OptMarg         "Optmial margin (USD/ha)"
+        Leaching    "Applied leaching water (mm3/year)"
         /
+
 
     e_resIrg /
         actET           "Actual evapotranspiration (m3/ha)"

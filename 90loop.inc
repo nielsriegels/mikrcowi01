@@ -121,7 +121,7 @@ elyBal(sSce,c,"XPT")        = SUM((g,y,m),          -XPT.l(c,g,y,m)             
 elyBal(sSce,c,"BAL")        = elyBal(sSce,c,"IMP") + elyBal(sSce,c,"TPP") + elyBal(sSce,c,"HPP") + elyBal(sSce,c,"USD")
                              +elyBal(sSce,c,"DEM") + elyBal(sSce,c,"EXP") + elyBal(sSce,c,"XPT") ;
 
-natBal(sSce,b)              = SUM((s,y,m), STO.l(s,b,y,m))$natExtra(b);
+natBal(sSce,b)              = SUM((s,y,m), STO.l(s,b,y,m))$sea(b);
 
 );
 

@@ -51,6 +51,8 @@ PARAMETERS
     rsFlow(sSce,bs,y0,e_resFlow,m0) "Flow of water through basin sections"
     rRbFlow(sSce,rb0,c,y0,*)        "Flow of water by basin in country" 
     rAgri(sSce,b,e_resAgri,y0,j,q0) "Agricultural results for zone parttions"
+    rAgriNode(sSce,b,e_resAgri,y0)  "Agricultural results for planning zones"
+    rAgriCrop(sSce,b,e_resAgri,y0,j) "Agricultural results for planning zones by crop type"
     rIrg(sSce,b,e_resIrg,y0,p,j,q0) "Irrigation results by zone, partition and growth phase"
     rEcon(sSce,b,e_resEcon,y0,m0)   "Economical results for zone"
     rsAgri(sSce,bs,y0,e_resAgri,j)  "Agricultural results for basin sections"

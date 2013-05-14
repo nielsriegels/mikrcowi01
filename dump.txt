@@ -7831,3 +7831,237 @@ BEAM - Basin Economic Allocation Model
                 Copyright (c) Mikkel Kromann, Niels David Riegels, COWI A/S and DHI Group A/S 2011-12
 /;
 
+BEAM - Basin Economic Allocation Model                                                                                                                                                                
+                                                                                                                                                                                
+                Copyright (c) Mikkel Kromann, Niels David Riegels, COWI A/S and DHI Group A/S 2011-12                                                                                                                                                
+                Use and distribution of the model is allowed only by permission of a copyright holder                                                                                                                                                
+                Please do not change sheet names or add or delete rows to sheets as this may cause errors.                                                                                                                                                 
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                BEAM Excel User Interface                                                                                                                
+                                                                                                                                                                                
+                                Scenario crop prices                                Electricity price, USD/MWh                                                Scenario Nature extra, mm3/year                
+                                                USD/ton                         Jan             7.000000E+01                                    Aral North      0.000000E+00    
+                                Cotton          1.000000E+03                    Feb             7.000000E+01                                    Aral South      0.000000E+00    
+                                Wheat           3.000000E+02                    Mar             6.000000E+01                                                                    
+                                Rice            5.000000E+02                    Apr             5.000000E+01                                    Scenario Flexible crops                
+                                Alfalfa         1.000000E+02                    May             4.000000E+01                                    Cotton          Yes             
+                                Vegetables      4.000000E+01                    Jun             3.000000E+01                                    Wheat           Yes             
+                                Fruit           4.500000E+02                    Jul             3.000000E+01                                    Rice            Yes             
+                                Other           7.500000E+01                    Aug             4.000000E+01                                    Alfalfa         Yes             
+                                                                                Sep             5.000000E+01                                                                    
+                                Scenario Input price changes                                Oct             5.000000E+01                                    Scenario New reservoirs in use                
+                                                % of baseline                Nov             6.000000E+01                                    Dashtijum       No              
+                                Labor           1.000000E+00                    Dec             6.500000E+01                                    Rogun           No              
+                                Capital         1.000000E+00                                                                                    Kambarata-1     No              
+                                Other           1.000000E+00                    Reservoir buildup, % of max                                                Yavan           No              
+                                                                                Scenario        0.000000E+00                                                                    
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                Note: Sets and data file will be written to the directory c:\mikr\mikrcowi01\                                                                                                                                                
+                Please change cell index!c4 to choose another path if needed                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                Baseyear chosen2.009000E+03                                                                                                                    
+                1.000000E+00    Dry (2000/2001)2.001000E+03                                                                                                                    
+                2.000000E+00    Normal (2008/2009)2.009000E+03                                                                                                                    
+                                                                                                                                                                                
+                1.000000E+00    Baseline (2009)                                                                                                                                
+                2.000000E+00    Medium term (2020)                                                                                                                                
+                3.000000E+00    Long term (2050)                                                                                                                                
+                                                                                                                                                                                
+                1.000000E+00    Optimized                                                                                                                                       
+                2.000000E+00    Fixed                                                                                                                                           
+                                                                                                                                                                                
+                1.000000E+00    None                                                                                                                                            
+                2.000000E+00    Minor                                                                                                                                           
+                3.000000E+00    Better                                                                                                                                          
+                4.000000E+00    Major                                                                                                                                           
+                                                                                                                                                                                
+                1.000000E+00    Sluggish        1.000000E-01                                                                                                                    
+                2.000000E+00    Medium          5.000000E-01                                                                                                                    
+                3.000000E+00    Flexible        2.000000E+00                                                                                                                    
+                4.000000E+00    Free            1.000000E+02                                                                                                                    
+                3.000000E+00                                                                                                                                                    
+                                                                                                                                                                                
+                1.000000E+00    Base year discharge                                                                                                                                
+                2.000000E+00    Optimized discharge                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+                                                                                                                                                                                
+/;
+
+BEAM - Basin Economic Allocation Model                                 
+                                                 
+                 Copyright (c) Mikkel Kromann, Niels David Riegels, COWI A/S and DHI Group A/S 2011-12                
+                 Use and distribution of the model is allowed only by permission of a copyright holder                
+                 Please do not change sheet names or add or delete rows to sheets as this may cause errors.                 
+                                                 
+                                                 
+                                                 
+                                                 
+                                 Scenario crop prices
+                                                 
+                                 Cotton          
+                                 Wheat           
+                                 Rice            
+                                 Alfalfa         
+                                 Vegetables      
+                                 Fruit           
+                                 Other           
+                                                 
+                                 Scenario Input price changes
+                                                 
+                                 Labor           
+                                 Capital         
+                                 Other           
+                                                 
+                                                 
+                                                 
+                                                 
+                                                 
+                                                 
+                                                 
+                 Note: Sets and data file will be written to the directory c:\mikr\mikrcowi01\                
+                 Please change cell index!c4 to choose another path if needed                
+                                                 
+                                                 
+                                                 
+/;
+
+BEAM - Basin Economic Allocation Model                                 
+                                                 
+                 Copyright (c) Mikkel Kromann, Niels David Riegels, COWI A/S and DHI Group A/S 2011-12                
+                 Use and distribution of the model is allowed only by permission of a copyright holder                
+                 Please do not change sheet names or add or delete rows to sheets as this may cause errors.                 
+                                                 
+                                                 
+                                                 
+                                                 
+                                 Scenario crop prices
+                                                 
+                                 Cotton          
+                                 Wheat           
+                                 Rice            
+                                 Alfalfa         
+                                 Vegetables      
+                                 Fruit           
+                                 Other           
+                                                 
+                                 Scenario Input price changes
+                                                 
+                                 Labor           
+                                 Capital         
+                                 Other           
+                                                 
+                                                 
+                                                 
+                                                 
+                                                 
+                                                 
+                                                 
+                 Note: Sets and data file will be written to the directory c:\mikr\mikrcowi01\                
+                 Please change cell index!c4 to choose another path if needed                
+                                                 
+                                                 
+                                                 
+                                                 
+                                 Baseyear chosen
+                 1               Dry (2000/2001)
+                 2               Normal (2008/2009)
+                                                 
+/;
+
+BEAM - Basin Economic Allocation Model                                 
+                                                 
+                 Copyright (c) Mikkel Kromann, Niels David Riegels, COWI A/S and DHI Group A/S 2011-12                
+                 Use and distribution of the model is allowed only by permission of a copyright holder                
+                 Please do not change sheet names or add or delete rows to sheets as this may cause errors.                 
+                                                 
+                                                 
+                                                 
+                                                 
+                                 Scenario crop prices
+                                                 
+                                 Cotton          
+                                 Wheat           
+                                 Rice            
+                                 Alfalfa         
+                                 Vegetables      
+                                 Fruit           
+                                 Other           
+                                                 
+                                 Scenario Input price changes
+                                                 
+                                 Labor           
+                                 Capital         
+                                 Other           
+                                                 
+                                                 
+                                                 
+                                                 
+                                                 
+                                                 
+                                                 
+/;
+
+TABLE pCrop0(*,*,j) "Base year crop price data by quantity (USD/ton)"                                                                                                                                                 
+                                 cot             wht             fru             ric             veg             alf             oth             fal             
+economic        .baseprice       7.500000E+02    2.760000E+02    4.500000E+02    4.500000E+02    4.000000E+01    1.160000E+02    7.500000E+01    0.000000E+00    
+economic        .elasticity      0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    
+financial       .baseprice       3.750000E+02    2.760000E+02    4.500000E+02    4.500000E+02    4.000000E+01    1.160000E+02    7.500000E+01    0.000000E+00    
+financial       .elasticity      0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    
+;
+
+TABLE cCrop0(*,k,j) "Crop costs by land use (USD/ha)"                                                                                                                                                 
+                                 cot             wht             fru             ric             veg             alf             oth             fal             
+noReform        .labr            6.480000E+02    1.380000E+02    8.000000E+01    2.280000E+02    1.600000E+02    6.900000E+02    1.200000E+02    0.000000E+00    
+noReform        .cptl            1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    0.000000E+00    
+noReform        .inpt            2.320000E+02    2.180000E+02    1.200000E+02    3.210000E+02    2.400000E+02    1.150000E+02    1.800000E+02    0.000000E+00    
+reform          .labr            2.000000E+02    1.600000E+02    8.000000E+01    2.400000E+02    1.600000E+02    8.000000E+01    1.200000E+02    0.000000E+00    
+reform          .cptl            1.800000E+01    1.800000E+01    1.400000E+01    1.400000E+01    1.400000E+01    1.200000E+01    1.200000E+01    0.000000E+00    
+reform          .inpt            3.000000E+02    2.400000E+02    1.200000E+02    3.600000E+02    2.400000E+02    1.200000E+02    1.800000E+02    0.000000E+00    
+;
+
+BEAM - Basin Economic Allocation Model                
+                                
+                Copyright (c) Mikkel Kromann, Niels David Riegels, COWI A/S and DHI Group A/S 2011-12
+/;
+
+BEAM - Basin Economic Allocation Model                
+                                
+                Copyright (c) Mikkel Kromann, Niels David Riegels, COWI A/S and DHI Group A/S 2011-12
+/;
+

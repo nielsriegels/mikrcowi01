@@ -5,9 +5,7 @@
         objAGRweight(b)             = 0.001;
         objELYweight                = 0.001;
         objHPPweight(b,m)           = 0.001;
-        objDISweight("Res_ROG",m)   = -10$mSum(m) + 10$mWin(m);
-        objDISweight("Res_TOK",m)   = -10$mSum(m) + 10$mWin(m);
-        objDISweight("Res_NUR",m)   = -10$mSum(m) + 10$mWin(m);
+        objDISweight(b,m)$bResInd(b)= -10$mSum(m) + 10$mWin(m);
     );
 
 * Constrained optimisation - maximise summer discharges
@@ -15,9 +13,7 @@
         objAGRweight(b)             = 0.001;
         objELYweight                = 0.001;
         objHPPweight(b,m)           = 0.001;
-        objDISweight("Res_ROG",m)   = -10$mWin(m) + 10$mSum(m);
-        objDISweight("Res_TOK",m)   = -10$mWin(m) + 10$mSum(m);
-        objDISweight("Res_NUR",m)   = -10$mWin(m) + 10$mSum(m);
+        objDISweight(b,m)$bResInd(b)= -10$mWin(m) + 10$mSum(m);
     );
 
 * Constrained optimisation - maximise total HPP electricity
@@ -48,12 +44,8 @@
         objDISweight(b,m)           = 0;
 
 * Set fixes for 2nd optimisation run, but only for reservoirs in operation
-        resDisFix(bd,"Res_ROG",y,m)$bResEly("Res_ROG")  = DIS.l("w",bd,"Res_ROG",y,m)+FLW.l("w",bd,"Res_ROG",y,m)+eps$resv(bd,"Res_ROG");
-        resDisFix(bd,"Res_TOK",y,m)$bResEly("Res_TOK")  = DIS.l("w",bd,"Res_TOK",y,m)+FLW.l("w",bd,"Res_TOK",y,m)+eps$resv(bd,"Res_TOK");
-        resDisFix(bd,"Res_NUR",y,m)$bResEly("Res_NUR")  = DIS.l("w",bd,"Res_NUR",y,m)+FLW.l("w",bd,"Res_NUR",y,m)+eps$resv(bd,"Res_NUR");
-        resVolFix("Res_ROG",y,m)$bResEly("Res_ROG")     = VOL.l("w","Res_ROG",y,m);
-        resVolFix("Res_TOK",y,m)$bResEly("Res_TOK")     = VOL.l("w","Res_TOK",y,m);
-        resVolFix("Res_NUR",y,m)$bResEly("Res_NUR")     = VOL.l("w","Res_NUR",y,m);
+        resDisFix(bd,b,y,m)$(bResEly(b) AND bResInd(b) and resv(bd,b))     = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps$resv(bd,b);
+        resVolFix(b,y,m)$(bResEly(b) AND bResInd(b))        = VOL.l("w",b,y,m);
     );
 
 * Constrained optimisation - single country sequential optimisation
@@ -81,8 +73,8 @@
         objNODEweight("FER_UZB")                = 1$(scenarios(sSce,"seqnce") eq 1);
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-                resDisFix(bd,b,y,m)$(resv(bd,b) AND bResEly(b))      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps;
-            resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
+            resDisFix(bd,b,y,m)$(bResEly(b) AND bResInd(b) and resv(bd,b))     = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps$resv(bd,b);
+            resVolFix(b,y,m)$(bResEly(b) AND bResInd(b))        = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
 
@@ -94,8 +86,8 @@
 DISPLAY resDisFix;
             SOLVE beam MAXIMIZING twv USING NLP;
             LOOP(b$objNODEweight(b),
-                resDisFix(bd,b,y,m)$(resv(bd,b) AND bResEly(b))      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps;
-                resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
+                resDisFix(bd,b,y,m)$(bResEly(b) AND bResInd(b) and resv(bd,b))     = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps$resv(bd,b);
+                resVolFix(b,y,m)$(bResEly(b) AND bResInd(b))        = VOL.l("w",b,y,m);
                 ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
             );
         );
@@ -108,8 +100,8 @@ DISPLAY resDisFix;
 DISPLAY resDisFix;
             SOLVE beam MAXIMIZING twv USING NLP;
             LOOP(b$objNODEweight(b),
-                resDisFix(bd,b,y,m)$(resv(bd,b) AND bResEly(b))      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps;
-                resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
+                resDisFix(bd,b,y,m)$(bResEly(b) AND bResInd(b) and resv(bd,b))     = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps$resv(bd,b);
+                resVolFix(b,y,m)$(bResEly(b) AND bResInd(b))        = VOL.l("w",b,y,m);
                 ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
             );
         );
@@ -121,8 +113,8 @@ DISPLAY resDisFix;
 DISPLAY resDisFix;
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-                resDisFix(bd,b,y,m)$(resv(bd,b) AND bResEly(b))      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps;
-            resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
+            resDisFix(bd,b,y,m)$(bResEly(b) AND bResInd(b) and resv(bd,b))     = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps$resv(bd,b);
+            resVolFix(b,y,m)$(bResEly(b) AND bResInd(b))        = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
 
@@ -131,8 +123,8 @@ DISPLAY resDisFix;
         objNODEweight(b)$bCty(b,"UZB")          = 1;
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-                resDisFix(bd,b,y,m)$(resv(bd,b) AND bResEly(b))      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps;
-            resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
+            resDisFix(bd,b,y,m)$(bResEly(b) AND bResInd(b) and resv(bd,b))     = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps$resv(bd,b);
+            resVolFix(b,y,m)$(bResEly(b) AND bResInd(b))        = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
     
