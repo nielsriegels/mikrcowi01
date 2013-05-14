@@ -335,8 +335,12 @@ MININFLOWa(b,y,mA)$(minInFlow0(b,y,mA) + natExtra(b))..
 
 * Annual minimum land use requirements
 MINLANDUSE(b,j,y)..
-SUM(q, LND(b,q,j,y)) =g= SUM(q, lnd0(b,q,j)* iMinLnd(b,j));
+    SUM(q, LND(b,q,j,y)) =g= lndMin(b,j);
 
+* Maximum crop demand by country
+*CROPMAX(c,j)$crpMax(c,j)..
+*    SUM((b,q)$bCty(b,c), CRP(b,q,j,y)) =l= crpMax(c,j);    
+    
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
 LEONTIEF(b,q,j,y)$(lnd0(b,q,j) and crp0(b,q,j))..

@@ -19,7 +19,7 @@ PARAMETERS
 * Irrigation system physical assumptions
     resDisMax0(b,m0)                "Maximum reservoir discharge (mm3/month)"
     natExtra(b)                     "Nature extra water (mm3/year)"
-    iMinLnd(b,j)                    "Index for minimum land use requirements for crops in procent of base"
+    lndMin(b,j)                     "Minimum land use requirements for crops (1000 ha)"
     wPhase(b,j,p0)                  "Weight for days in growth phase (% of growth days)"
     etcM2P(b,j,p0,m)                "Map for water use in phases and months (% of monthly water use in phase)"
     etcP(b,j,p0)                    "Optimal evapotranspiration by phase (1000 m3/ha)"

@@ -16,7 +16,7 @@ execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, 
 *USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 *HPP.l("Res_KA2",g,y,m) = 0;
 *HHD.l("Res_KA2",y,m) = 0;
-LND.l(b,q,j,y)$(not bPlz(b)) = 0;
+*LND.l(b,q,j,y)$(not bPlz(b)) = 0;
 
     IF(scenCalc("run",sSce), 
 * Fix hydrological variables that can never be non-zero
@@ -39,9 +39,9 @@ LND.l(b,q,j,y)$(not bPlz(b)) = 0;
         CMX.lo(b,q,x,y)$bPlz(b)                                     = 0;
         CMX.up(b,q,x,y)$bPlz(b)                                     = INF$bPlz(b);
         CRP.lo(b,q,j,y)$bPlz(b)                                     = 0;
-        CRP.up(b,q,j,y)$bPlz(b)                                     = INF$bPlz(b);
-        LND.lo(b,q,j,y)                                             = 0.001$bPlz(b);
-        LND.up(b,q,j,y)$bPlz(b)                                     = INF$bPlz(b);
+        CRP.up(b,q,j,y)$bPlz(b)                                     = INF$(bPlz(b) and lnd0(b,q,j));
+        LND.lo(b,q,j,y)                                             = 0.001$(bPlz(b) and lnd0(b,q,j));
+        LND.up(b,q,j,y)$bPlz(b)                                     = INF$(bPlz(b) and lnd0(b,q,j));
         CMX.fx(b,q0,x,y)$(not q(q0))                                = 0;
         CRP.fx(b,q0,j,y)$(not q(q0))                                = 0;
         LND.fx(b,q0,j,y)$(not q(q0))                                = 0;

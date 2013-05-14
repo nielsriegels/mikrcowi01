@@ -63,7 +63,7 @@
 
 
 *  Index for minimum land use for crops in procent of base
-    iMinLnd(b,j)         = SUM(c$bCty(b,c), iMinLnd0(c,j))$(scenarios(sSce,"lndRfm") eq 0);
+    lndMin(b,j)         = SUM(y0$y(y0), lndMin0(b,y0,j))$(scenarios(sSce,"lndRfm") eq 0);
 
 * Calculate land share for CET function
     lShare(b,q,j)$jAF(j)    = (lnd0(b,q,j) / SUM(jj$jAF(jj), lnd0(b,q,jj)))$SUM(jj$jAF(jj), lnd0(b,q,jj));

@@ -408,19 +408,6 @@ TABLE pEly0(y0,m) "Electricity prices USD/MWh"
 ;
 
 
-TABLE iMinLnd0(c,j) "Index for minimum land use for crops in procent of base"
-        cot     wht     alf     ric        
-UZB     0.283   0       0       0  
-KAZ     0       0       0       0  
-TUR     0       0       0       0  
-TAD     0       0       0       0  
-KYR     0       0       0       0  
-AFG     0       0       0       0  
-;
-
-
-
-
 * CASA-1000 (1,300 MW) with a maximum annual energy export of 4,000 GWh (shared by the Kyrgyz Republic [40%] 
 * and Tajikistan [60% = 2,400 GWh] from 2017 onwards; 
 * CASA Phase 2 (1,300 MW) with a maximum annual energy export from Tajikistan of 4,000 GWh, from 2023 onwards; 
