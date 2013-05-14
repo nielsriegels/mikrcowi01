@@ -3,9 +3,9 @@ POSITIVE VARIABLES
     IRG(b,q0,j,y0,m0)       "Actual irrigation (mm3)"
     YWR(b,q0,j,y0)          "Yield-water response function (index: 1=optimal)"
     iET(b,q0,j,p,y0)        "Index for actual ET relative to optimal ET (index: 1=optimal)"
-    CMX(b,q0,x,y0)          "Crop mix land use (ha)"
-    CRP(b,q0,j,y0)          "Crop production (ton/year)"
-    LND(b,q0,j,y0)          "Land use by crop and suitability class (ha)"
+    CMX(b,q0,x,y0)          "Crop mix land use (1000 ha)"
+    CRP(b,q0,j,y0)          "Crop production (1000 ton/year)"
+    LND(b,q0,j,y0)          "Land use by crop and suitability class (1000 ha)"
     HHI(s,sSec,b,y0,m0)     "Water use by households and industries (mm3)"
     LOS(s,b,l,y0,m0)        "Losses to seepage and evaporation (mm3)"
     LCH(s,b,y0,m0)          "Water use for leaching (mm3)"
@@ -167,7 +167,7 @@ RETURNWATER(s,b,y,m)..
 * Leaching requirements
 * qLch is in m3/ha, transform into mm3
 LEACHING(s,b,y)..
-    SUM(m$mLch0(b,m), LCH(s,b,y,m)) =e= qLch(b)*SUM((q,j)$lnd0(b,q,j), LND(b,q,j,y))/1000000;
+    SUM(m$mLch0(b,m), LCH(s,b,y,m)) =e= qLch(b)*SUM((q,j)$lnd0(b,q,j), LND(b,q,j,y))/1000;
 
 * Irrigation needs - irg0 is base year irrigation,
 * Not used when we enable Yield-Water response
@@ -193,16 +193,16 @@ YIELDWATER1m(b,q,j,p,y)$((not noYWR) AND lnd0(b,q,j) AND etcP(b,j,p))..
 * Equation for eva / evc index
 * etcP is in 1000m3/ha while IRG is in mm3
 iEVAPOTRANS(b,q,j,p,y)$(lnd0(b,q,j) AND etcP(b,j,p) AND (not noYWR) )..
-    iET(b,q,j,p,y) =e= SUM(m, 1000*etcM2P(b,j,p,m)*IRG(b,q,j,y,m)) / (etcP(b,j,p)*LND(b,q,j,y))  ;
+    iET(b,q,j,p,y) =e= SUM(m, etcM2P(b,j,p,m)*IRG(b,q,j,y,m)) / (etcP(b,j,p)*LND(b,q,j,y))  ;
 
 * YWR function parameters are only valid down to 60% deficit watering
 MINiET(b,q,j,p,y)$(lnd0(b,q,j) AND etcP(b,j,p) AND (not noYWR) )..
     iET(b,q,j,p,y) =g= 0.6;
 
 * Ensure that there is no excess watering (to not boost YWR above 1)
-* etcP is in 1000m3/ha while IRG is in mm3
+* etcM is in 1000m3/ha while IRG is in mm3
 YIELDWATER2(b,q,j,y,m)$((not noYWR) AND lnd0(b,q,j))..
-    IRG(b,q,j,y,m) =l= etcM(b,j,m) * LND(b,q,j,y)/1000 ;
+    IRG(b,q,j,y,m) =l= etcM(b,j,m) * LND(b,q,j,y) ;
 
 * Use of water by households and industries
 HHIUSES(s,sSec,b,y,m)$hhiUse(sSec,b,m)..
@@ -370,12 +370,13 @@ LANDLIMIT(b,q,y)$SUM(j, lnd0(b,q,j))..
 * Note: reservoir costs are stated in million USD/year
 OBJ..   TWV =e=
                 SUM(b$objNODEweight(b),
-                    SUM((q,j,y)$crp0(b,q,j),                  CRP(b,q,j,y) * pCrop(b,j)                                   * objAGRweight(b)    ) / 1000000000
-                   -SUM((q,j,y)$lnd0(b,q,j),                  LND(b,q,j,y) * cCrop(b,j)                                   * objAGRweight(b)    ) / 1000000000
+* CRP is in 1000 ton and pCrop is USD/ton, LND is 1000 ha and cCrop is USD/ha
+                    SUM((q,j,y)$crp0(b,q,j),             1000*CRP(b,q,j,y) * pCrop(b,j)                                   * objAGRweight(b)    ) / 1000000000
+                   -SUM((q,j,y)$lnd0(b,q,j),             1000*LND(b,q,j,y) * cCrop(b,j)                                   * objAGRweight(b)    ) / 1000000000
 * CAUTION: The row below are operating costs depending on water use, e.g. power consumption - correct specification when receiving inv. data from Bekzod
                    -SUM((q,j,y,m)$irg0(b,q,j,y,m),            IRG(b,q,j,y,m)*iInv("usdPerMM3")                            * objAGRweight(b)    ) / 1000000000
 * CAUTION: The irrigation investments are probably misspecified: they depend on exogenous land use, not actual - check this!!!
-                   -SUM((q,j,y)$lnd0(b,q,j),                  LND(b,q,j,y) * iInv("usdPerHa")                             * objAGRweight(b)    ) / 1000000000
+                   -SUM((q,j,y)$lnd0(b,q,j),             1000*LND(b,q,j,y) * iInv("usdPerHa")                             * objAGRweight(b)    ) / 1000000000
                    -SUM((y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       ) / 1000
               )+SUM(c$objCTYweight(c),
                    -SUM((u,g,y,m)$tppMap(c,u),                TPP(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000                 * objELYweight       ) / 1000000000

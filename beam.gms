@@ -149,5 +149,5 @@ PUT step;
 PUT "4";
 PUTCLOSE;
 
-DISPLAY rPlz, rLos;
+DISPLAY rPlz, rLos, LND.l, CRP.l;
 DISPLAY checkOutput;

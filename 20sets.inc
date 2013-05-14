@@ -139,7 +139,6 @@ Res_PYD
 res_ZAR         
 Res_NA1         
 Res_KA1         
-Res_KA2         
 /;
 
 SET bs "Basin sections" /

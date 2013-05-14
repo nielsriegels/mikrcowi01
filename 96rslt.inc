@@ -82,24 +82,24 @@
     rAgri(sSce,b,"WaterChg",y,j,q)            = ( 100 * SUM(m, IRG.l(b,q,j,y,m))  / SUM(m, irg0(b,q,j,y,m)) - 100 )$SUM(m, irg0(b,q,j,y,m)) ;
     rAgri(sSce,b,"WaterInt",y,j,q)            = 1000 * (SUM(m, IRG.l(b,q,j,y,m))/LND.l(b,q,j,y))$LND.l(b,q,j,y);
     rAgri(sSce,b,"WaterIntB",y,j,q)           = 1000 * (SUM(m, irg0(b,q,j,y,m) )/lnd0(b,q,j)   )$lnd0(b,q,j);
-    rAgri(sSce,b,"LandUse",y,j,q)             = LND.l(b,q,j,y)/1000;
+    rAgri(sSce,b,"LandUse",y,j,q)             = LND.l(b,q,j,y);
     rAgri(sSce,b,"LandChg",y,j,q)$lnd0(b,q,j) = 100*LND.l(b,q,j,y)/lnd0(b,q,j)-100;
-    rAgri(sSce,b,"AgriProd",y,j,q)            = CRP.l(b,q,j,y)/1000;
+    rAgri(sSce,b,"AgriProd",y,j,q)            = CRP.l(b,q,j,y);
     rAgri(sSce,b,"YWR",y,j,q)                 = 100*YWR.l(b,q,j,y);
-    rAgri(sSce,b,"YieldAct",y,j,q)$lnd0(b,q,j)= CRP.l(b,q,j,y) /  LND.l(b,q,j,y);
+    rAgri(sSce,b,"YieldAct",y,j,q)            = ( CRP.l(b,q,j,y) /  LND.l(b,q,j,y) )$(LND.l(b,q,j,y) gt 0);
 *    rAgri(sSce,b,"iET",y,j,q)                 = 100*YWR.l(b,q,j,y);
     rAgri(sSce,b,"ActMarg",y,j,q)$LND.l(b,q,j,y) = (pCrop(b,j)*CRP.l(b,q,j,y) - cCrop(b,j)*LND.l(b,q,j,y))/LND.l(b,q,j,y);
     rAgri(sSce,b,"OptMarg",y,j,q)$lnd0(b,q,j) = (pCrop(b,j)* crp0(b,q,j)   - cCrop(b,j) *lnd0(b,q,j)  )/ lnd0(b,q,j);
  
-    rIrg(sSce,b,"ActET",y,p,j,q)$LND.l(b,q,j,y)    = 1000000*SUM(m, IRG.l(b,q,j,y,m)*etcM2p(b,j,p,m)) / LND.l(b,q,j,y);
+    rIrg(sSce,b,"ActET",y,p,j,q)$LND.l(b,q,j,y)    = SUM(m, IRG.l(b,q,j,y,m)*etcM2p(b,j,p,m)) / LND.l(b,q,j,y);
     rIrg(sSce,b,"OptET",y,p,j,q)$lnd0(b,q,j)    = etcP(b,j,p)*1000;
     rIrg(sSce,b,"iET",y,p,j,q)$lnd0(b,q,j)      = iET.l(b,q,j,p,y)*100;
     rIrg(sSce,b,"wPhase",y,p,j,q)$lnd0(b,q,j)   = wPhase(b,j,p)*100;
     
  
 * Economic results, line
-    rEcon(sSce,b,"AgriSales",y,m)           = 0.000001*SUM((q,j), pCrop(b,j)*CRP.l(b,q,j,y) ) / 12;
-    rEcon(sSce,b,"AgriCost",y,m)            = 0.000001*SUM((q,j), cCrop(b,j)*LND.l(b,q,j,y) ) / 12;
+    rEcon(sSce,b,"AgriSales",y,m)           = 0.001*SUM((q,j), pCrop(b,j)*CRP.l(b,q,j,y) ) / 12;
+    rEcon(sSce,b,"AgriCost",y,m)            = 0.001*SUM((q,j), cCrop(b,j)*LND.l(b,q,j,y) ) / 12;
     rEcon(sSce,b,"AgriInc",y,m)             = rEcon(sSce,b,"AgriSales",y,m) - rEcon(sSce,b,"AgriCost",y,m);
     rEcon(sSce,b,"HydroCost",y,m)           = -reservoirs(b,"cost")$(not bResNOP(b));
     rEcon(sSce,b,"HydroInc",y,m)            = -SUM(g, HPP.l(b,g,y,m) * SUM(c$bCty(b,c), ELYMKT.m(c,g,y,m))*1000 ) + rEcon(sSce,b,"HydroCost",y,m);
@@ -208,20 +208,20 @@ $offtext
     rBorder(sSce,y,"DwnToktogul",m)      = SUM((s)$sW(s),               DIS.l(s,"Res_NA2","Res_TOK",y,m)+FLW.l(s,"Res_NA2","Res_TOK",y,m));
     rBorder(sSce,y,"DwnNurek",m)         = SUM((s)$sW(s),               DIS.l(s,"Res_VA1","Res_NUR",y,m)+FLW.l(s,"Res_VA1","Res_NUR",y,m));
 
-    rcView(sSce,y,"AgriSales",c)            =  SUM((b,q,j)$bCty(b,c),       CRP.l(b,q,j,y) * pCrop(b,j)  ) / 1000000;
-    rcView(sSce,y,"AgriCosts",c)            = -SUM((b,q,j)$bCty(b,c),       LND.l(b,q,j,y) * cCrop(b,j)  ) / 1000000;
-    rcView(sSce,y,"AgriVA",c)               = rcView(sSce,y,"AgriSales",c) - rcView(sSce,y,"AgriCosts",c);
-    rcView(sSce,y,"AgriCot",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$cot(j))/1000000;
-    rcView(sSce,y,"AgriWht",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$wht(j))/1000000;
-    rcView(sSce,y,"AgriAlf",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$alf(j))/1000000;
-    rcView(sSce,y,"AgriVeg",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$veg(j))/1000000;
-    rcView(sSce,y,"AgriRic",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$ric(j))/1000000;
-    rcView(sSce,y,"AgriFru",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$fru(j))/1000000;
-    rcView(sSce,y,"AgriOth",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$oth(j))/1000000;
+    rcView(sSce,y,"AgriSales",c)            =  SUM((b,q,j)$bCty(b,c),       CRP.l(b,q,j,y) * pCrop(b,j)  ) / 1000;
+    rcView(sSce,y,"AgriCosts",c)            = -SUM((b,q,j)$bCty(b,c),       LND.l(b,q,j,y) * cCrop(b,j)  ) / 1000;
+    rcView(sSce,y,"AgriVA",c)               = rcView(sSce,y,"AgriSales",c) + rcView(sSce,y,"AgriCosts",c);
+    rcView(sSce,y,"AgriCot",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$cot(j))/1000;
+    rcView(sSce,y,"AgriWht",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$wht(j))/1000;
+    rcView(sSce,y,"AgriAlf",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$alf(j))/1000;
+    rcView(sSce,y,"AgriVeg",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$veg(j))/1000;
+    rcView(sSce,y,"AgriRic",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$ric(j))/1000;
+    rcView(sSce,y,"AgriFru",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$fru(j))/1000;
+    rcView(sSce,y,"AgriOth",c)              = SUM((b,q,j)$bCty(b,c),        pCrop(b,j)*CRP.l(b,q,j,y)$oth(j))/1000;
     rcView(sSce,y,"AgriWater",c)            = SUM((b,q,j,m)$bCty(b,c),      IRG.l(b,q,j,y,m));
     rcView(sSce,y,"AgriWaterSum",c)         = SUM((b,q,j,m)$bCty(b,c),      IRG.l(b,q,j,y,m)$mSum(m));
     rcView(sSce,y,"AgriWaterWin",c)         = SUM((b,q,j,m)$bCty(b,c),      IRG.l(b,q,j,y,m)$mWin(m));
-    rcView(sSce,y,"AgriWaterInt",c)         = ( SUM((b,q,j,m)$bCty(b,c),    IRG.l(b,q,j,y,m)*1000000$mWin(m))  / SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y)) )$SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y));
+    rcView(sSce,y,"AgriWaterInt",c)         = ( SUM((b,q,j,m)$bCty(b,c),    IRG.l(b,q,j,y,m)*1000)  / SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y)) )$SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y));
     rcView(sSce,y,"AgriLandChg",c)          = ( SUM((b,q,j)$bCty(b,c),      LND.l(b,q,j,y)*100      )  / SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y));
     rcView(sSce,y,"HHIuse",c)               = SUM((s,b,sSec,m)$bCty(b,c),   HHI.l(s, sSec,b,y,m)$sW(s));
     rcView(sSce,y,"Intake",c)               = SUM((rb,s), SUM((bd,bo,m)$(bNukus(bo,rb) and bCty(bd,c)),             ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m)  )); 
@@ -284,20 +284,20 @@ $offtext
 
 
 
-    rcRbView(sSce,y,"AgriSales",rb0,c)           =  SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),       CRP.l(b,q,j,y) * pCrop(b,j)  ) / 1000000;
-    rcRbView(sSce,y,"AgriCosts",rb0,c)           = -SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),       LND.l(b,q,j,y) * cCrop(b,j)  ) / 1000000;
-    rcRbView(sSce,y,"AgriVA",rb0,c)              = rcRbView(sSce,y,"AgriSales",rb0,c) - rcRbView(sSce,y,"AgriCosts",rb0,c);
-    rcRbView(sSce,y,"AgriCot",rb0,c)             = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$cot(j))/1000000;
-    rcRbView(sSce,y,"AgriWht",rb0,c)              = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$wht(j))/1000000;
-    rcRbView(sSce,y,"AgriAlf",rb0,c)              = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$alf(j))/1000000;
-    rcRbView(sSce,y,"AgriVeg",rb0,c)              = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$veg(j))/1000000;
-    rcRbView(sSce,y,"AgriRic",rb0,c)              = SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$ric(j))/1000000;
-    rcRbView(sSce,y,"AgriFru",rb0,c)              = SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$fru(j))/1000000;
-    rcRbView(sSce,y,"AgriOth",rb0,c)              = SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$oth(j))/1000000;
+    rcRbView(sSce,y,"AgriSales",rb0,c)           =  SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),       CRP.l(b,q,j,y) * pCrop(b,j)  ) / 1000;
+    rcRbView(sSce,y,"AgriCosts",rb0,c)           = -SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),       LND.l(b,q,j,y) * cCrop(b,j)  ) / 1000;
+    rcRbView(sSce,y,"AgriVA",rb0,c)              = rcRbView(sSce,y,"AgriSales",rb0,c) + rcRbView(sSce,y,"AgriCosts",rb0,c);
+    rcRbView(sSce,y,"AgriCot",rb0,c)             = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$cot(j))/1000;
+    rcRbView(sSce,y,"AgriWht",rb0,c)              = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$wht(j))/1000;
+    rcRbView(sSce,y,"AgriAlf",rb0,c)              = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$alf(j))/1000;
+    rcRbView(sSce,y,"AgriVeg",rb0,c)              = SUM((b,q,j)$(bCty(b,c)AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$veg(j))/1000;
+    rcRbView(sSce,y,"AgriRic",rb0,c)              = SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$ric(j))/1000;
+    rcRbView(sSce,y,"AgriFru",rb0,c)              = SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$fru(j))/1000;
+    rcRbView(sSce,y,"AgriOth",rb0,c)              = SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),        pCrop(b,j)*CRP.l(b,q,j,y)$oth(j))/1000;
     rcRbView(sSce,y,"AgriWater",rb0,c)            = SUM((b,q,j,m)$(bCty(b,c) AND bBas(b,rb0)),      IRG.l(b,q,j,y,m));
     rcRbView(sSce,y,"AgriWaterSum",rb0,c)         = SUM((b,q,j,m)$(bCty(b,c) AND bBas(b,rb0)),      IRG.l(b,q,j,y,m)$mSum(m));
     rcRbView(sSce,y,"AgriWaterWin",rb0,c)         = SUM((b,q,j,m)$(bCty(b,c) AND bBas(b,rb0)),      IRG.l(b,q,j,y,m)$mWin(m));
-    rcRbView(sSce,y,"AgriWaterInt",rb0,c)         = ( SUM((b,q,j,m)$(bCty(b,c) AND bBas(b,rb0)),    IRG.l(b,q,j,y,m)*1000000$mWin(m))  / SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y)) )$SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y));
+    rcRbView(sSce,y,"AgriWaterInt",rb0,c)         = ( SUM((b,q,j,m)$(bCty(b,c) AND bBas(b,rb0)),    IRG.l(b,q,j,y,m)*1000)     / SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y)) )$SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y));
     rcRbView(sSce,y,"AgriLandChg",rb0,c)          = ( SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)),      LND.l(b,q,j,y)*100      )  / SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j)$(bCty(b,c) AND bBas(b,rb0)), LND.l(b,q,j,y));
     rcRbView(sSce,y,"HHIuse",rb0,c)               = SUM((s,b,sSec,m)$(bCty(b,c) AND bBas(b,rb0)),   HHI.l(s, sSec,b,y,m)$sW(s));
 *    rcRbView(sSce,y,"Intake",rb,c)               = SUM((s,bd,bo,m)$(bNukus(bo,rb) and (not bNukus(bd,rb)) and bCty(bd,c) and bPlz(bd)),  
@@ -363,21 +363,21 @@ $offtext
 ***********************************************
 ***********************************************
 
-    rSView(y,"AgriSales",sSce)            =  SUM((b,q,j),       CRP.l(b,q,j,y) * pCrop(b,j)  ) / 1000000;
-    rSView(y,"AgriCosts",sSce)            = -SUM((b,q,j),       LND.l(b,q,j,y) * cCrop(b,j)  ) / 1000000;
-    rSView(y,"AgriVA",sSce)               = rSView(y,"AgriSales",sSce) - rSView(y,"AgriCosts",sSce);
-    rSView(y,"AgriCot",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$cot(j))/1000000;
-    rSView(y,"AgriWht",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$wht(j))/1000000;
-    rSView(y,"AgriAlf",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$alf(j))/1000000;
-    rSView(y,"AgriVeg",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$veg(j))/1000000;
-    rSView(y,"AgriRic",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$ric(j))/1000000;
-    rSView(y,"AgriFru",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$fru(j))/1000000;
-    rSView(y,"AgriOth",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$oth(j))/1000000;
+    rSView(y,"AgriSales",sSce)            =  SUM((b,q,j),       CRP.l(b,q,j,y) * pCrop(b,j)  ) / 1000;
+    rSView(y,"AgriCosts",sSce)            = -SUM((b,q,j),       LND.l(b,q,j,y) * cCrop(b,j)  ) / 1000;
+    rSView(y,"AgriVA",sSce)               = rSView(y,"AgriSales",sSce) + rSView(y,"AgriCosts",sSce);
+    rSView(y,"AgriCot",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$cot(j))/1000;
+    rSView(y,"AgriWht",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$wht(j))/1000;
+    rSView(y,"AgriAlf",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$alf(j))/1000;
+    rSView(y,"AgriVeg",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$veg(j))/1000;
+    rSView(y,"AgriRic",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$ric(j))/1000;
+    rSView(y,"AgriFru",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$fru(j))/1000;
+    rSView(y,"AgriOth",sSce)              = SUM((b,q,j),        pCrop(b,j)*CRP.l(b,q,j,y)$oth(j))/1000;
     rSView(y,"AgriWater",sSce)            = SUM((b,q,j,m),      IRG.l(b,q,j,y,m));
     rSView(y,"AgriWaterSum",sSce)         = SUM((b,q,j,m),      IRG.l(b,q,j,y,m)$mSum(m));
     rSView(y,"AgriWaterWin",sSce)         = SUM((b,q,j,m),      IRG.l(b,q,j,y,m)$mWin(m));
-    rSView(y,"AgriWaterInt",sSce)         = ( SUM((b,q,j,m),    IRG.l(b,q,j,y,m)*1000000$mWin(m))  / SUM((b,q,j), LND.l(b,q,j,y)) )$SUM((b,q,j), LND.l(b,q,j,y));
-    rSView(y,"AgriLandChg",sSce)          = ( SUM((b,q,j),      LND.l(b,q,j,y)*100      )  / SUM((b,q,j), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j), LND.l(b,q,j,y));
+    rSView(y,"AgriWaterInt",sSce)         = ( SUM((b,q,j,m),    IRG.l(b,q,j,y,m)*1000)  / SUM((b,q,j), LND.l(b,q,j,y)) )$SUM((b,q,j), LND.l(b,q,j,y));
+    rSView(y,"AgriLandChg",sSce)          = ( SUM((b,q,j),      LND.l(b,q,j,y)*100   )  / SUM((b,q,j), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j), LND.l(b,q,j,y));
     rSView(y,"HHIuse",sSce)               = SUM((s,b,sSec,m),   HHI.l(s, sSec,b,y,m)$sW(s));
     rSView(y,"Intake",sSce)               = SUM((s,rb,bd,bo,m)$bPlz(bd),    (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb))  );
     rSView(y,"Nukus",sSce)                = SUM((s,rb,bd,bo,m,c)$bPlz(bd),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$(bBas(bd,rb)) * sNukus(c,rb)  );
