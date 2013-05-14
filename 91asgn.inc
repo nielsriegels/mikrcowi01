@@ -62,8 +62,11 @@
     LND.l(b,q0,j,y)$(not q(q0))         = 0;
 
 
-*  Index for minimum land use for crops in procent of base
+*  Minimum land use for crops in 1000 ha
     lndMin(b,j)         = SUM(y0$y(y0), lndMin0(b,y0,j))$(scenarios(sSce,"lndRfm") eq 0);
+
+* Maximum crop production limited by country demand 1000 tonnes
+    crpMax(c,j)             = SUM(y0$y(y0), crpMax0(c,y0,j));
 
 * Calculate land share for CET function
     lShare(b,q,j)$jAF(j)    = (lnd0(b,q,j) / SUM(jj$jAF(jj), lnd0(b,q,jj)))$SUM(jj$jAF(jj), lnd0(b,q,jj));
@@ -126,15 +129,16 @@ $offtext
 *    cCrop(b,j)$bPlz(b)      = SUM(k, cCrop0("noReform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) eq 0)
 *                            + SUM(k, cCrop0("reform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) ne 0);
     cCrop(b,j)$bPlz(b)      = SUM(c$bCty(b,c), 
-                                    icCrop("labr",sSce) * pAgri0(c,j,"financial","qLbr") * pAgri0(c,j,"financial","pLbr")
-                                   +icCrop("inpt",sSce) * pAgri0(c,j,"financial","pIpt")
-                                   +icCrop("cptl",sSce) * pAgri0(c,j,"financial","pCap")
+                                    0.8*icCrop("labr",sSce) * pAgri0(c,j,"financial","qLbr") * pAgri0(c,j,"financial","pLbr")
+                                   +0.7*icCrop("inpt",sSce) * pAgri0(c,j,"financial","pIpt")
+                                   +0.7*icCrop("cptl",sSce) * pAgri0(c,j,"financial","pCap")
                               )$(scenarios(sSce,"aPrice") ne 0)
                              +SUM(c$bCty(b,c), 
-                                    icCrop("labr",sSce) * pAgri0(c,j,"economic","qLbr") * pAgri0(c,j,"economic","pLbr")
-                                   +icCrop("inpt",sSce) * pAgri0(c,j,"economic","pIpt")
-                                   +icCrop("cptl",sSce) * pAgri0(c,j,"economic","pCap")
+                                    0.8*icCrop("labr",sSce) * pAgri0(c,j,"economic","qLbr") * pAgri0(c,j,"economic","pLbr")
+                                   +0.7*icCrop("inpt",sSce) * pAgri0(c,j,"economic","pIpt")
+                                   +0.7*icCrop("cptl",sSce) * pAgri0(c,j,"economic","pCap")
                               )$(scenarios(sSce,"aPrice") eq 0);
+
     
 * Set leaching requirements
     qLch(b)      = SUM(y0$y(y0), qLch0(b,"dry")$y("2001") +  qLch0(b,"nor")$y("2009") ); 
@@ -182,6 +186,7 @@ IF(SUM((s,bd,bo,y,m), FLW.l(s,bd,bo,y,m)) eq 0,
                                           * ( reservoirs(b,"coef_a") + reservoirs(b,"coef_b")*VOL.l(s,b,y,m) + reservoirs(b,"coef_c")*POWER(VOL.l(s,b,y,m),2))
                                       ) / 3600;
 * Agricultural variable levels
+
         LND.l(b,q,j,y)              = lnd0(b,q,j);
         CRP.l(b,q,j,y)              = crp0(b,q,j);
     );    

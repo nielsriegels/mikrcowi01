@@ -84,6 +84,7 @@ ITKMAX(s,bd,y0)
     iEVAPOTRANS(b,q0,j,p,y0)    "Calculate index for actual ET ratio to optimal ET"
     MINiET(b,q0,j,p,y0)         "Set minimum for deficit watering"
     LEONTIEF(b,q0,j,y0)         "Ratio between outputs and inputs"
+    CROPMAX(c,j,y0)             "Maximum crop production"
     CETLAND(b,y0)               "Index for physical amount of land"
     FIXEDLAND(b,q0,j,y0)        "Fixed land shares"
     LANDLIMIT(b,q0,y0)          "Maximum land use"
@@ -338,8 +339,8 @@ MINLANDUSE(b,j,y)..
     SUM(q, LND(b,q,j,y)) =g= lndMin(b,j);
 
 * Maximum crop demand by country
-*CROPMAX(c,j)$crpMax(c,j)..
-*    SUM((b,q)$bCty(b,c), CRP(b,q,j,y)) =l= crpMax(c,j);    
+CROPMAX(c,j,y)$crpMax(c,j)..
+    SUM((b,q)$bCty(b,c), CRP(b,q,j,y)) =l= crpMax(c,j);    
     
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
@@ -404,7 +405,7 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS, LEACHING,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN, RESHHDMAX, 
                 MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
-                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, AGRCMX, IRGACT, YIELDWATER1w, YIELDWATER2, iEVAPOTRANS, MINiET, RETURNWATER
+                LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, CROPMAX, AGRCMX, IRGACT, YIELDWATER1w, YIELDWATER2, iEVAPOTRANS, MINiET, RETURNWATER
                 OBJ
                 ITKMAX
                 /;

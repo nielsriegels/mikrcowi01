@@ -149,5 +149,10 @@ PUT step;
 PUT "4";
 PUTCLOSE;
 
-DISPLAY rPlz, rLos, LND.l, CRP.l;
+PARAMETER rcCrop(j,c), rcLand(j,c);
+rcLand(j,c) = SUM((b,q,y)$bCty(b,c), round(LND.l(b,q,j,y),2));
+rcCrop(j,c)$rcLand(j,c) = SUM((b,q,y)$bCty(b,c), ROUND(CRP.l(b,q,j,y),1));
+
+
+DISPLAY rPlz, rLos, rcCrop, rcLand;
 DISPLAY checkOutput;
