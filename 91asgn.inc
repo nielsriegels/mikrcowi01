@@ -41,7 +41,7 @@
 * Allow flexibility in land allocation and account for any fallow land
 * unless scenario user chose fixed land allocation (opLND=0)
 *    IF(scenarios("fixLND",sSce) gt 0,
-        jAF(j)                  = NO;
+*        jAF(j)                  = NO;
 *        jAF("wht")              = YES;
 *    );
 *    IF(scenarios("fixLND",sSce) eq 0,
@@ -54,6 +54,8 @@
 * Disable average yields and enable partitioning by soil suitability class
 *    q(qAvg)                 = YES$scenarios("avgSoil",sSce);
 *    q(qPar)                 = YES$(not scenarios("avgSoil",sSce));
+
+    jAF(j)                  = YES;
     q(qPar)                 = YES;
 
     CRP.l(b,q0,j,y)$(not q(q0))         = 0;
@@ -117,7 +119,7 @@ $offtext
 * Set crop prices according to scenario indices for crop price
 *    pCrop(j)                = pCrop0("economic","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) eq 0)
 *                            + pCrop0("financial","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) ne 0);
-    pCrop(b,j)              = ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"economic","pCrp")  )$(scenarios(sSce,"aPrice") eq 0)
+    pCrop(b,j)$bPlz(b)       = ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"economic","pCrp")  )$(scenarios(sSce,"aPrice") eq 0)
                              +ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"financial","pCrp") )$(scenarios(sSce,"aPrice") ne 0);
 
 * Set crop costs according to scenario indices for crop costs
