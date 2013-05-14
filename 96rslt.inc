@@ -147,9 +147,11 @@ $offtext
     rcElec(sSce,"qDemUsd",y,c,m)        =  SUM((g,d),               USD.l(g,c,d,y,m));
     rcElec(sSce,"qTrxNet",y,c,m)        = -SUM((g,cc),              TRX.l(c,cc,g,y,m)-TRX.l(cc,c,g,y,m)*0.9) ;
     rcElec(sSce,"qTrxSA",y,c,m)         = -SUM(g,                   XPT.l(c,g,y,m));
-    rcElec(sSce,"qSupTot",y,c,m)        =  SUM((b,g)$bCty(b,c),     HPP.l(b,g,y,m)) + SUM((u,g)$tppMap(c,u), TPP.l(c,u,g,y,m));;
-    rcElec(sSce,"qSupHPP",y,c,m)        =  SUM((b,g)$bCty(b,c),     HPP.l(b,g,y,m));
+    rcElec(sSce,"qSupHPP",y,c,m)        =  SUM((b,g)$bResEly(b),    HPP.l(b,g,y,m)$bCty(b,c));
+    rcElec(sSce,"qSupHPPh",y,c,m)       =  SUM((b,g)$bResEly(b),    HPP.l(b,g,y,m)$(bCty(b,c) AND reservoirs(b,"max") gt 0));
+    rcElec(sSce,"qSupHPPr",y,c,m)       =  SUM((b,g)$bResEly(b),    HPP.l(b,g,y,m)$(bCty(b,c) AND reservoirs(b,"max") eq 0));
     rcElec(sSce,"qSupTPP",y,c,m)        =  SUM((u,g)$tppMap(c,u),   TPP.l(c,u,g,y,m));
+    rcElec(sSce,"qSupTot",y,c,m)        =  rcElec(sSce,"qSupHPP",y,c,m) + rcElec(sSce,"qSupTPP",y,c,m);
     rcElec(sSce,"vCstTPP",y,c,m)        = -SUM((u,g)$tppMap(c,u),   TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u) )/1000 ;
     rcElec(sSce,"vCstUSD",y,c,m)        = -SUM((g,d0),              USD.l(g,c,d0,y,m)*usd0(c,g,d0))/1000 ;
 *   rcElec(sSce,"vCstCPX",c,m)          = -SUM(u$uPrd(u),           TNI.l(c,u)*tpp0(c,u,"CAPX"))*TNIweight(m) ;
@@ -224,7 +226,7 @@ $offtext
     rcView(sSce,y,"AgriWaterInt",c)         = ( SUM((b,q,j,m)$bCty(b,c),    IRG.l(b,q,j,y,m)*1000)  / SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y)) )$SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y));
     rcView(sSce,y,"AgriLandChg",c)          = ( SUM((b,q,j)$bCty(b,c),      LND.l(b,q,j,y)*100      )  / SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y)) - 100   )$SUM((b,q,j)$bCty(b,c), LND.l(b,q,j,y));
     rcView(sSce,y,"HHIuse",c)               = SUM((s,b,sSec,m)$bCty(b,c),   HHI.l(s, sSec,b,y,m)$sW(s));
-    rcView(sSce,y,"Intake",c)               = SUM((rb,s), SUM((bd,bo,m)$(bNukus(bo,rb) and bCty(bd,c)),             ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m)  )); 
+    rcView(sSce,y,"Intake",c)               = SUM((rb,s), SUM((bd,bo,m)$(bNukus(bo,rb) and (not bNukus(bd,rb)) ),  (ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m))$bCty(bd,c)  )); 
     rcView(sSce,y,"Nukus",c)                = SUM((rb,s), SUM((bd,bo,m)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ),   ITK.l(s,bd,bo,y,m)+FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m)  )*sNukus(c,rb)) 
                                              +SUM((rb,s), SUM((bd,m)$bNukus(bd,rb), rtn0(bd,m))*sNukus(c,rb));
     

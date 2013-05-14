@@ -1,1 +1,1 @@
-copy /Y  c:\mikr\mikrcowi01\solutions\solution.gdx c:\mikr\mikrcowi01\solutions\solution-s20.gdx
+copy /Y  c:\mikr\mikrcowi01\solutions\solution.gdx c:\mikr\mikrcowi01\solutions\solution-s111.gdx

@@ -133,6 +133,8 @@ $include "%path%70eqtn.inc";
 *$include "%path%80lvls.inc";
 
 PARAMETER checkElybal(sSce,g,c,y0,*,m0) ;
+PARAMETER elyBal(sSce,c,*);
+PARAMETER natBal(sSce,b);
 OPTIONS checkElyBal:1:4:1;
 
 * =============================================================================
@@ -154,5 +156,8 @@ rcLand(j,c) = SUM((b,q,y)$bCty(b,c), round(LND.l(b,q,j,y),2));
 rcCrop(j,c)$rcLand(j,c) = SUM((b,q,y)$bCty(b,c), ROUND(CRP.l(b,q,j,y),1));
 
 
-DISPLAY rPlz, rLos, rcCrop, rcLand;
+
+
+*DISPLAY rPlz, rLos, rcCrop, rcLand, elyBal;
+DISPLAY natBal;
 DISPLAY checkOutput;

@@ -56,7 +56,7 @@ SETS
     sSec                    "Non-agri sectors"      / HH, ind /
     sRtn                    "Return flow types"     / total, irrig, river, lakes/
     sEly                    "Elec. data types"      / elyCap, aCAPEX, aFOPEX, uVOPEX, uFUELEX, eELEC, eHEAT, rHEAT /
-    sSce                    "Scenarios"             / s01*s110 /
+    sSce                    "Scenarios"             / s01*s111 /
     l                       "Loss types"            / seep, evap /
     x                       "Crop mixes"            / cotn, whet, alfa, rice, ric2, stfr, tgrp, meln, tomt, shav, pota, mung, subt, mazf, mazg /
 
@@ -207,6 +207,8 @@ SETS
         qDemNot         "Notional demand (GWh)"
         qSupTPP         "Thermal electricity production (GWh)"
         qSupHPP         "Hydro electricity production (GWh)"
+        qSupHPPr        "Hydro electricity production, reservoirs (GWh)"
+        qSupHPPh        "Hydro electricity production, run-of-river (GWh)"
         qSupTot         "Electricity production (GWh)"
         qDemSrv         "Served demand (GWh)"
         qDemUsd         "Unserved demand (GWh)"

@@ -12,7 +12,7 @@ $include "%path%91asgn.inc";
 putclose sRename 'copy /Y %path%solutions\solution-' sSce.tl:0 '.gdx %path%solutions\solution.gdx';
 execute '%path%solutions\renameS.cmd';
 
-execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, TRX, DEM, USD, YWR, iET, CRP, LND, CMX, TWV ;
+execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, TRX, XPT, DEM, USD, YWR, iET, CRP, LND, CMX, TWV, ELYMKT ;
 *USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 *HPP.l("Res_KA2",g,y,m) = 0;
 *HHD.l("Res_KA2",y,m) = 0;
@@ -69,7 +69,7 @@ $include "%path%92cstr.inc";
 
 * Save solution to re-use later
         IF( ((beam.modelstat le 2) or (beam.modelstat eq 7)), 
-            execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, XPT, YWR, iET, CRP, LND, CMX, TWV;
+            execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, XPT, YWR, iET, CRP, LND, CMX, TWV, ELYMKT;
             putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
             execute '%path%solutions\renameS.cmd';
         ); 
@@ -107,6 +107,21 @@ rPlz(bd,sSce,"bal")$bPlz(bd) = round(rPlz(bd,sSce,"sup")+ rPlz(bd,sSce,"dem"),3)
 *rLos(bd,sSce,"riv")$bRiv(bd) = SUM((s,m,y),           LOS(s,bd,"seep",y,m)+LOS(s,bd,"evap",y,m));
 *rLos(bd,sSce,"res")$bRiv(bd) = SUM((s,m,y),           LOS(s,bd,"seep",y,m)+LOS(s,bd,"evap",y,m));
 rLos(bd,sSce)                 = SUM((s,m,y),           LOS.l(s,bd,"seep",y,m)+LOS.l(s,bd,"evap",y,m));
+
+
+ 
+
+elyBal(sSce,c,"IMP")        = SUM((g,y,m),          SUM(cc$trx0(cc,c),       TRX.l(cc,c,g,y,m) )*0.9  );
+elyBal(sSce,c,"TPP")        = SUM((g,y,m),          SUM(u$tppMap(c,u),       TPP.l(c,u,g,y,m))        );
+elyBal(sSce,c,"HPP")        = SUM((g,y,m),          SUM(b$bResEly(b),        HPP.l(b,g,y,m)$bCty(b,c)));
+elyBal(sSce,c,"USD")        = SUM((g,y,m),          SUM(d$usd0(c,g,d),       USD.l(g,c,d,y,m))        );
+elyBal(sSce,c,"DEM")        = SUM((g,y,m),          -DEM.l(g,c,y,m)                                   );
+elyBal(sSce,c,"EXP")        = SUM((g,y,m),          -SUM(cc$trx0(c,cc),       TRX.l(c,cc,g,y,m) )     );
+elyBal(sSce,c,"XPT")        = SUM((g,y,m),          -XPT.l(c,g,y,m)                                   );
+elyBal(sSce,c,"BAL")        = elyBal(sSce,c,"IMP") + elyBal(sSce,c,"TPP") + elyBal(sSce,c,"HPP") + elyBal(sSce,c,"USD")
+                             +elyBal(sSce,c,"DEM") + elyBal(sSce,c,"EXP") + elyBal(sSce,c,"XPT") ;
+
+natBal(sSce,b)              = SUM((s,y,m), STO.l(s,b,y,m))$natExtra(b);
 
 );
 

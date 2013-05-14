@@ -81,7 +81,7 @@
         objNODEweight("FER_UZB")                = 1$(scenarios(sSce,"seqnce") eq 1);
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps$resv(bd,b);
+                resDisFix(bd,b,y,m)$(resv(bd,b) AND bResEly(b))      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps;
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
@@ -94,7 +94,7 @@
 DISPLAY resDisFix;
             SOLVE beam MAXIMIZING twv USING NLP;
             LOOP(b$objNODEweight(b),
-                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps$resv(bd,b);
+                resDisFix(bd,b,y,m)$(resv(bd,b) AND bResEly(b))      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps;
                 resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
                 ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
             );
@@ -108,7 +108,7 @@ DISPLAY resDisFix;
 DISPLAY resDisFix;
             SOLVE beam MAXIMIZING twv USING NLP;
             LOOP(b$objNODEweight(b),
-                resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps$resv(bd,b);
+                resDisFix(bd,b,y,m)$(resv(bd,b) AND bResEly(b))      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps;
                 resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
                 ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
             );
@@ -121,7 +121,7 @@ DISPLAY resDisFix;
 DISPLAY resDisFix;
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps$resv(bd,b);
+                resDisFix(bd,b,y,m)$(resv(bd,b) AND bResEly(b))      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps;
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
@@ -131,7 +131,7 @@ DISPLAY resDisFix;
         objNODEweight(b)$bCty(b,"UZB")          = 1;
         SOLVE beam MAXIMIZING twv USING NLP;
         LOOP(b$objNODEweight(b),
-            resDisFix(bd,b,y,m)$bResEly(b)      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m)+eps$resv(bd,b);
+                resDisFix(bd,b,y,m)$(resv(bd,b) AND bResEly(b))      = DIS.l("w",bd,b,y,m)+FLW.l("w",bd,b,y,m) + eps;
             resVolFix(b,y,m)$bResEly(b)         = VOL.l("w",b,y,m);
             ITK.fx(s,b,bo,y,m)                  = ITK.l(s,b,bo,y,m);
         );
