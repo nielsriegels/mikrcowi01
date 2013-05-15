@@ -96,6 +96,8 @@
     rAgriNode(sSce,b,"LandUse",y)             = SUM((q,j), LND.l(b,q,j,y))/1000;
     rAgriNode(sSce,b,"AgriProd",y)            = SUM((q,j), CRP.l(b,q,j,y))/1000;
     rAgriNode(sSce,b,"Leaching",y)        = SUM((s,m), LCH.l(s,b,y,m)); 
+    rAgriNode(sSce,b,"FieldLoss",y)           = SUM((s,q,j,l,m), FLS.l(s,b,q,j,l,y,m)); 
+    rAgriNode(sSce,b,"ConvLoss",y)            = SUM((s,l,m), CLS.l(s,b,l,y,m)); 
     
 * Agricultural line results by crop
     rAgriCrop(sSce,b,"WaterUse",y,j)            = SUM((m,q), IRG.l(b,q,j,y,m));

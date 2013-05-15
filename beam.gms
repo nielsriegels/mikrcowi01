@@ -161,6 +161,6 @@ elyPr(c,g,y,m) = ELYMKT.m(c,g,y,m)*1000000;
 OPTIONS elyPr:2:3:1;
 
 
-*DISPLAY rPlz, rLos, rcCrop, rcLand, elyBal;
-DISPLAY elyBal, TNI.l, cTPP, elyPr;
+DISPLAY rPlz, FLW.l;
+*DISPLAY elyBal, TNI.l, cTPP, elyPr;
 DISPLAY checkOutput;

@@ -17,8 +17,8 @@ execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, 
 *HPP.l("Res_KA2",g,y,m) = 0;
 *HHD.l("Res_KA2",y,m) = 0;
 *LND.l(b,q,j,y)$(not bPlz(b)) = 0;
+*FLW.l(s,bd,bo,y,m) = 0;
 
-beam.solprint = yes;
 
     IF(scenCalc("run",sSce), 
 * Fix hydrological variables that can never be non-zero
@@ -71,7 +71,7 @@ $include "%path%92cstr.inc";
 
 * Save solution to re-use later
         IF( ((beam.modelstat le 2) or (beam.modelstat eq 7)), 
-            execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, XPT, YWR, iET, CRP, LND, CMX, TWV, ELYMKT, ELYTRX;
+            execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, CLS, FLS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, XPT, YWR, iET, CRP, LND, CMX, TWV, ELYMKT, ELYTRX;
             putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
             execute '%path%solutions\renameS.cmd';
         ); 
@@ -94,10 +94,13 @@ rItk(bd,sSce,"ITKl")$bPlz(bd) = SUM((s,bo,y,m), ITK.l(s,bd,bo,y,m)+DIS.l(s,bd,bo
 rItk(bd,sSce,"IRGl")$bPlz(bd) = SUM((s,q,j,y,m), IRG.l(bd,q,j,y,m));
 
 rPlz(bd,sSce,"ITK")$bPlz(bd) = SUM((s,bo,y,m),  ITK.l(s,bd,bo,y,m));
-rPlz(bd,sSce,"FLW")$bPlz(bd) = SUM((s,bo,y,m),  FLW.l(s,bd,bo,y,m));
-rPlz(bd,sSce,"DIS")$bPlz(bd) = SUM((s,bo,y,m),  DIS.l(s,bd,bo,y,m));
+rPlz(bd,sSce,"FLW")$bPlz(bd) = SUM((s,bo,y,m)$flow(bd,bo),  FLW.l(s,bd,bo,y,m));
+rPlz(bd,sSce,"DIS")$bPlz(bd) = SUM((s,bo,y,m)$resv(bd,bo),  FLW.l(s,bd,bo,y,m)+DIS.l(s,bd,bo,y,m));
 rPlz(bd,sSce,"GRW")$bPlz(bd) = SUM((s,y,m),     GRW.l(bd,y,m));
 rPlz(bd,sSce,"LOS")$bPlz(bd) =-SUM((s,y,m),     LOS.l(s,bd,"seep",y,m));
+rPlz(bd,sSce,"LSF")$bPlz(bd) =-SUM((s,q,j,l,y,m),   FLS.l(s,bd,q,j,l,y,m));
+rPlz(bd,sSce,"LSC")$bPlz(bd) =-SUM((s,l,y,m),       CLS.l(s,bd,l,y,m));
+
 rPlz(bd,sSce,"IRG")$bPlz(bd) =-SUM((s,q,j,y,m), IRG.l(bd,q,j,y,m));
 rPlz(bd,sSce,"LCH")$bPlz(bd) =-SUM((s,y,m),     LCH.l(s,bd,y,m));
 rPlz(bd,sSce,"RTN")$bPlz(bd) = SUM((s,y,m),     rtn0(bd,m));

@@ -111,15 +111,6 @@
                                    (reservoirs(b,"effect")*24*30/reservoirs(b,"ely"))$reservoirs(b,"ely")
                                  )$bResEly(b);
 
-* Set loss in channels according to investment choices
-    lossChannels(b,l,m)     = lossChannels0(b,l,m) * scenarios(sSce,"iCanal");
-
-* Set conveyance cost according to investment choices
-    conveyanceCost(c)       = conveyCost0(c)  * scenarios(sSce,"cCanal"); 
-
-* Change pumping requirements due to investment in chanellosses
-    elyPump(bd,bo)          = elyPump0(bd,bo) * scenarios(sSce,"iCanal");
-
 * Fix discharge and volumen patterns for selected reservoirs
 $ontext
     IF(scenarios("fixRES",sSce) ne 0,
@@ -170,6 +161,25 @@ $offtext
 
 * Set levels for intake reduction scenarios
     itk2(s,bd,y,m)$bPlz(bd)       = itk1(s,bd,y,m)*minIntake0(sSce);
+
+* Set losses
+    lossChannels(b,l,m)             = lossChannels0("bsline",b,l,m)$yM("2009")
+                                     +lossChannels0("BaU-30",b,l,m)*(1-scenarios(sSce,"iCanal")/100)$yM("2020")
+                                     +lossChannels0("action",b,l,m)*(  scenarios(sSce,"iCanal")/100)$yM("2020");
+    lossFields(b,l,m)               = lossFields0("bsline",b,l,m)$yM("2009")
+                                     +lossFields0("BaU-30",b,l,m) * (1-scenarios(sSce,"iField")/100)$yM("2020")
+                                     +lossFields0("action",b,l,m) * (  scenarios(sSce,"iField")/100)$yM("2020");  
+    lossReservoirs(b,l,m)           = lossReservoirs0("bsline",b,l,m)$(scenarios(sSce,"clmChg") eq 0)
+                                     +lossReservoirs0("clmchg",b,l,m)$(scenarios(sSce,"clmChg") ne 0);
+    lossLakes(b,l,m)                = 0;
+
+* Set conveyance cost according to investment choices
+    conveyanceCost(c)       = conveyCost0(c)  * scenarios(sSce,"cCanal"); 
+
+* Change pumping requirements due to investment in chanellosses
+    elyPump(bd,bo)          = elyPump0(bd,bo) * scenarios(sSce,"iCanal");
+
+
 
 
 * Set tentative levels if first run

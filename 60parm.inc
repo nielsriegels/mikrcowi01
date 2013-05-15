@@ -32,6 +32,11 @@ PARAMETERS
     resVolFix(b,y0,m)               "Fixed volume for reservoirs (mm3)"
     resDisFix(bd,bo,y0,m)           "Fixed discharges for reservoirs (mm3/month)"
     nuk0(rb0,c,y0,m0)               "Nukus Allocation of water (mm3/bi-season)"
+    lossChannels(b,l,m)             "Losses from conveyance (%)"
+    lossReservoirs(b,l,m)           "Losses from reservoirs (%)"
+    lossFields(b,l,m)               "Losses from field level irrigation (%)"
+    lossLakes(b,l,m)                "Losses from lakes (%)"
+
 * Parameters for control of model scenarios
     jAF(j)                          "Crops with flexible land allocation 0/1"
     jAX(j)                          "Crops with fixed land allocation 0/1"

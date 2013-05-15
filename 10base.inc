@@ -61,7 +61,7 @@ SETS
     sRtn                    "Return flow types"     / total, irrig, river, lakes/
     sEly                    "Elec. data types"      / elyCap, cCAPEX, eCAPEX, fCAPEX, cFOPEX, uVOPEX, uFUELEX, uSRMC, eELEC, eHEAT, rHEAT /
     sSce                    "Scenarios"             / s01*s111 /
-    sAct                    "Action possibilities"  / bsline, action, cliChg /
+    sAct                    "Action possibilities"  / bsline, action, BaU-30, clmChg /
     l                       "Loss types"            / seep, evap /
     x                       "Crop mixes"            / cotn, whet, alfa, rice, ric2, stfr, tgrp, meln, tomt, shav, pota, mung, subt, mazf, mazg /
 
@@ -183,7 +183,10 @@ SETS
         YWR             "Yield water response (1=optimal yield)"
         ActMarg         "Actual margin (USD/ha)"
         OptMarg         "Optmial margin (USD/ha)"
-        Leaching    "Applied leaching water (mm3/year)"
+        Leaching        "Applied leaching water (mm3/year)"
+        FieldLoss       "Field loss (mm3/year)"    
+        ConvLoss        "Conveyance loss (mm3/year)"
+
         /
 
 

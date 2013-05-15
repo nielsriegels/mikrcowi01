@@ -8,6 +8,8 @@ POSITIVE VARIABLES
     LND(b,q0,j,y0)          "Land use by crop and suitability class (1000 ha)"
     HHI(s,sSec,b,y0,m0)     "Water use by households and industries (mm3)"
     LOS(s,b,l,y0,m0)        "Losses to seepage and evaporation (mm3)"
+    CLS(s,b,l,y0,m0)        "Losses in conveyance system (mm3)"
+    FLS(s,b,q0,j,l,y0,m0)   "Losses at field level (mm3)"
     LCH(s,b,y0,m0)          "Water use for leaching (mm3)"
     ITK(s,bd,bo,y0,m0)      "Water intakes from river nodes to zones (mm3)"
     FLW(s,bd,bo,y0,m0)      "Flows between river nodes (mm3)"
@@ -51,6 +53,8 @@ ITKMAX(s,bd,y0)
     WNUKUS(s,rb0,c,y0)          "Constrain within Nukus agreement"
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
     LOSSES(s,b,l,y0,m0)         "Losses to seepage and evaporation"
+    CONVEYLOSS(s,b,l,y0,m0)     "Losses in conveyance system"
+    FIELDLOSS(s,b,q0,j,l,y0,m0) "Losses at field level"
     LEACHING(s,b,y0)            "Leaching requirements"
     HHIUSES(s,sSec,b,y0,m0)     "Water use by households and industries"
     SEAVOL(s,b,y0,m0)           "Reservoir level end of season"
@@ -129,6 +133,7 @@ ITKMAX(s,bd,y)$(SUM((m), itk2(s,bd,y,m)))..
 
 
 * Account for losses to seepage and evaporation
+* Account for losses to seepage and evaporation
 LOSSES(s,b,l,y,m)..
     LOS(s,b,l,y,m) =e= lossRivers(b,l,m) * (
                           SUM(bo$flow(b,bo), FLW(s,b,bo,y,m)+DIS(s,b,bo,y,m)+ITK(s,b,bo,y,m))
@@ -136,11 +141,24 @@ LOSSES(s,b,l,y,m)..
 *                        + SUM(bo$resv(b,bo), DIS(s,b,bo,y,m))
                         + sup(s,b,m)
                         + rtn0(b,m) )$bRiv(b)
-                     + lossChannels(b,l,m) * SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)       )$bPLz(b) 
-                     + SUM((j,q)$irg0(b,q,j,y,m), lossFields(b,j,l,m) * IRG(b,q,j,y,m))$bPlz(b)
+                     + lossChannels(b,l,m)   * SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)       )$bPLz(b) 
+                     + lossChannels(b,l,m)   * SUM(bo$resv(b,bo), DIS(s,b,bo,y,m)       )$bPLz(b)
+                     + lossChannels(b,l,m)   * SUM(bo$resv(b,bo), FLW(s,b,bo,y,m)       )$bPLz(b)
+                     + lossChannels(b,l,m)   * SUM(bo$flow(b,bo), FLW(s,b,bo,y,m)       )$bPLz(b)
+                     + lossFields(b,l,m)     * SUM((j,q)$irg0(b,q,j,y,m), IRG(b,q,j,y,m))$bPlz(b)
                      + lossReservoirs(b,l,m) * VOL(s,b,y,m)$bRes(b)
-                     + lossLakes(b,l,m)      * VOL(s,b,y,m)$Sea(b)
-;
+                     + lossLakes(b,l,m)      * VOL(s,b,y,m)$Sea(b);
+
+* Account for conveyance loss component
+CONVEYLOSS(s,b,l,y,m)..
+    CLS(s,b,l,y,m) =e=  lossChannels(b,l,m) * SUM(bo$intk(b,bo), ITK(s,b,bo,y,m)       )$bPLz(b)
+                      + lossChannels(b,l,m) * SUM(bo$resv(b,bo), DIS(s,b,bo,y,m)       )$bPLz(b)
+                      + lossChannels(b,l,m) * SUM(bo$resv(b,bo), FLW(s,b,bo,y,m)       )$bPLz(b); 
+    
+* Account for conveyance loss component
+FIELDLOSS(s,b,q,j,l,y,m)$bPlz(b)..
+    FLS(s,b,q,j,l,y,m) =e= (lossFields(b,l,m) * IRG(b,q,j,y,m));     
+
 
 * Nukus agreement
 * Allocate given shares of river basin runoff on semi annual basis
@@ -411,7 +429,7 @@ MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS, LEACHING,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
                 LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, CROPMAX, AGRCMX, IRGACT, YIELDWATER1w, YIELDWATER2, iEVAPOTRANS, MINiET, RETURNWATER
                 OBJ
-                ITKMAX
+                ITKMAX, CONVEYLOSS, FIELDLOSS
                 /;
 
 * Set model options
