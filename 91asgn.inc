@@ -1,5 +1,7 @@
 * Set model year (demography for demand growth etc)
     y(y0)                   = scenRainYear(sSce,y0);
+    yR(y0)                  = scenRainYear(sSce,y0);
+    yM(y0)                  = scenModelYear(sSce,y0);
 
 * Set elasticity of transformation 
     rL = 1;
@@ -31,12 +33,19 @@
 
 * Set thermal OPEX and CAPEX - (u denote unit cost in USD/MWh, c denotes capacitcy costs in mUSD/MW)
 * CAPEX is for whole construction period, ie not annualised
-    cTPP(u0,"uVOPEX")         = elyThermal("uVOPEX",u0)$SUM(y$y0(y), tppMapYear(y,u0));
-    cTPP(u0,"cFOPEX")         = elyThermal("cFOPEX",u0)$SUM(y$y0(y), tppMapYear(y,u0));
-    cTPP(u0,"cCAPEX")         = elyThermal("cCAPEX",u0)$SUM(y$y0(y), tppMapYear(y,u0));
+    cTPP(u0,"uSRMC")          = ( elyThermal("uVOPEX",u0)+elyThermal("uFUELEX",u0) )$SUM(y0$yM(y0), tppMapYear(y0,u0));
+    cTPP(u0,"cFOPEX")         = 0.000001 * elyThermal("cFOPEX",u0)$SUM(y0$yM(y0), tppMapYear(y0,u0));
+    cTPP(u0,"cCAPEX")         = elyThermal("cCAPEX",u0)$SUM(y0$yM(y0), tppMapYear(y0,u0));
+* Calculate annualised finacial and economic capex
+    cTPP(u0,"fCAPEX")         = rFin * cTPP(u0,"cCAPEX") / (1 - (1+rFin)**(-40) );
+    cTPP(u0,"eCAPEX")         = rFin * cTPP(u0,"cCAPEX") / (1 - (1+rEco)**(-40) );
+    cTPP(u,"elyCap")          = elyThermal("elyCap",u)$SUM(y0$yM(y0), tppMapYear(y0,u));
+    tppMap(c,u)               = tppMap0(c,u)$SUM(y0$yM(y0), tppMapYear(y0,u));
+DISPLAY cTPP, tppMap, y;
+ TNI.l(c,u,y)   = (smax((g,m), elyDemand0(c,g,m)))$tppMap(c,u);
  
 * Cost of unserved demand
-    cUSD(c,g,d)               = SUM(y0$y(y0), usd0(c,y0,g,d));
+    cUSD(c,g,d)               = SUM(y0$yM(y0), usd0(c,y0,g,d));
  
 * Reset country and node objective function weights to their normal 1's and 0's
     objAGRweight(b)         = 1;

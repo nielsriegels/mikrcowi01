@@ -156,9 +156,11 @@ PARAMETER rcCrop(j,c), rcLand(j,c);
 rcLand(j,c) = SUM((b,q,y)$bCty(b,c), round(LND.l(b,q,j,y),2));
 rcCrop(j,c)$rcLand(j,c) = SUM((b,q,y)$bCty(b,c), ROUND(CRP.l(b,q,j,y),1));
 
-
+PARAMETER elyPr(c,g,y0,m);
+elyPr(c,g,y,m) = ELYMKT.m(c,g,y,m)*1000000;
+OPTIONS elyPr:2:3:1;
 
 
 *DISPLAY rPlz, rLos, rcCrop, rcLand, elyBal;
-DISPLAY elyBal, USD.l, cUSD;
+DISPLAY elyBal, TNI.l, cTPP, elyPr;
 DISPLAY checkOutput;

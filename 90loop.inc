@@ -122,6 +122,10 @@ elyBal(sSce,c,"EXP")        = SUM((g,y,m),          -SUM(cc$trx0(c,cc),       TR
 elyBal(sSce,c,"XPT")        = SUM((g,y,m),          -XPT.l(c,g,y,m)                                   );
 elyBal(sSce,c,"BAL")        = elyBal(sSce,c,"IMP") + elyBal(sSce,c,"TPP") + elyBal(sSce,c,"HPP") + elyBal(sSce,c,"USD")
                              +elyBal(sSce,c,"DEM") + elyBal(sSce,c,"EXP") + elyBal(sSce,c,"XPT") ;
+elyBal(sSce,c,"MC")         = ( SUM((g,y,m),         ( SUM(u, TPP.l(c,u,g,y,m))+SUM(b$bCty(b,c), HPP.l(b,g,y,m)) )*ELYMKT.m(c,g,y,m) )*1000000
+                               /SUM((g,y,m),         ( SUM(u, TPP.l(c,u,g,y,m))+SUM(b$bCty(b,c), HPP.l(b,g,y,m)) ) )                 
+                              )$elyBal(sSce,c,"DEM");
+
 
 natBal(sSce,b)              = SUM((s,y,m), STO.l(s,b,y,m))$sea(b);
 

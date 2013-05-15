@@ -17,6 +17,7 @@ POSITIVE VARIABLES
     HHD(b,y0,m0)            "Hydro power reservoir head (m)"
     HPP(b,g0,y0,m0)         "Hydro power production (GWh)"
     TPP(c,u,g0,y0,m0)       "Thermal power production (GWh)"
+    TNI(c,u,y0)             "Thermal new investments (MW)"
     USD(g0,c,d0,y0,m0)      "Unserved demand (GWh)"
     DEM(g0,c,y0,m0)         "Served demand (GWh)"
     TRX(c,cc,g0,y0,m0)      "Export of electricity intra CAPS from c to cc (GWh)"
@@ -140,10 +141,6 @@ LOSSES(s,b,l,y,m)..
                      + lossReservoirs(b,l,m) * VOL(s,b,y,m)$bRes(b)
                      + lossLakes(b,l,m)      * VOL(s,b,y,m)$Sea(b)
 ;
-
-
-* ADD ENDOGENOUS TNI
-* ADD ENDOGENOUS EXP
 
 * Nukus agreement
 * Allocate given shares of river basin runoff on semi annual basis
@@ -276,8 +273,11 @@ ELYHPP(b,y,m)$bResEly(b)..
     SUM(g, HPP(b,g,y,m)) =e= 0.001 * gravity * reservoirs(b,"coef_eta") * SUM((s,bd)$resv(bd,b), DIS(s,bd,b,y,m)$sW(s)) * HHD(b,y,m) / 3.6;
 
 * Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
-ELYTPP(c,u,g,y,m)$(elyThermal("elyCap",u) and tppMap(c,u))..
-    TPP(c,u,g,y,m) =l= 0.001 * 30 * elyThermal("elyCap",u) * elyHours(c,g,m);
+* Assume that new capacity has a technical / practical availability of 90 %'
+* TNI is in MW
+ELYTPP(c,u,g,y,m)$(cTPP(u,"elyCap") and tppMap(c,u))..
+    TPP(c,u,g,y,m) =l= ( 0.001 * 30 * cTPP(u,"elyCap") * elyHours(c,g,m) )$(cTPP(u,"cCAPEX") eq 0)
+                      +( 0.001 * 30 * TNI(c,u,y)*0.90  * elyHours(c,g,m) )$(cTPP(u,"cCAPEX") ne 0);
 
 * Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
 ELYUSD(g,c,d,y,m)$cUSD(c,g,d)..
@@ -386,7 +386,8 @@ OBJ..   TWV =e=
                    -SUM((q,j,y)$lnd0(b,q,j),             1000*LND(b,q,j,y) * iInv("usdPerHa")                             * objAGRweight(b)    ) / 1000000000
                    -SUM((y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       ) / 1000
               )+SUM(c$objCTYweight(c),
-                   -SUM((u,g,y,m)$tppMap(c,u),                TPP(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000                 * objELYweight       ) / 1000000000
+                   -SUM((u,g,y,m)$tppMap(c,u),                TPP(c,u,g,y,m)*cTPP(u,"uSRMC")*1000                         * objELYweight       ) / 1000000000
+                   -SUM((u,y)$tppMap(c,u),                    TNI(c,u,y)*(cTPP(u,"fCAPEX")+cTPP(u,"cFOPEX"))*1000         * objELYweight       ) / 1000000000
                    -SUM((d,g,y,m)$cUSD(c,g,d),                USD(g,c,d,y,m)*cUSD(c,g,d)*1000                             * objELYweight       ) / 1000000000
 *                   +SUM(m$elySAqExp(c,m),                     elySAqExp(c,m)*elySApExp(c,m)*1000                          * objELYweight       ) / 1000000000
                    +SUM((g,y,m)$qXpt(c,m),                    XPT(c,g,y,m)*pXpt(c,m)*1000                                 * objELYweight       ) / 1000000000
