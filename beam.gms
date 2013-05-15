@@ -78,9 +78,9 @@ SETS
 * =============================================================================
 * Include data tables on water flows, agriculture and economics
 * =============================================================================
-$offlisting
+*$offlisting
 $include "%path%40data.inc";
-$onlisting
+*$onlisting
 
 * TEMPORARY - replace with Excel entries
 SET cot(j)  / cot /;

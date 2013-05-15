@@ -12,6 +12,8 @@ PARAMETERS
     pInput(k)                       "Index for input prices"
     cCrop(b,j)                      "Crop costs by land use (USD/ha)"
     cmx2lnd(b,q0,j,x)               "Map between crop mix land use and crop land use"
+    cTPP(u0,*)                      "Capex, fixed and var. opex for thermal power (USD/MWh)"
+    cUSD(c,g,d0)                    "Cost of unserved demand (USD/MWh)"
 * Irrigation system costs
     iInv(sInv)                      "Irrigation investment data"
     conveyanceCost(c)               "Cost of conveyance system"

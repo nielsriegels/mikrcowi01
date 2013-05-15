@@ -280,7 +280,7 @@ ELYTPP(c,u,g,y,m)$(elyThermal("elyCap",u) and tppMap(c,u))..
     TPP(c,u,g,y,m) =l= 0.001 * 30 * elyThermal("elyCap",u) * elyHours(c,g,m);
 
 * Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
-ELYUSD(g,c,d,y,m)$usd0(c,g,d)..
+ELYUSD(g,c,d,y,m)$cUSD(c,g,d)..
     USD(g,c,d,y,m) =l= 0.001 * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d);
 
 * Electricity demand
@@ -296,7 +296,7 @@ ELYMKT(c,g,y,m)..
            SUM(cc$trx0(cc,c),       TRX(cc,c,g,y,m) )*0.9
          + SUM(u$tppMap(c,u),       TPP(c,u,g,y,m)) 
          + SUM(b$bResEly(b),        HPP(b,g,y,m)$bCty(b,c))
-         + SUM(d$usd0(c,g,d),       USD(g,c,d,y,m))
+         + SUM(d$cUSD(c,g,d),       USD(g,c,d,y,m))
     =e=    
            DEM(g,c,y,m)
          + SUM((s,bd,bo),           0.001*ITK(s,bd,bo,y,m)* elyPump(bd,bo))
@@ -315,8 +315,8 @@ ELYEXP(c,g,y,m)$qXpt(c,m)..
 
 * Serve unserved demand before starting any export
 SRVUSD1ST(c,g,y,m)..
-    (SUM(cc$transx(c,cc), TRX(c,cc,g,y,m))+XPT(c,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m)) =e= 0;
-*    SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m)) =e= 0;
+    (SUM(cc$transx(c,cc), TRX(c,cc,g,y,m))+XPT(c,g,y,m)) * SUM(d$cUSD(c,g,d), USD(g,c,d,y,m)) =e= 0;
+*    SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$cUSD(c,g,d), USD(g,c,d,y,m)) =e= 0;
 
 * Maximum seasonal ground water extraction
 GRNDWATER(b,y,mS)$grwtrMax(b,ms)..
@@ -387,7 +387,7 @@ OBJ..   TWV =e=
                    -SUM((y)$bRes(b),                          reservoirs(b,"cost")$(not bResNOP(b))                       * objELYweight       ) / 1000
               )+SUM(c$objCTYweight(c),
                    -SUM((u,g,y,m)$tppMap(c,u),                TPP(c,u,g,y,m)*elyThermal("uFUELEX",u)*1000                 * objELYweight       ) / 1000000000
-                   -SUM((d,g,y,m)$usd0(c,g,d),                USD(g,c,d,y,m)*usd0(c,g,d)*1000                             * objELYweight       ) / 1000000000
+                   -SUM((d,g,y,m)$cUSD(c,g,d),                USD(g,c,d,y,m)*cUSD(c,g,d)*1000                             * objELYweight       ) / 1000000000
 *                   +SUM(m$elySAqExp(c,m),                     elySAqExp(c,m)*elySApExp(c,m)*1000                          * objELYweight       ) / 1000000000
                    +SUM((g,y,m)$qXpt(c,m),                    XPT(c,g,y,m)*pXpt(c,m)*1000                                 * objELYweight       ) / 1000000000
 * CAPEX and OPEX expense due to conveyance system
@@ -399,7 +399,7 @@ OBJ..   TWV =e=
 * Subtract a tiny amount from spill flows in reservoirs, so that DIS is preferred above FLW
                    -SUM((s,bd,bo,y,m)$resv(bd,bo),              FLW(s,bd,bo,y,m) * 0.001                                                         ) / 1000000000
 * Add SRVSUD1st to objective function to help solver 
-*                   -SUM((c,g,y,m),                            SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$usd0(c,g,d), USD(g,c,d,y,m))         )
+*                   -SUM((c,g,y,m),                            SUM(cc$transx(c,cc), TRX(c,cc,g,y,m)) * SUM(d$cUSD(c,g,d), USD(g,c,d,y,m))         )
 ;
 
 

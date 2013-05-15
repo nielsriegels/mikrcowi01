@@ -28,6 +28,15 @@
 * Enable electricity exports to South Asia
     pXpt(c,m)               = elyExp0("pExp",c,m)$scenarios(sSce,"SAexpt");
     qXpt(c,m)               = elyExp0("qExp",c,m)$scenarios(sSce,"SAexpt");
+
+* Set thermal OPEX and CAPEX - (u denote unit cost in USD/MWh, c denotes capacitcy costs in mUSD/MW)
+* CAPEX is for whole construction period, ie not annualised
+    cTPP(u0,"uVOPEX")         = elyThermal("uVOPEX",u0)$SUM(y$y0(y), tppMapYear(y,u0));
+    cTPP(u0,"cFOPEX")         = elyThermal("cFOPEX",u0)$SUM(y$y0(y), tppMapYear(y,u0));
+    cTPP(u0,"cCAPEX")         = elyThermal("cCAPEX",u0)$SUM(y$y0(y), tppMapYear(y,u0));
+ 
+* Cost of unserved demand
+    cUSD(c,g,d)               = SUM(y0$y(y0), usd0(c,y0,g,d));
  
 * Reset country and node objective function weights to their normal 1's and 0's
     objAGRweight(b)         = 1;

@@ -167,7 +167,7 @@ $offtext
     rcElec(sSce,"qSupTPP",y,c,m)        =  SUM((u,g)$tppMap(c,u),   TPP.l(c,u,g,y,m));
     rcElec(sSce,"qSupTot",y,c,m)        =  rcElec(sSce,"qSupHPP",y,c,m) + rcElec(sSce,"qSupTPP",y,c,m);
     rcElec(sSce,"vCstTPP",y,c,m)        = -SUM((u,g)$tppMap(c,u),   TPP.l(c,u,g,y,m)*elyThermal("uFUELEX",u) )/1000 ;
-    rcElec(sSce,"vCstUSD",y,c,m)        = -SUM((g,d0),              USD.l(g,c,d0,y,m)*usd0(c,g,d0))/1000 ;
+    rcElec(sSce,"vCstUSD",y,c,m)        = -SUM((g,d0),              USD.l(g,c,d0,y,m)*cUSD(c,g,d0))/1000 ;
 *   rcElec(sSce,"vCstCPX",c,m)          = -SUM(u$uPrd(u),           TNI.l(c,u)*tpp0(c,u,"CAPX"))*TNIweight(m) ;
     rcElec(sSce,"pMCbase",y,c,m)        =                          -1000000 * ELYMKT.m(c,"base",y,m)$(-ELYMKT.m(c,"base",y,m) gt eps);
     rcElec(sSce,"pMCpeak",y,c,m)        =                          -1000000 * ELYMKT.m(c,"peak",y,m)$(-ELYMKT.m(c,"peak",y,m) gt eps);
@@ -186,10 +186,10 @@ $offtext
 *   rcElec(sSce,"Thermal subsidy req. (mUSD)",c,m)          = rcElec(sSce,"Thermal financial costs (mUSD)",c,m) - rcElec(sSce,"Electricity tariff (mUSD)",c,m);
 *   elyValue(c,m)                                           = SUM(d, dem(c,m)*udm(c,d,"cap")*udm(c,d,"wtp"));
 *   elyValue(c,m)                                           = SUM(d, DEM.l(g,c,y,m)*udm(c,d,"cap")*udm(c,d,"wtp"));
-*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*(elyValue(c,m)  - SUM(d, USD.l(c,d,m) * USD0(c,g,d0)) ) / 1000000 ;
-*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*(DEM.l(g,c,y,m) - SUM(d, USD.l(c,d,m) * USD0(c,g,d0)) ) / 1000000 ;
-*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*( elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,d,"wtp")) ) / 1000000 ;
-*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*( elyValue(c,m) - SUM(d, USD.l(c,d,m) * USD0(c,d,"wtp")) ) / 1000000 ;
+*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*(elyValue(c,m)  - SUM(d, USD.l(c,d,m) * cUSD(c,g,d0)) ) / 1000000 ;
+*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*(DEM.l(g,c,y,m) - SUM(d, USD.l(c,d,m) * cUSD(c,g,d0)) ) / 1000000 ;
+*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*( elyValue(c,m) - SUM(d, USD.l(c,d,m) * cUSD(c,d,"wtp")) ) / 1000000 ;
+*   rcElec(sSce,"Electricity cons. surpl. (mUSD)",c,y,m)  = 1000*( elyValue(c,m) - SUM(d, USD.l(c,d,m) * cUSD(c,d,"wtp")) ) / 1000000 ;
 *   rcElec(sSce,"Electricity value added (mUSD)",c,y,m)   = rcElec(sSce,"Electricity cons. surpl. (mUSD)",g,c,y,m) + rcElec(sSce,"Thermal economic costs (mUSD)",g,c,y,m)
 *                                                             +rcElec(sSce,"External elec. export (mUSD)",g,c,y,m) ;
 *   rcElec(sSce,"Total value added (mUSD)",c,y,m)         = rcElec(sSce,"Electricity value added (mUSD)",g,c,y,m) + rcElec(sSce,"Agricultural value added (mUSD)",g,c,y,m) ;
@@ -283,8 +283,8 @@ $offtext
     rcView(sSce,y,"qElyUSDw",c)             = SUM((g,m)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mWin(m));
     rcView(sSce,y,"qElyUSDs",c)             = SUM((g,m)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mSum(m));
 
-    rcView(sSce,y,"usdVal",c)               =-SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
-    rcView(sSce,y,"aggWTP",c)               = SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcView(sSce,y,"usdVal",c) ;
+    rcView(sSce,y,"usdVal",c)               =-SUM((d,g,m)$cUSD(c,g,d),      cUSD(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
+    rcView(sSce,y,"aggWTP",c)               = SUM((d,g,m)$cUSD(c,g,d),      cUSD(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcView(sSce,y,"usdVal",c) ;
     rcView(sSce,y,"demVal",c)               = SUM((g,m)$elyDemand0(c,g,m),  -1000*ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
     rcView(sSce,y,"tppVal",c)               = SUM((g,m),                    -1000*ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
     rcView(sSce,y,"expVal",c)               = SUM((g,m),                    1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;
@@ -361,8 +361,8 @@ $offtext
     rcRbView(sSce,y,"qElyUSDw",rb0,c)               = SUM((g,m)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mWin(m));
     rcRbView(sSce,y,"qElyUSDs",rb0,c)               = SUM((g,m)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mSum(m));
 
-    rcRbView(sSce,y,"usdVal",rb0,c)                 =-SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
-    rcRbView(sSce,y,"aggWTP",rb0,c)                 = SUM((d,g,m)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcRbView(sSce,y,"usdVal",rb0,c) ;
+    rcRbView(sSce,y,"usdVal",rb0,c)                 =-SUM((d,g,m)$cUSD(c,g,d),      cUSD(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
+    rcRbView(sSce,y,"aggWTP",rb0,c)                 = SUM((d,g,m)$cUSD(c,g,d),      cUSD(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rcRbView(sSce,y,"usdVal",rb0,c) ;
     rcRbView(sSce,y,"demVal",rb0,c)                 = SUM((g,m)$elyDemand0(c,g,m),  -1000*ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
     rcRbView(sSce,y,"tppVal",rb0,c)                 = SUM((g,m),                    -1000*ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
     rcRbView(sSce,y,"expVal",rb0,c)                 = SUM((g,m),                    1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;
@@ -420,8 +420,8 @@ $offtext
     rSView(y,"qElyUSDw",sSce)             = SUM((g,m,c)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mWin(m));
     rSView(y,"qElyUSDs",sSce)             = SUM((g,m,c)$elyDemand0(c,g,m),  SUM(d, USD.l(g,c,d,y,m))$mSum(m));
 
-    rSView(y,"usdVal",sSce)               =-SUM((d,g,m,c)$usd0(c,g,d),      usd0(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
-    rSView(y,"aggWTP",sSce)               = SUM((d,g,m,c)$usd0(c,g,d),      usd0(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rSView(y,"usdVal",sSce) ;
+    rSView(y,"usdVal",sSce)               =-SUM((d,g,m,c)$cUSD(c,g,d),      cUSD(c,g,d) * 1000 * USD.l(g,c,d,y,m) ) / 1000000;
+    rSView(y,"aggWTP",sSce)               = SUM((d,g,m,c)$cUSD(c,g,d),      cUSD(c,g,d) * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d) ) / 1000000 + rSView(y,"usdVal",sSce) ;
     rSView(y,"demVal",sSce)               = SUM((g,m,c)$elyDemand0(c,g,m),  -1000*ELYMKT.m(c,g,y,m) * DEM.l(g,c,y,m)$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
     rSView(y,"tppVal",sSce)               = SUM((g,m,c),                    -1000*ELYMKT.m(c,g,y,m) * SUM(u$tppMap(c,u), TPP.l(c,u,g,y,m))$(-ELYMKT.m(c,g,y,m) gt 0.000000001) );
     rSView(y,"expVal",sSce)               = SUM((g,m,c),                    1000 * pXpt(c,m)*XPT.l(c,g,y,m)) / 1000000;

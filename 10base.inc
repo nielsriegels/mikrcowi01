@@ -49,13 +49,13 @@ SETS
     g(g0)                   "Energy demand segment" / base, peak /
     u0                      "Energy prod. units"    / u01*u90 /
     u(u0)                   "Energy prod. units"    / u01*u21 /
-    d0                      "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45, d40, d35, d30 /
+    d0                      "Unserved demand steps" / d140, d135, d130, d125, d120, d115, d110, d105, d100, d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45, d40, d35, d30 /
     d(d0)                   "Unserved demand steps" / d95, d90, d85, d80, d75, d70, d65, d60, d55, d50, d45 /
     sBal                    "Balance table cols"    / Demand, FromSrc, DisTo, FromUp, FromIn, Return, ToIn, DisFrom, ToDwn, ToLoss /
     sInv                    "Irrigation investment" / usdPerMM3, usdPerHa, improve /
     sSec                    "Non-agri sectors"      / HH, ind /
     sRtn                    "Return flow types"     / total, irrig, river, lakes/
-    sEly                    "Elec. data types"      / elyCap, aCAPEX, aFOPEX, uVOPEX, uFUELEX, eELEC, eHEAT, rHEAT /
+    sEly                    "Elec. data types"      / elyCap, cCAPEX, cFOPEX, uVOPEX, uFUELEX, eELEC, eHEAT, rHEAT /
     sSce                    "Scenarios"             / s01*s111 /
     l                       "Loss types"            / seep, evap /
     x                       "Crop mixes"            / cotn, whet, alfa, rice, ric2, stfr, tgrp, meln, tomt, shav, pota, mung, subt, mazf, mazg /
