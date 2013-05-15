@@ -281,11 +281,11 @@ ELYTPP(c,u,g,y,m)$(cTPP(u,"elyCap") and tppMap(c,u))..
 
 * Thermal power production (in MWh) is also capped by hours in each segment according to maximum effect (in MW)
 ELYUSD(g,c,d,y,m)$cUSD(c,g,d)..
-    USD(g,c,d,y,m) =l= 0.001 * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) * usdSh(d);
+    USD(g,c,d,y,m) =l= 0.001 * 30 * elyHours(c,g,m) * elyDemand(c,g,m) * usdSh(d);
 
 * Electricity demand
-ELYDEM(c,g,y,m)$elyDemand0(c,g,m)..
-    DEM(g,c,y,m)   =e= 0.001 * 30 * elyHours(c,g,m) * elyDemand0(c,g,m) ;
+ELYDEM(c,g,y,m)$elyDemand(c,g,m)..
+    DEM(g,c,y,m)   =e= 0.001 * 30 * elyHours(c,g,m) * elyDemand(c,g,m) ;
 
 * Themal and hydro power production should cover the energy demand in every segment
 * Note: We might want to enter availability of TPP as a parameter which can increase
@@ -347,6 +347,7 @@ CROPMAX(c,j,y)$crpMax(c,j)..
 * Leontief production technology (perfect complements)
 * Also correct for the fall in yield caused by the CET function.
 LEONTIEF(b,q,j,y)$(lnd0(b,q,j) and crp0(b,q,j))..
+* CRP(b,q,j,y) =e= YWR(b,q,j,y) * yield(b,q,j) * LND(b,q,j,y);
     ( CRP(b,q,j,y) / crp0(b,q,j) ) =e= 
         YWR(b,q,j,y) * (LND(b,q,j,y)/lnd0(b,q,j)) * (1$jAX(j) 
 *                                                     +useCET*SUM(jj$lShare(b,q,jj), lShare(b,q,jj)*( CRP(b,q,jj,y) / crp0(b,q,jj) ) )$jAF(j) 

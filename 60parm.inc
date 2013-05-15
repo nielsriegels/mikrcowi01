@@ -15,6 +15,7 @@ PARAMETERS
     cTPP(u0,sEly)                   "Capex, fixed and var. opex for thermal power (USD/MWh)"
     cUSD(c,g,d0)                    "Cost of unserved demand (USD/MWh)"
     tppMap(c,u)                     "Map Thermal plants to countries"
+    elyDemand(c,g,m)                "Demand for electricity (MW)"
 * Irrigation system costs
     iInv(sInv)                      "Irrigation investment data"
     conveyanceCost(c)               "Cost of conveyance system"

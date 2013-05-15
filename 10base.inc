@@ -61,6 +61,7 @@ SETS
     sRtn                    "Return flow types"     / total, irrig, river, lakes/
     sEly                    "Elec. data types"      / elyCap, cCAPEX, eCAPEX, fCAPEX, cFOPEX, uVOPEX, uFUELEX, uSRMC, eELEC, eHEAT, rHEAT /
     sSce                    "Scenarios"             / s01*s111 /
+    sAct                    "Action possibilities"  / bsline, action, cliChg /
     l                       "Loss types"            / seep, evap /
     x                       "Crop mixes"            / cotn, whet, alfa, rice, ric2, stfr, tgrp, meln, tomt, shav, pota, mung, subt, mazf, mazg /
 
@@ -281,7 +282,8 @@ SETS
         tppPS           "Thermal producer surplus"
         tppVal          "Thermal power value at marg. cost"
         elyVal          "Value of electricity at marg. cost"
-        expVal          "Value of electricity exported at export price"
+        xptval          "Value of electricity exported to SA"
+        trxval          "Value of electricity exported to CA"
         usdVal          "Value of unserved demand"
         demVal          "Value of served demand at marg. cost"
         qTherm          "Thermal production total"

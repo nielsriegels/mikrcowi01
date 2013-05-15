@@ -41,11 +41,12 @@
     cTPP(u0,"eCAPEX")         = rFin * cTPP(u0,"cCAPEX") / (1 - (1+rEco)**(-40) );
     cTPP(u,"elyCap")          = elyThermal("elyCap",u)$SUM(y0$yM(y0), tppMapYear(y0,u));
     tppMap(c,u)               = tppMap0(c,u)$SUM(y0$yM(y0), tppMapYear(y0,u));
-DISPLAY cTPP, tppMap, y;
- TNI.l(c,u,y)   = (smax((g,m), elyDemand0(c,g,m)))$tppMap(c,u);
  
 * Cost of unserved demand
     cUSD(c,g,d)               = SUM(y0$yM(y0), usd0(c,y0,g,d));
+ 
+* Electricity demand
+    elyDemand(c,g,m)          = SUM(y0$yM(y0), elyDemand0(c,g,y0,m));
  
 * Reset country and node objective function weights to their normal 1's and 0's
     objAGRweight(b)         = 1;
