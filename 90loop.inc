@@ -18,6 +18,8 @@ execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, 
 *HHD.l("Res_KA2",y,m) = 0;
 *LND.l(b,q,j,y)$(not bPlz(b)) = 0;
 
+beam.solprint = yes;
+
     IF(scenCalc("run",sSce), 
 * Fix hydrological variables that can never be non-zero
         FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);
@@ -69,7 +71,7 @@ $include "%path%92cstr.inc";
 
 * Save solution to re-use later
         IF( ((beam.modelstat le 2) or (beam.modelstat eq 7)), 
-            execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, XPT, YWR, iET, CRP, LND, CMX, TWV, ELYMKT;
+            execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, XPT, YWR, iET, CRP, LND, CMX, TWV, ELYMKT, ELYTRX;
             putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
             execute '%path%solutions\renameS.cmd';
         ); 

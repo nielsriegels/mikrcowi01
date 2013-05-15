@@ -160,5 +160,5 @@ rcCrop(j,c)$rcLand(j,c) = SUM((b,q,y)$bCty(b,c), ROUND(CRP.l(b,q,j,y),1));
 
 
 *DISPLAY rPlz, rLos, rcCrop, rcLand, elyBal;
-DISPLAY natBal;
+DISPLAY elyBal, USD.l, cUSD;
 DISPLAY checkOutput;
