@@ -9915,3 +9915,102 @@ BEAM - Basin Economic Allocation Model
                 
 /;
 
+BEAM - Basin Economic Allocation Model 
+                 
+                 
+/;
+
+BEAM - Basin Economic Allocation Model 
+                 
+                 
+/;
+
+BEAM - Basin Economic Allocation Model 
+                 
+                 
+/;
+
+TABLE pCrop0(*,*,j) "Base year crop price data by quantity (USD/ton)"                                                                                                                                                 
+                                 cot             wht             fru             ric             veg             alf             oth             fal             
+economic        .baseprice       7.500000E+02    2.760000E+02    4.500000E+02    4.500000E+02    4.000000E+01    1.160000E+02    7.500000E+01    0.000000E+00    
+economic        .elasticity      0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    
+financial       .baseprice       3.750000E+02    2.760000E+02    4.500000E+02    4.500000E+02    4.000000E+01    1.160000E+02    7.500000E+01    0.000000E+00    
+financial       .elasticity      0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    
+;
+
+TABLE cCrop0(*,k,j) "Crop costs by land use (USD/ha)"                                                                                                                                                 
+                                 cot             wht             fru             ric             veg             alf             oth             fal             
+noReform        .labr            6.480000E+02    1.380000E+02    8.000000E+01    2.280000E+02    1.600000E+02    6.900000E+02    1.200000E+02    0.000000E+00    
+noReform        .cptl            1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    0.000000E+00    
+noReform        .inpt            2.320000E+02    2.180000E+02    1.200000E+02    3.210000E+02    2.400000E+02    1.150000E+02    1.800000E+02    0.000000E+00    
+reform          .labr            2.000000E+02    1.600000E+02    8.000000E+01    2.400000E+02    1.600000E+02    8.000000E+01    1.200000E+02    0.000000E+00    
+reform          .cptl            1.800000E+01    1.800000E+01    1.400000E+01    1.400000E+01    1.400000E+01    1.200000E+01    1.200000E+01    0.000000E+00    
+reform          .inpt            3.000000E+02    2.400000E+02    1.200000E+02    3.600000E+02    2.400000E+02    1.200000E+02    1.800000E+02    0.000000E+00    
+;
+
+BEAM - Basin Economic Allocation Model
+                
+                
+/;
+
+BEAM - Basin Economic Allocation Model 
+                 
+                 
+/;
+
+BEAM - Basin Economic Allocation Model 
+                 
+                 
+/;
+
+BEAM - Basin Economic Allocation Model 
+                 
+                 
+/;
+
+TABLE pCrop0(*,*,j) "Base year crop price data by quantity (USD/ton)"                                                                                                                                                 
+                                 cot             wht             fru             ric             veg             alf             oth             fal             
+economic        .baseprice       7.500000E+02    2.760000E+02    4.500000E+02    4.500000E+02    4.000000E+01    1.160000E+02    7.500000E+01    0.000000E+00    
+economic        .elasticity      0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    
+financial       .baseprice       3.750000E+02    2.760000E+02    4.500000E+02    4.500000E+02    4.000000E+01    1.160000E+02    7.500000E+01    0.000000E+00    
+financial       .elasticity      0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    
+;
+
+TABLE cCrop0(*,k,j) "Crop costs by land use (USD/ha)"                                                                                                                                                 
+                                 cot             wht             fru             ric             veg             alf             oth             fal             
+noReform        .labr            6.480000E+02    1.380000E+02    8.000000E+01    2.280000E+02    1.600000E+02    6.900000E+02    1.200000E+02    0.000000E+00    
+noReform        .cptl            1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    0.000000E+00    
+noReform        .inpt            2.320000E+02    2.180000E+02    1.200000E+02    3.210000E+02    2.400000E+02    1.150000E+02    1.800000E+02    0.000000E+00    
+reform          .labr            2.000000E+02    1.600000E+02    8.000000E+01    2.400000E+02    1.600000E+02    8.000000E+01    1.200000E+02    0.000000E+00    
+reform          .cptl            1.800000E+01    1.800000E+01    1.400000E+01    1.400000E+01    1.400000E+01    1.200000E+01    1.200000E+01    0.000000E+00    
+reform          .inpt            3.000000E+02    2.400000E+02    1.200000E+02    3.600000E+02    2.400000E+02    1.200000E+02    1.800000E+02    0.000000E+00    
+;
+
+BEAM - Basin Economic Allocation Model
+                
+                
+/;
+
+TABLE pCrop0(*,*,j) "Base year crop price data by quantity (USD/ton)"                                                                                                                                                 
+                                 cot             wht             fru             ric             veg             alf             oth             fal             
+economic        .baseprice       7.500000E+02    2.760000E+02    4.500000E+02    4.500000E+02    4.000000E+01    1.160000E+02    7.500000E+01    0.000000E+00    
+economic        .elasticity      0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    
+financial       .baseprice       3.750000E+02    2.760000E+02    4.500000E+02    4.500000E+02    4.000000E+01    1.160000E+02    7.500000E+01    0.000000E+00    
+financial       .elasticity      0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    0.000000E+00    
+;
+
+TABLE cCrop0(*,k,j) "Crop costs by land use (USD/ha)"                                                                                                                                                 
+                                 cot             wht             fru             ric             veg             alf             oth             fal             
+noReform        .labr            6.480000E+02    1.380000E+02    8.000000E+01    2.280000E+02    1.600000E+02    6.900000E+02    1.200000E+02    0.000000E+00    
+noReform        .cptl            1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    1.200000E+02    0.000000E+00    
+noReform        .inpt            2.320000E+02    2.180000E+02    1.200000E+02    3.210000E+02    2.400000E+02    1.150000E+02    1.800000E+02    0.000000E+00    
+reform          .labr            2.000000E+02    1.600000E+02    8.000000E+01    2.400000E+02    1.600000E+02    8.000000E+01    1.200000E+02    0.000000E+00    
+reform          .cptl            1.800000E+01    1.800000E+01    1.400000E+01    1.400000E+01    1.400000E+01    1.200000E+01    1.200000E+01    0.000000E+00    
+reform          .inpt            3.000000E+02    2.400000E+02    1.200000E+02    3.600000E+02    2.400000E+02    1.200000E+02    1.800000E+02    0.000000E+00    
+;
+
+BEAM - Basin Economic Allocation Model
+                
+                
+/;
+

@@ -132,21 +132,21 @@ $offtext
 * Set crop prices according to scenario indices for crop price
 *    pCrop(j)                = pCrop0("economic","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) eq 0)
 *                            + pCrop0("financial","baseprice",j)*ipCrop(j,sSce)$(scenarios("rMkt",sSce) ne 0);
-    pCrop(b,j)$bPlz(b)       = ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"economic","pCrp")  )$(scenarios(sSce,"aPrice") eq 0)
-                             +ipCrop(j,sSce) * SUM(c$bCty(b,c), pAgri0(c,j,"financial","pCrp") )$(scenarios(sSce,"aPrice") ne 0);
+    pCrop(b,j)$bPlz(b)       = (1+ipCrop(j,sSce)) * SUM(c$bCty(b,c), pAgri0(c,j,"economic","pCrp")  )$(scenarios(sSce,"aPrice") eq 0)
+                              +(1+ipCrop(j,sSce)) * SUM(c$bCty(b,c), pAgri0(c,j,"financial","pCrp") )$(scenarios(sSce,"aPrice") ne 0);
 
 * Set crop costs according to scenario indices for crop costs
 *    cCrop(b,j)$bPlz(b)      = SUM(k, cCrop0("noReform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) eq 0)
 *                            + SUM(k, cCrop0("reform",k,j)*icCrop(k,sSce))$(scenarios("rMkt",sSce) ne 0);
     cCrop(b,j)$bPlz(b)      = SUM(c$bCty(b,c), 
-                                    0.8*icCrop("labr",sSce) * pAgri0(c,j,"financial","qLbr") * pAgri0(c,j,"financial","pLbr")
-                                   +0.7*icCrop("inpt",sSce) * pAgri0(c,j,"financial","pIpt")
-                                   +0.7*icCrop("cptl",sSce) * pAgri0(c,j,"financial","pCap")
+                                    (1+icCrop("labr",sSce)) * pAgri0(c,j,"financial","qLbr") * pAgri0(c,j,"financial","pLbr")
+                                   +(1+icCrop("inpt",sSce)) * pAgri0(c,j,"financial","pIpt")
+                                   +(1+icCrop("cptl",sSce)) * pAgri0(c,j,"financial","pCap")
                               )$(scenarios(sSce,"aPrice") ne 0)
                              +SUM(c$bCty(b,c), 
-                                    0.8*icCrop("labr",sSce) * pAgri0(c,j,"economic","qLbr") * pAgri0(c,j,"economic","pLbr")
-                                   +0.7*icCrop("inpt",sSce) * pAgri0(c,j,"economic","pIpt")
-                                   +0.7*icCrop("cptl",sSce) * pAgri0(c,j,"economic","pCap")
+                                    (1+icCrop("labr",sSce)) * pAgri0(c,j,"economic","qLbr") * pAgri0(c,j,"economic","pLbr")
+                                   +(1+icCrop("inpt",sSce)) * pAgri0(c,j,"economic","pIpt")
+                                   +(1+icCrop("cptl",sSce)) * pAgri0(c,j,"economic","pCap")
                               )$(scenarios(sSce,"aPrice") eq 0);
 
     
@@ -172,9 +172,13 @@ $offtext
     lossReservoirs(b,l,m)           = lossReservoirs0("bsline",b,l,m)$(scenarios(sSce,"clmChg") eq 0)
                                      +lossReservoirs0("clmchg",b,l,m)$(scenarios(sSce,"clmChg") ne 0);
     lossLakes(b,l,m)                = 0;
-
+DISPLAY lossChannels, LossFields;
 * Set conveyance cost according to investment choices
     conveyanceCost(c)       = conveyCost0(c)  * scenarios(sSce,"cCanal"); 
+*   cConv(c)                = cConv0(c)$yM("2009") 
+*   cField(c)               = 
+*
+
 
 * Change pumping requirements due to investment in chanellosses
     elyPump(bd,bo)          = elyPump0(bd,bo) * scenarios(sSce,"iCanal");

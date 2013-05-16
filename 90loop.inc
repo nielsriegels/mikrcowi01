@@ -17,15 +17,19 @@ execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, 
 *HPP.l("Res_KA2",g,y,m) = 0;
 *HHD.l("Res_KA2",y,m) = 0;
 *LND.l(b,q,j,y)$(not bPlz(b)) = 0;
-*FLW.l(s,bd,bo,y,m) = 0;
+FLW.l(s,bd,bo,y,m) = FLW.l(s,bd,bo,y,m)$(flow(bd,bo) or resv(bd,bo));
+DIS.l(s,bd,bo,y,m) = DIS.l(s,bd,bo,y,m)$(resv(bd,bo));
+ITK.l(s,bd,bo,y,m) = ITK.l(s,bd,bo,y,m)$(intk(bd,bo));
 
 
     IF(scenCalc("run",sSce), 
 * Fix hydrological variables that can never be non-zero
+        FLW.up(s,bd,bo,y,m)                                         = 0;
         FLW.up(s,bd,bo,y,m)                                         = INF$flow(bd,bo);
         FLW.up(s,bd,bo,y,m)$resv(bd,bo)                             = 99999$resv(bd,bo);
-        ITK.lo(s,bd,bo,y,m)                                         = 0;
+        ITK.up(s,bd,bo,y,m)                                         = 0;
         ITK.up(s,bd,bo,y,m)                                         = INF$intk(bd,bo);
+        DIS.up(s,bd,bo,y,m)                                         = 0;
         DIS.up(s,bd,bo,y,m)                                         = INF$resv(bd,bo);
         IRG.up(b,q,j,y,m)                                           = INF$irg0(b,q,j,y,m);
         HHI.up(s,sSec,b,y,m)                                        = INF$HHIuse(sSec,b,m);
@@ -52,6 +56,7 @@ execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, 
 *    iET.l(b,q0,j,p,y) = 1$(lnd0(b,q0,j) AND etcP(b,j,p) );
 
 * Include module for constrained optimisation
+*beam.solprint = yes;
 $include "%path%92cstr.inc";
 
 * Solve model for the give scenario
@@ -71,7 +76,7 @@ $include "%path%92cstr.inc";
 
 * Save solution to re-use later
         IF( ((beam.modelstat le 2) or (beam.modelstat eq 7)), 
-            execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, CLS, FLS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, XPT, YWR, iET, CRP, LND, CMX, TWV, ELYMKT, ELYTRX;
+            execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, CLS, FLS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, XPT, YWR, iET, CRP, LND, CMX, TWV, ELYMKT, ELYTRX, NUKIN, NUKOUT;
             putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
             execute '%path%solutions\renameS.cmd';
         ); 
@@ -108,6 +113,8 @@ rPlz(bd,sSce,"HHI")$bPlz(bd) =-SUM((s,y,m),     HHI.l(s,"HH",bd,y,m)+HHI.l(s,"In
 rPlz(bd,sSce,"sup")$bPlz(bd) = rPlz(bd,sSce,"ITK") + rPlz(bd,sSce,"FLW") + rPlz(bd,sSce,"DIS") + rPlz(bd,sSce,"GRW"); 
 rPlz(bd,sSce,"dem")$bPlz(bd) = rPlz(bd,sSce,"LOS") + rPlz(bd,sSce,"LCH") + rPlz(bd,sSce,"HHI") + rPlz(bd,sSce,"IRG") + rPlz(bd,sSce,"RTN"); 
 rPlz(bd,sSce,"bal")$bPlz(bd) = round(rPlz(bd,sSce,"sup")+ rPlz(bd,sSce,"dem"),3);
+rPlz(bd,sSce,"lnd")$bPlz(bd) = SUM((q,j,y), LND.l(bd,q,j,y)) / SUM((q,j), lnd0(bd,q,j)) ;
+
 
 *rLos(bd,sSce,"riv")$bRiv(bd) = SUM((s,m,y),           LOS(s,bd,"seep",y,m)+LOS(s,bd,"evap",y,m));
 *rLos(bd,sSce,"res")$bRiv(bd) = SUM((s,m,y),           LOS(s,bd,"seep",y,m)+LOS(s,bd,"evap",y,m));

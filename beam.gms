@@ -160,7 +160,26 @@ PARAMETER elyPr(c,g,y0,m);
 elyPr(c,g,y,m) = ELYMKT.m(c,g,y,m)*1000000;
 OPTIONS elyPr:2:3:1;
 
+PARAMETER nukusIn(rb,bd,bo);
+PARAMETER nukusOut(rb,bd,bo);
+PARAMETER crpChg(b,q0,j,*);
+OPTIONS crpCHg:3:3:1;
+crpChg(b,q,j,p) = iET.l(b,q,j,p,"2009");
+crpChg(b,q,j,"land") = LND.l(b,q,j,"2009");
+crpChg(b,q,j,"water") = ((SUM((y,m), IRG.l(b,q,j,y,m))/0.65)/0.65); 
 
-DISPLAY rPlz, FLW.l;
+nukusOut(rb,bd,bo)$(bNukus(bo,rb) and (not bNukus(bd,rb))) = SUM((s,y,m), 
+      ITK.l(s,bd,bo,y,m)$intk(bd,bo)
+     +FLW.l(s,bd,bo,y,m)$flow(bd,bo)
+     +DIS.l(s,bd,bo,y,m)$resv(bd,bo)
+     +FLW.l(s,bd,bo,y,m)$resv(bd,bo) );
+
+nukusIn(rb,bd,bo)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ) = SUM((s,y,m), 
+      ITK.l(s,bd,bo,y,m)$intk(bd,bo)
+     +FLW.l(s,bd,bo,y,m)$flow(bd,bo)
+     +DIS.l(s,bd,bo,y,m)$resv(bd,bo)
+     +FLW.l(s,bd,bo,y,m)$resv(bd,bo) );
+
+DISPLAY rPlz;
 *DISPLAY elyBal, TNI.l, cTPP, elyPr;
 DISPLAY checkOutput;

@@ -1,5 +1,7 @@
 POSITIVE VARIABLES
     GRW(bd,y0,m0)           "Ground water extraction (mm3)"
+NUKOUT(s,rb,bd,bo,y0)
+NUKIN(s,rb,bd,bo,y0)
     IRG(b,q0,j,y0,m0)       "Actual irrigation (mm3)"
     YWR(b,q0,j,y0)          "Yield-water response function (index: 1=optimal)"
     iET(b,q0,j,p,y0)        "Index for actual ET relative to optimal ET (index: 1=optimal)"
@@ -51,6 +53,8 @@ EQUATIONS
     WBALANCE(s,b,y0,m0)         "Water balance at all nodes"
 ITKMAX(s,bd,y0)
     WNUKUS(s,rb0,c,y0)          "Constrain within Nukus agreement"
+    WNUKUSIN(s,rb,bd,bo,y0)     "Supply of water to Nukus agreement"
+    WNUKUSOUT(s,rb,bd,bo,y0)    "Demand for water from Nukus agreement"
     GRNDWATER(b,y0,mS)          "Seasonal limits on groundwater extraction"
     LOSSES(s,b,l,y0,m0)         "Losses to seepage and evaporation"
     CONVEYLOSS(s,b,l,y0,m0)     "Losses in conveyance system"
@@ -165,17 +169,47 @@ FIELDLOSS(s,b,q,j,l,y,m)$bPlz(b)..
 * Left side is country demand by basin
 * Right side is country supply by basin
 WNUKUS(s,rb,c,y)$(sW(s) AND sNukus(c,rb) AND useNukus)..
+    SUM((bd,bo)$nukusOut0(rb,bd,bo), NUKOUT(s,rb,bd,bo,y)$bCty(bd,c))
+    =l= 
+    SUM((bd,bo)$nukusIn0(rb,bd,bo), NUKIN(s,rb,bd,bo,y))*sNukus(c,rb)
+   +SUM((b,m)$bBas(b,rb), rtn0(b,m));
+$ontext
     SUM((bd,bo,m)$(bNukus(bo,rb) and (not bNukus(bd,rb)) and bCty(bd,c)), 
-        ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  
+        ITK(s,bd,bo,y,m)$intk(bd,bo)
+       +FLW(s,bd,bo,y,m)$flow(bd,bo)
+       +DIS(s,bd,bo,y,m)$resv(bd,bo)  
+       +FLW(s,bd,bo,y,m)$resv(bd,bo)  
     ) 
     =l= sNukus(c,rb) * (
-         SUM((bd,bo,m)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ), 
-            ITK(s,bd,bo,y,m)+FLW(s,bd,bo,y,m)+DIS(s,bd,bo,y,m)  ) 
-        +SUM((bd,m)$bNukus(bd,rb), rtn0(bd,m))
-        -SUM((b,m0)$(mA(m0) AND bBas(b,rb)), minInFlow0(b,y,m0))
-        -SUM(b$bBas(b,rb), natExtra(b))
-   );
+        SUM((bd,bo,m)$(bNukus(bd,rb) and (not bNukus(bo,rb)) ), 
+            ITK(s,bd,bo,y,m)$intk(bd,bo)
+           +FLW(s,bd,bo,y,m)$flow(bd,bo)
+           +DIS(s,bd,bo,y,m)$resv(bd,bo)  
+           +FLW(s,bd,bo,y,m)$resv(bd,bo)  
+        )
+*       -SUM((b,l)$bBas(b,rb), LOS(s,b,l,y,m)$bRiv(b) )
+       +SUM((bd,m)$bNukus(bd,rb), rtn0(bd,m))
+*        -SUM((b,m0)$(mA(m0) AND bBas(b,rb)), minInFlow0(b,y,m0))
+*        -SUM(b$bBas(b,rb), natExtra(b))
+    );
+$offtext
 
+* Demand for Nukus water
+WNUKUSIN(s,rb,bd,bo,y)$(useNukus and nukusIn0(rb,bd,bo))..
+    NUKIN(s,rb,bd,bo,y) =e= SUM(m,
+        ITK(s,bd,bo,y,m)$intk(bd,bo)
+       +FLW(s,bd,bo,y,m)$flow(bd,bo)
+       +DIS(s,bd,bo,y,m)$resv(bd,bo)  
+       +FLW(s,bd,bo,y,m)$resv(bd,bo)   );
+
+
+WNUKUSOUT(s,rb,bd,bo,y)$(useNukus and nukusOut0(rb,bd,bo))..
+    NUKOUT(s,rb,bd,bo,y) =e= SUM(m,
+        ITK(s,bd,bo,y,m)$intk(bd,bo)
+       +FLW(s,bd,bo,y,m)$flow(bd,bo)
+       +DIS(s,bd,bo,y,m)$resv(bd,bo)  
+       +FLW(s,bd,bo,y,m)$resv(bd,bo)   );
+ 
 
 * Account for return of water due to drainage
 RETURNWATER(s,b,y,m)..
@@ -412,6 +446,7 @@ OBJ..   TWV =e=
                    +SUM((g,y,m)$qXpt(c,m),                    XPT(c,g,y,m)*pXpt(c,m)*1000                                 * objELYweight       ) / 1000000000
 * CAPEX and OPEX expense due to conveyance system
                    -conveyanceCost(c)
+*                  -cFieldirg Cost()
               )
 * Constrained optimisation for HPP and discharges
                    +SUM((b,g,y,m)$objHPPweight(b,m),            HPP(b,g,y,m)                                                * objHPPweight(b,m)  ) / 1000000000
@@ -423,9 +458,9 @@ OBJ..   TWV =e=
 ;
 
 
-MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS, LEACHING,
+MODEL beam  /   WBALANCE, SEAVOL, LOSSES, HHIUSES, GRNDWATER, WNUKUS, WNUKUSIN, WNUKUSOUT, LEACHING,
                 RESVOL, RESFIXVOL, RESFIXDIS, RESDISMAX, RESVOLMAX, RESVOLMIN, RESHHDMAX, 
-                MINOUTFLOW, MININFLOW, MININFLOWa, MINLANDUSE,
+                MININFLOW, MININFLOWa, MINLANDUSE,
                 ELYHEAD, ELYHPP, ELYSEG, ELYTPP, ELYUSD, ELYDEM, ELYMKT, ELYTRX, SRVUSD1ST, 
                 LEONTIEF, CETLAND, FIXEDLAND, LANDLIMIT, CROPMAX, AGRCMX, IRGACT, YIELDWATER1w, YIELDWATER2, iEVAPOTRANS, MINiET, RETURNWATER
                 OBJ
