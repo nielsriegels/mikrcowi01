@@ -12,7 +12,10 @@ $include "%path%91asgn.inc";
 putclose sRename 'copy /Y %path%solutions\solution-' sSce.tl:0 '.gdx %path%solutions\solution.gdx';
 execute '%path%solutions\renameS.cmd';
 
-execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, TRX, XPT, DEM, USD, YWR, iET, CRP, LND, CMX, TWV, ELYMKT ;
+CLS.l(s,b,l,y,m) = 0;
+FLS.l(s,b,q,j,l,y,m) = 0;
+
+execute_load "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, TNI, TRX, XPT, DEM, USD, YWR, iET, CRP, LND, CMX, TWV, ELYMKT ;
 *USD.l(g,c,d0,y,m)$(not d(d0)) = 0;
 *HPP.l("Res_KA2",g,y,m) = 0;
 *HHD.l("Res_KA2",y,m) = 0;
@@ -76,7 +79,7 @@ $include "%path%92cstr.inc";
 
 * Save solution to re-use later
         IF( ((beam.modelstat le 2) or (beam.modelstat eq 7)), 
-            execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, CLS, FLS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, USD, DEM, TRX, XPT, YWR, iET, CRP, LND, CMX, TWV, ELYMKT, ELYTRX, NUKIN, NUKOUT;
+            execute_unload "%path%solutions\solution.gdx", GRW, IRG, HHI, LOS, CLS, FLS, ITK, LCH, FLW, VOL, DIS, STO, HPP, HHD, TPP, TNI, USD, DEM, TRX, XPT, YWR, iET, CRP, LND, CMX, TWV, ELYMKT, ELYTRX, NUKIN, NUKOUT;
             putclose sRename 'copy /Y  %path%solutions\solution.gdx %path%solutions\solution-' sSce.tl:0 '.gdx';
             execute '%path%solutions\renameS.cmd';
         ); 

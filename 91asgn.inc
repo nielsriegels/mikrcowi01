@@ -92,8 +92,8 @@
 
 * Set water supply (choose between dry and normal)
     sup(s,b,m)              = SUM(y0$scenRainYear(sSce,y0),     sup0(s,b,y0,m));
-    hhiUse("HH",b,m)        = SUM(y0$scenModelYear(sSce,y0),    qHwater(b,m)*(1+demography(y0,"HH") ) );
-    hhiUse("ind",b,m)       = SUM(y0$scenModelYear(sSce,y0),    qIwater(b,m)*(1+demography(y0,"ind")) );
+    hhiUse("HH",b,m)        = SUM(y0$scenModelYear(sSce,y0),    qHwater(b,m)*(1+0*demography(y0,"HH") ) );
+    hhiUse("ind",b,m)       = SUM(y0$scenModelYear(sSce,y0),    qIwater(b,m)*(1+0*demography(y0,"ind")) );
 
 * Set new reservoirs in operation according to scenario definition
     bResNOP(b)              = YES$(resNew(b) AND not resNewOp(sSce,b));
@@ -168,7 +168,7 @@ $offtext
                                      +lossChannels0("action",b,l,m)*(  scenarios(sSce,"iCanal")/100)$yM("2020");
     lossFields(b,l,m)               = lossFields0("bsline",b,l,m)$yM("2009")
                                      +lossFields0("BaU-30",b,l,m) * (1-scenarios(sSce,"iField")/100)$yM("2020")
-                                     +lossFields0("action",b,l,m) * (  scenarios(sSce,"iField")/100)$yM("2020");  
+                                     +lossFields0("action",b,l,m) * (  scenarios(sSce,"iField")/100)$yM("2020");
     lossReservoirs(b,l,m)           = lossReservoirs0("bsline",b,l,m)$(scenarios(sSce,"clmChg") eq 0)
                                      +lossReservoirs0("clmchg",b,l,m)$(scenarios(sSce,"clmChg") ne 0);
     lossLakes(b,l,m)                = 0;

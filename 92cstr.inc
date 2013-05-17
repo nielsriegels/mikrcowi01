@@ -93,7 +93,7 @@ DISPLAY resDisFix;
         );
 
 * In sequence B and C, TAD is next (2nd and 3rd pick)
-        IF( ((ord(sSce) eq 32) or (ord(sSce) eq 35)),
+        IF(scenarios(sSce,"seqnce") gt 1,
 *            objCTYweight("UZB")                     = 0;
             objCTYweight("TAD")                     = 1;
             objNODEweight(b)$bCty(b,"TAD")          = 1;
